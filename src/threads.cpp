@@ -82,6 +82,8 @@ void thread_conveyor(void* p)
   topBall_task.suspend();
   while(true) {
     if(shooting && !ejecting) {
+      if(topBall || topBall2)
+        botConveyor.move_velocity(0);
       topConveyor.move_velocity(600);
       pros::delay(400);
       botConveyor.move_velocity(300);
