@@ -5,6 +5,7 @@ const double WHEEL_DIAMETER = 2.75;
 const double ENCODER_WIDTH = 10.25;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
 const int DELAY = 5;
+int test1 = 1;
 
 double robotTheta = 0.0;
 double robotX = 0.0;
