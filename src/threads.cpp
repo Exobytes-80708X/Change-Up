@@ -4,6 +4,7 @@ int intakeState = 2;
 bool shooting = false;
 bool ejecting = false;
 bool macro1_trigger = false;
+bool macro2_trigger = false;
 
 bool topBall_low;
 bool topBall_high;
@@ -79,7 +80,7 @@ void countBalls(int numOfBalls)
     while(firstBall) pros::delay(10);
 
     if(n == numOfBalls-1)
-      botConveyor.move_velocity(200);
+      botConveyor.move_velocity(150);
 
     while(!firstBall) {
       pros::delay(10);
@@ -94,7 +95,7 @@ void countBalls(int numOfBalls)
   //pros::delay(200);
 }
 
-void macro1() //shoots 3 balls
+void macro(int numOfBalls) //shoots x balls
 {
   if(!firstBall) //if no balls are ready to shoot
     return;
@@ -103,7 +104,7 @@ void macro1() //shoots 3 balls
   botConveyor.move_velocity(0);
   pros::delay(400);
   botConveyor.move_velocity(300);
-  countBalls(2);
+  countBalls(numOfBalls-1);
 }
 
 void centerTopBall()
@@ -170,7 +171,10 @@ void thread_conveyor(void* p)
       }
     }
     else if(macro1_trigger) {
-      macro1();
+      macro(3);
+    }
+    else if(macro2_trigger) {
+      macro(2);
     }
     else {
       if(firstBall)
@@ -238,21 +242,31 @@ void thread_control(void* p)
       shooting = true;
       ejecting = false;
       macro1_trigger = false;
+      macro2_trigger = false;
     }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       shooting = false;
       ejecting = true;
       macro1_trigger = false;
+      macro2_trigger = false;
     }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
       shooting = false;
       ejecting = false;
       macro1_trigger = true;
+      macro2_trigger = false;
+    }
+    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
+      shooting = false;
+      ejecting = false;
+      macro1_trigger = false;
+      macro2_trigger = true;
     }
     else {
      shooting = false;
      ejecting = false;
      macro1_trigger = false;
+     macro2_trigger = false;
     }
 
     pros::delay(10);
