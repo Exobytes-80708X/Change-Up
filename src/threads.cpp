@@ -92,12 +92,11 @@ void countBalls(int numOfBalls)
     }
     if(noBalls) break;
   }
-  //pros::delay(200);
 }
 
-void macro(int numOfBalls) //shoots x balls
+void macro(int numOfBalls)
 {
-  if(!firstBall) //if no balls are ready to shoot
+  if(!firstBall)
     return;
 
   topConveyor.move_velocity(500);
