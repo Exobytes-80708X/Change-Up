@@ -413,3 +413,73 @@ void adaptiveDrive(double x, double y)
 {
 	adaptiveDrive(x,y,0,10,0.65,4,1.0,250,10000,true);
 }
+
+void face(double x, double y, bool reversed, double accel, double minV, double maxV, double kP, int settleTime, int timeout)
+{
+		double error = calcAngleError(x,y);
+		double currentSpeed;
+		double reqSpeed;
+		int settleTimer = 0;
+		int timeoutTimer = 0;
+		accel *= 12000;
+		minV *= 1000;
+		maxV *= 1000;
+		kP *= 1000;
+		lv_obj_t * debugLabel = lv_label_create(lv_scr_act(), NULL);
+		lv_obj_set_pos(debugLabel,25,125);
+		lv_obj_t * debugLabel1 = lv_label_create(lv_scr_act(), NULL);
+		lv_obj_set_pos(debugLabel1,25,145);
+
+		std::string debug = std::to_string(error );
+		char debug_array[debug.length()+1];
+		strcpy(debug_array,debug.c_str());
+		lv_label_set_text(debugLabel, debug_array);
+
+		pros::delay(1000);
+		while(settleTimer < settleTime && timeoutTimer < timeout)
+		{
+				if(reversed == true)
+					error = calcAngleErrorReversed(x,y);
+				else
+					error = calcAngleError(x,y);
+
+					reqSpeed = error*kP;
+
+					currentSpeed = reqSpeed;
+
+				if(fabs(error) < 0.02) //~2 deg each side
+					settleTimer+=10;
+				timeoutTimer+=10;
+
+				 //currentSpeed = reqSpeed;
+
+				if(currentSpeed < -maxV)
+					currentSpeed = -maxV;
+				else if(currentSpeed > maxV)
+					currentSpeed = maxV;
+
+				if(currentSpeed > 0 && fabs(currentSpeed) < minV)
+					currentSpeed = minV;
+				else if(currentSpeed < 0 && fabs(currentSpeed) < minV)
+					currentSpeed = -minV;
+
+					leftDrive.moveVoltage(currentSpeed);
+					rightDrive.moveVoltage(-currentSpeed);
+					pros::delay(10);
+
+					std::string debug = std::to_string(error );
+					char debug_array[debug.length()+1];
+					strcpy(debug_array,debug.c_str());
+					lv_label_set_text(debugLabel, debug_array);
+
+					std::string debug1 = std::to_string(currentSpeed );
+					char debug_array1[debug1.length()+1];
+					strcpy(debug_array1,debug1.c_str());
+					lv_label_set_text(debugLabel1, debug_array1);
+		}
+		lv_label_set_text(debugLabel, "finished");
+		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+		rightDrive.moveVelocity(0);
+	  leftDrive.moveVelocity(0);
+}
