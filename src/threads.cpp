@@ -71,7 +71,7 @@ void waitForTopBalltoLower()
 
 void countBalls(int numOfBalls)
 {
-  int timeOut = 400;
+  int timeOut = 750;
   int timer = 0;
   bool noBalls = false;
 
@@ -93,13 +93,18 @@ void countBalls(int numOfBalls)
 
     while(topBall_high) pros::delay(10);
 
-    while(!topBall_high) {
-      pros::delay(10);
-      timer += 10;
-      if(timer >= timeOut) {
-        noBalls = true;
-        break;
+    if(n < numOfBalls-2) {
+      while(!topBall_high) {
+        pros::delay(10);
+        timer += 10;
+        if(timer >= timeOut) {
+          noBalls = true;
+          break;
+        }
       }
+    }
+    else {
+      pros::delay(400);
     }
     if(noBalls) break;
   }
