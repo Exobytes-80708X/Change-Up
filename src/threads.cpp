@@ -1,10 +1,19 @@
 #include "main.h"
 
 int intakeState = 2;
-bool shooting = false;
-bool ejecting = false;
-bool macro1_trigger = false;
-bool macro2_trigger = false;
+
+int conveyorState = 0;
+
+int idle = 0;
+int shooting = 1;
+int ejecting = 2;
+int macro1_trigger = 3;
+int macro2_trigger = 4;
+
+//bool shooting = false;
+//bool ejecting = false;
+//bool macro1_trigger = false;
+//bool macro2_trigger = false;
 
 bool topBall_low;
 bool topBall_high;
@@ -142,7 +151,7 @@ void thread_conveyor(void* p)
   pros::Task topBall_task (thread_centerTopBall, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
   topBall_task.suspend();
   while(true) {
-    if(shooting) {
+    /*if(shooting) {
       if(firstBall)
         botConveyor.move_velocity(0);
       topConveyor.move_velocity(500);
@@ -185,6 +194,58 @@ void thread_conveyor(void* p)
         botConveyor.move_velocity(0);
       else
         botConveyor.move_velocity(400);
+    }*/
+
+    switch(conveyorState) {
+      case 0: //idle state
+        if(firstBall)
+          centerTopBall();
+        else
+          topConveyor.move_velocity(200);
+
+        if(secondBall && firstBall)
+          botConveyor.move_velocity(0);
+        else
+          botConveyor.move_velocity(400);
+        break;
+
+      case 1: //shooting manually
+        if(firstBall)
+          botConveyor.move_velocity(0);
+        topConveyor.move_velocity(500);
+        pros::delay(400);
+        botConveyor.move_velocity(300);
+        while(shooting)
+          pros::delay(10);
+        break;
+
+      case 2: //ejecting manually
+        if(topBall_high && !secondBall) {
+          waitForTopBalltoLower();
+          topConveyor.move_velocity(-600);
+          botConveyor.move_velocity(600);
+          waitForBallToEject();
+        }
+        else if(topBall_high && secondBall) {
+          botConveyor.move_velocity(600);
+          topBall_task.resume();
+          waitForBallToEject();
+          topBall_task.suspend();
+        }
+        else if(!topBall_high) {
+          topConveyor.move_velocity(-600);
+          botConveyor.move_velocity(600);
+        }
+        break;
+
+      case 3: //shooting macro 3 balls
+        macro(3);
+        break;
+
+      case 4: //shooting macro 2 balls
+        macro(2);
+        break;
+
     }
     pros::delay(10);
   }
@@ -238,34 +299,39 @@ void thread_control(void* p)
   while(true)
   {
     if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      shooting = true;
+      /*shooting = true;
       ejecting = false;
       macro1_trigger = false;
-      macro2_trigger = false;
+      macro2_trigger = false;*/
+      conveyorState = shooting;
     }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-      shooting = false;
+      /*shooting = false;
       ejecting = true;
       macro1_trigger = false;
-      macro2_trigger = false;
+      macro2_trigger = false;*/
+      conveyorState = ejecting;
     }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
-      shooting = false;
+      /*shooting = false;
       ejecting = false;
       macro1_trigger = true;
-      macro2_trigger = false;
+      macro2_trigger = false;*/
+      conveyorState = macro1_trigger;
     }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
-      shooting = false;
+      /*shooting = false;
       ejecting = false;
       macro1_trigger = false;
-      macro2_trigger = true;
+      macro2_trigger = true;*/
+      conveyorState = macro2_trigger;
     }
     else {
-     shooting = false;
-     ejecting = false;
-     macro1_trigger = false;
-     macro2_trigger = false;
+     /*shooting = false;
+       ejecting = false;
+       macro1_trigger = false;
+       macro2_trigger = false;*/
+       conveyorState = idle;
     }
 
     pros::delay(10);
