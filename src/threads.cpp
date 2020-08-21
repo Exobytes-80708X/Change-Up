@@ -115,7 +115,7 @@ void shooting_macro(int numOfBalls)
   if(!firstBall)
     return;
 
-  topConveyor.move_velocity(450);
+  topConveyor.move_velocity(440);
   botConveyor.move_velocity(0);
   pros::delay(400);
   botConveyor.move_velocity(300);
@@ -175,7 +175,7 @@ void thread_conveyor(void* p)
       case 1: //shooting manually
         if(firstBall)
           botConveyor.move_velocity(0);
-        topConveyor.move_velocity(500);
+        topConveyor.move_velocity(440);
         pros::delay(400);
         botConveyor.move_velocity(300);
         while(conveyorState == shooting)
