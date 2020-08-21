@@ -51,14 +51,31 @@ void thread_Odometry(void*param)
     lv_obj_set_pos(yLabel,255,145);
     lv_obj_set_pos(thetaLabel,255,165);
 
-    left.reset();
-    right.reset();
-    pros::delay(50);
+    /*debugLabel3 = lv_label_create(lv_scr_act(), NULL);
+  	lv_label_set_text(debugLabel3, "");
+  	lv_obj_set_pos(debugLabel3,25,75);
+
+  	debugLabel4 = lv_label_create(lv_scr_act(), NULL);
+  	lv_label_set_text(debugLabel4, "");
+  	lv_obj_set_pos(debugLabel4,25,95);
+
+  	debugLabel5 = lv_label_create(lv_scr_act(), NULL);
+  	lv_label_set_text(debugLabel5, "");
+  	lv_obj_set_pos(debugLabel5,255,75);
+
+  	debugLabel6 = lv_label_create(lv_scr_act(), NULL);
+  	lv_label_set_text(debugLabel6, "");
+  	lv_obj_set_pos(debugLabel6,255,95);*/
+
+    int leftReset = left.reset();
+    int rightReset = right.reset();
+
+    pros::delay(200);
 
     while(true)
     {
-        currentLeft = left.get_value()/360.0*WHEEL_CIRCUMFERENCE; //read encoders
-        currentRight = right.get_value()/360.0*WHEEL_CIRCUMFERENCE;
+        currentLeft = left.get()/360.0*WHEEL_CIRCUMFERENCE; //read encoders
+        currentRight = right.get()/360.0*WHEEL_CIRCUMFERENCE;
 
         //currentLeft = leftDrive.getPosition()/900*WHEEL_CIRCUMFERENCE; //read encoders
         //currentRight = rightDrive.getPosition()/900*WHEEL_CIRCUMFERENCE;
@@ -83,6 +100,21 @@ void thread_Odometry(void*param)
         robotX += dX; //add to current x and y
         robotY += dY;
 
+        /*if(abs(left.get()) > 10 || abs(right.get()) > 10) {
+
+          std::string leftval = std::to_string( left.get() );
+          char left_array[leftval.length()+1];
+
+          std::string rightval = std::to_string( right.get() );
+          char right_array[rightval.length()+1];
+
+          strcpy(left_array,leftval.c_str());
+          strcpy(right_array,rightval.c_str());
+
+          lv_label_set_text(debugLabel3, left_array);
+          lv_label_set_text(debugLabel4, right_array);
+        }*/
+
         std::string x = std::to_string( robotX );
         char x_array[x.length()+1];
 
@@ -96,9 +128,11 @@ void thread_Odometry(void*param)
         strcpy(y_array,y.c_str());
         strcpy(theta_array,theta.c_str());
 
+
         lv_label_set_text(xLabel, x_array);
         lv_label_set_text(yLabel, y_array);
         lv_label_set_text(thetaLabel, theta_array);
+
 
         pros::delay(10); //reupdate every dT msec
     }
@@ -358,8 +392,6 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 		distkPScale = pow(fabs(projection/distError),scalePower);
 		scaledDistkP = distkP * distkPScale;
 
-		angleSpeed = angleError*anglekP;
-
 		if(fabs(distError) < settleMargin || (fabs(distError) < adjustMargin && fabs(angleError) > 85.0*M_PI/180.0) )
 			settleTimer+=10;
 		timeoutTimer+=10;
@@ -372,13 +404,16 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 			angleSpeed = 0;
 			distSpeed = distError*distkP;
 		}
-		else
+		else {
+      angleSpeed = angleError*anglekP;
 			distSpeed = distError*scaledDistkP;
+    }
 
 		currentSpeed = distSpeed;
 
 		driveVector(currentSpeed,angleSpeed,maxV,debugOn);
 		pros::delay(10);
+
 		if(debugOn) {
 			std::string debug = std::to_string(distError );
 			char debug_array[debug.length()+1];
@@ -397,9 +432,9 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
   leftDrive.moveVelocity(0);
 
 	if(debugOn) {
-		lv_label_set_text(debugLabel1, "finished");
-		lv_label_set_text(debugLabel2, "finished");
-		pros::delay(1000);
+		//lv_label_set_text(debugLabel1, "finished");
+		//lv_label_set_text(debugLabel2, "finished");
+		pros::delay(10000);
 		lv_obj_del(debugLabel1);
 		lv_obj_del(debugLabel2);
 		lv_label_set_text(debugLabel3, "");
@@ -409,9 +444,9 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 	}
 }
 
-void adaptiveDrive(double x, double y)
+void adaptiveDrive(double x, double y, double maxV)
 {
-	adaptiveDrive(x,y,0,10,0.65,4,1.0,250,10000,true);
+	adaptiveDrive(x,y,0,maxV,0.65,4,1.0,250,10000,true);
 }
 
 void face(double x, double y, bool reversed, double accel, double minV, double maxV, double kP, int settleTime, int timeout)

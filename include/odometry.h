@@ -10,4 +10,4 @@ extern double calcAngleErrorReversed(double targetX, double targetY);
 extern double calcAngleErrorReversed(double theta);
 extern double* calcPointOfIntersection(double x1, double y1, double theta1);
 extern void resetOdometry();
-extern void adaptiveDrive(double x, double );
+extern void adaptiveDrive(double x, double y, double maxV);

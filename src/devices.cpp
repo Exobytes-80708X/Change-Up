@@ -12,6 +12,6 @@ pros::ADIAnalogIn topDetector ('H');
 pros::ADIAnalogIn botDetector ('G');
 pros::ADIAnalogIn ejectDetector ('F');
 
-pros::ADIEncoder left('C','D',true);
-pros::ADIEncoder right('A','B',true);
+okapi::ADIEncoder left('C','D',true);
+okapi::ADIEncoder right('A','B',true);
 pros::Controller controller(pros::E_CONTROLLER_MASTER);

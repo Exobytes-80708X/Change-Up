@@ -110,7 +110,7 @@ void countBalls(int numOfBalls)
   }
 }
 
-void macro(int numOfBalls)
+void shooting_macro(int numOfBalls)
 {
   if(!firstBall)
     return;
@@ -203,11 +203,11 @@ void thread_conveyor(void* p)
         break;
 
       case 3: //shooting macro 3 balls
-        macro(3);
+        shooting_macro(3);
         break;
 
       case 4: //shooting macro 2 balls
-        macro(2);
+        shooting_macro(2);
         break;
 
     }

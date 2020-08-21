@@ -10,7 +10,7 @@ extern pros::ADIAnalogIn topDetector;
 extern pros::ADIAnalogIn topDetector2;
 extern pros::ADIAnalogIn botDetector;
 extern pros::ADIAnalogIn ejectDetector;
-extern pros::ADIEncoder left;
-extern pros::ADIEncoder right;
+extern okapi::ADIEncoder left;
+extern okapi::ADIEncoder right;
 
 extern pros::Controller controller;
