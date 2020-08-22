@@ -1,7 +1,7 @@
 #include "main.h"
 //================ Odometry Variables ================
 
-const double WHEEL_DIAMETER = 2.875;
+const double WHEEL_DIAMETER = 2.875 ;
 const double ENCODER_WIDTH = 7.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
 const int DELAY = 5;

@@ -110,6 +110,15 @@ void countBalls(int numOfBalls)
   }
 }
 
+void ejecting_macro(int numOfBalls )
+{
+  if(!secondBall)
+    return;
+
+
+
+}
+
 void shooting_macro(int numOfBalls)
 {
   if(!firstBall)
@@ -210,6 +219,20 @@ void thread_conveyor(void* p)
         shooting_macro(2);
         break;
 
+      case 5: //ejecting macro top 2 balls
+        if(secondBall) {
+          botConveyor.move_velocity(600);
+          topBall_task.resume();
+          waitForBallToEject();
+          topBall_task.suspend();
+
+          waitForTopBalltoLower();
+          topConveyor.move_velocity(-600);
+          botConveyor.move_velocity(600);
+          waitForBallToEject();
+        }
+        break;
+
     }
     pros::delay(10);
   }
@@ -274,6 +297,9 @@ void thread_control(void* p)
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
       conveyorState = macro2_trigger;
     }
+    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+      conveyorState = 5;
+    }
     else {
        conveyorState = idle;
     }
@@ -284,9 +310,20 @@ void thread_control(void* p)
 
 void thread_drive(void* p)
 {
+  rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::coast);
+  leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::coast);
   while(true) {
-    leftDrive.moveVoltage(controller.get_analog(ANALOG_LEFT_Y)/127.0*12000);
-    rightDrive.moveVoltage(controller.get_analog(ANALOG_RIGHT_Y)/127.0*12000);
+    if(abs(controller.get_analog(ANALOG_LEFT_Y)) > 5) {
+        leftDrive.moveVoltage(controller.get_analog(ANALOG_LEFT_Y)/127.0*12000);
+    }
+    else
+      leftDrive.moveVoltage(0);
+
+    if(abs(controller.get_analog(ANALOG_RIGHT_Y)) > 5) {
+        rightDrive.moveVoltage(controller.get_analog(ANALOG_RIGHT_Y)/127.0*12000);
+    }
+    else
+      rightDrive.moveVoltage(0);
     pros::delay(10);
   }
 }
