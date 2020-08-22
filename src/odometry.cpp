@@ -1,8 +1,8 @@
 #include "main.h"
 //================ Odometry Variables ================
 
-const double WHEEL_DIAMETER = 2.75;
-const double ENCODER_WIDTH = 10.25;
+const double WHEEL_DIAMETER = 2.875;
+const double ENCODER_WIDTH = 7.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
 const int DELAY = 5;
 int test = 0;
@@ -137,6 +137,7 @@ void thread_Odometry(void*param)
         pros::delay(10); //reupdate every dT msec
     }
 }
+// =============================================== math ===============================================================
 
 double calcDistance(double x1, double y1, double x2, double y2)
 {
@@ -147,6 +148,13 @@ double calcDistance(double x2, double y2)
 {
   double distance = calcDistance(robotX,robotY,x2,y2);
   //if(fabs(calcAngleError(x2,y2)) > M_PI/2) distance *= -1;
+  return distance;
+}
+
+double calcDistance_signed(double x2, double y2)
+{
+  double distance = calcDistance(robotX,robotY,x2,y2);
+  if(fabs(calcAngleError(x2,y2)) > M_PI/2) distance *= -1;
   return distance;
 }
 
@@ -329,6 +337,228 @@ void driveVector(double currentSpeed, double angleSpeed, double maxV, bool debug
 	rightDrive.moveVoltage(rightSpeed);
 }
 
+void driveDistance(double distance, double accel, double minV, double maxV, double distkP, double anglekP, int settleTime, int timeout)
+{
+	double simX = distance*sin(robotTheta) + robotX;
+  double simY = distance*cos(robotTheta) + robotY;
+	double initX = robotX;
+  double initY = robotY;
+	double initTheta = robotTheta;
+	double distError;
+	double angleError;
+	double distSpeed;
+	double angleSpeed;
+	double currentSpeed = 0.0;
+	accel *= 12000;
+	minV *= 1000;
+	maxV *= 1000;
+	distkP *= 1000;
+	anglekP *= 1000;
+
+	int settleTimer = 0;
+	int timeoutTimer = 0;
+	lv_obj_t * debugLabel = lv_label_create(lv_scr_act(), NULL);
+	lv_obj_set_pos(debugLabel,25,125);
+	while(settleTimer < settleTime && timeoutTimer < timeout)
+	{
+		distError = calcDistance_signed(simX,simY);
+		if(distance < 0)
+			angleError = calcAngleErrorReversed(simX,simY);
+		else
+			angleError = calcAngleError(simX,simY);
+
+		angleSpeed = angleError*anglekP;
+		distSpeed = distError*distkP;
+
+		if(distSpeed > 0 && currentSpeed < distSpeed)	currentSpeed += accel;
+		else if(distSpeed < 0 && currentSpeed > distSpeed) currentSpeed -= accel;
+		else currentSpeed = distSpeed;
+
+		if(currentSpeed < -maxV)
+			currentSpeed = -maxV;
+		else if(currentSpeed > maxV)
+			currentSpeed = maxV;
+
+		if(currentSpeed > 0 && currentSpeed < minV)
+			currentSpeed = minV;
+		else if(currentSpeed < 0 && currentSpeed > -minV)
+			currentSpeed = -minV;
+
+		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0)
+			settleTimer+=10;
+    else
+      settleTimer = 0;
+		timeoutTimer+=10;
+
+		if(fabs(distError) < 6.0 && fabs(angleError) > 15*M_PI/180.0)
+			angleSpeed = 0;
+
+		//leftDrive.moveVoltage(currentSpeed + angleSpeed);
+		//rightDrive.moveVoltage(currentSpeed - angleSpeed);
+    driveVector(currentSpeed,angleSpeed,maxV,false);
+		pros::delay(10);
+
+		std::string debug = std::to_string(distError );
+		char debug_array[debug.length()+1];
+		strcpy(debug_array,debug.c_str());
+		lv_label_set_text(debugLabel, debug_array);
+	}
+	lv_label_set_text(debugLabel, "finished");
+	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	rightDrive.moveVelocity(0);
+  leftDrive.moveVelocity(0);
+}
+
+void driveDistance(double distance, double maxV)
+{
+  driveDistance(distance,0.05,2.5,maxV,0.7,4,250,5000);
+}
+
+void face(double x, double y, bool reversed, double accel, double minV, double maxV, double kP, int settleTime, int timeout)
+{
+		double error = calcAngleError(x,y);
+		double currentSpeed;
+		double reqSpeed;
+		int settleTimer = 0;
+		int timeoutTimer = 0;
+		accel *= 12000;
+		minV *= 1000;
+		maxV *= 1000;
+		kP *= 1000;
+		lv_obj_t * debugLabel = lv_label_create(lv_scr_act(), NULL);
+		lv_obj_set_pos(debugLabel,25,125);
+		lv_obj_t * debugLabel1 = lv_label_create(lv_scr_act(), NULL);
+		lv_obj_set_pos(debugLabel1,25,145);
+
+		std::string debug = std::to_string(error );
+		char debug_array[debug.length()+1];
+		strcpy(debug_array,debug.c_str());
+		lv_label_set_text(debugLabel, debug_array);
+
+		while(settleTimer < settleTime && timeoutTimer < timeout)
+		{
+				if(reversed == true)
+					error = calcAngleErrorReversed(x,y);
+				else
+					error = calcAngleError(x,y);
+
+					reqSpeed = error*kP;
+
+					currentSpeed = reqSpeed;
+
+				if(fabs(error) < 0.02) //~2 deg each side
+					settleTimer+=10;
+				timeoutTimer+=10;
+
+				if(currentSpeed < -maxV)
+					currentSpeed = -maxV;
+				else if(currentSpeed > maxV)
+					currentSpeed = maxV;
+
+				if(currentSpeed > 0 && fabs(currentSpeed) < minV)
+					currentSpeed = minV;
+				else if(currentSpeed < 0 && fabs(currentSpeed) < minV)
+					currentSpeed = -minV;
+
+					leftDrive.moveVoltage(currentSpeed);
+					rightDrive.moveVoltage(-currentSpeed);
+					pros::delay(10);
+
+					std::string debug = std::to_string(error );
+					char debug_array[debug.length()+1];
+					strcpy(debug_array,debug.c_str());
+					lv_label_set_text(debugLabel, debug_array);
+
+					std::string debug1 = std::to_string(currentSpeed );
+					char debug_array1[debug1.length()+1];
+					strcpy(debug_array1,debug1.c_str());
+					lv_label_set_text(debugLabel1, debug_array1);
+		}
+		lv_label_set_text(debugLabel, "finished");
+		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+		rightDrive.moveVelocity(0);
+	  leftDrive.moveVelocity(0);
+}
+
+void face(double theta, bool reversed, double accel, double minV, double maxV, double kP, int settleTime, int timeout)
+{
+		double error = calcAngleError(theta);
+		double currentSpeed;
+		double reqSpeed;
+		int settleTimer = 0;
+		int timeoutTimer = 0;
+		accel *= 12000;
+		minV *= 1000;
+		maxV *= 1000;
+		kP *= 1000;
+		lv_obj_t * debugLabel = lv_label_create(lv_scr_act(), NULL);
+		lv_obj_set_pos(debugLabel,25,125);
+		lv_obj_t * debugLabel1 = lv_label_create(lv_scr_act(), NULL);
+		lv_obj_set_pos(debugLabel1,25,145);
+
+		std::string debug = std::to_string(error );
+		char debug_array[debug.length()+1];
+		strcpy(debug_array,debug.c_str());
+		lv_label_set_text(debugLabel, debug_array);
+
+		while(settleTimer < settleTime && timeoutTimer < timeout)
+		{
+				if(reversed == true)
+					error = calcAngleErrorReversed(theta);
+				else
+					error = calcAngleError(theta);
+
+					reqSpeed = error*kP;
+
+					currentSpeed = reqSpeed;
+
+				if(fabs(error) < 0.02) //~2 deg each side
+					settleTimer+=10;
+				timeoutTimer+=10;
+
+				if(currentSpeed < -maxV)
+					currentSpeed = -maxV;
+				else if(currentSpeed > maxV)
+					currentSpeed = maxV;
+
+				if(currentSpeed > 0 && fabs(currentSpeed) < minV)
+					currentSpeed = minV;
+				else if(currentSpeed < 0 && fabs(currentSpeed) < minV)
+					currentSpeed = -minV;
+
+					leftDrive.moveVoltage(currentSpeed);
+					rightDrive.moveVoltage(-currentSpeed);
+					pros::delay(10);
+
+					std::string debug = std::to_string(error );
+					char debug_array[debug.length()+1];
+					strcpy(debug_array,debug.c_str());
+					lv_label_set_text(debugLabel, debug_array);
+
+					std::string debug1 = std::to_string(currentSpeed );
+					char debug_array1[debug1.length()+1];
+					strcpy(debug_array1,debug1.c_str());
+					lv_label_set_text(debugLabel1, debug_array1);
+		}
+		lv_label_set_text(debugLabel, "finished");
+		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+		rightDrive.moveVelocity(0);
+	  leftDrive.moveVelocity(0);
+}
+
+void face(double x, double y)
+{
+  face(x,y,false,0,1.5,10,6.7,250,5000);
+}
+
+void face(double theta)
+{
+  face(theta,false,0,1.5,10,6.7,250,5000);
+}
+
 void adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout, bool debugOn)
 {
 	double initX = robotX;
@@ -446,75 +676,5 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 
 void adaptiveDrive(double x, double y, double maxV)
 {
-	adaptiveDrive(x,y,0,maxV,0.65,4,1.0,250,10000,true);
-}
-
-void face(double x, double y, bool reversed, double accel, double minV, double maxV, double kP, int settleTime, int timeout)
-{
-		double error = calcAngleError(x,y);
-		double currentSpeed;
-		double reqSpeed;
-		int settleTimer = 0;
-		int timeoutTimer = 0;
-		accel *= 12000;
-		minV *= 1000;
-		maxV *= 1000;
-		kP *= 1000;
-		lv_obj_t * debugLabel = lv_label_create(lv_scr_act(), NULL);
-		lv_obj_set_pos(debugLabel,25,125);
-		lv_obj_t * debugLabel1 = lv_label_create(lv_scr_act(), NULL);
-		lv_obj_set_pos(debugLabel1,25,145);
-
-		std::string debug = std::to_string(error );
-		char debug_array[debug.length()+1];
-		strcpy(debug_array,debug.c_str());
-		lv_label_set_text(debugLabel, debug_array);
-
-		pros::delay(1000);
-		while(settleTimer < settleTime && timeoutTimer < timeout)
-		{
-				if(reversed == true)
-					error = calcAngleErrorReversed(x,y);
-				else
-					error = calcAngleError(x,y);
-
-					reqSpeed = error*kP;
-
-					currentSpeed = reqSpeed;
-
-				if(fabs(error) < 0.02) //~2 deg each side
-					settleTimer+=10;
-				timeoutTimer+=10;
-
-				 //currentSpeed = reqSpeed;
-
-				if(currentSpeed < -maxV)
-					currentSpeed = -maxV;
-				else if(currentSpeed > maxV)
-					currentSpeed = maxV;
-
-				if(currentSpeed > 0 && fabs(currentSpeed) < minV)
-					currentSpeed = minV;
-				else if(currentSpeed < 0 && fabs(currentSpeed) < minV)
-					currentSpeed = -minV;
-
-					leftDrive.moveVoltage(currentSpeed);
-					rightDrive.moveVoltage(-currentSpeed);
-					pros::delay(10);
-
-					std::string debug = std::to_string(error );
-					char debug_array[debug.length()+1];
-					strcpy(debug_array,debug.c_str());
-					lv_label_set_text(debugLabel, debug_array);
-
-					std::string debug1 = std::to_string(currentSpeed );
-					char debug_array1[debug1.length()+1];
-					strcpy(debug_array1,debug1.c_str());
-					lv_label_set_text(debugLabel1, debug_array1);
-		}
-		lv_label_set_text(debugLabel, "finished");
-		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
-		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
-		rightDrive.moveVelocity(0);
-	  leftDrive.moveVelocity(0);
+	adaptiveDrive(x,y,0,maxV,0.65,4.0,1.0,250,10000,true);
 }

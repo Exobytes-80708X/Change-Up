@@ -40,7 +40,11 @@ void competition_initialize()
 
 void autonomous()
 {
-
+  driveDistance(24,10);
+  face(90);
+  face(0);
+  driveDistance(-24,10);
+  pros::delay(250);
 }
 
 void opcontrol()
