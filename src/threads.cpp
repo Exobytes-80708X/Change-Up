@@ -314,13 +314,13 @@ void thread_drive(void* p)
   leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::coast);
   while(true) {
     if(abs(controller.get_analog(ANALOG_LEFT_Y)) > 5) {
-        leftDrive.moveVoltage(controller.get_analog(ANALOG_LEFT_Y)/127.0*12000);
+        leftDrive.moveVoltage(controller.get_analog(ANALOG_LEFT_Y)/127.0*10000);
     }
     else
       leftDrive.moveVoltage(0);
 
     if(abs(controller.get_analog(ANALOG_RIGHT_Y)) > 5) {
-        rightDrive.moveVoltage(controller.get_analog(ANALOG_RIGHT_Y)/127.0*12000);
+        rightDrive.moveVoltage(controller.get_analog(ANALOG_RIGHT_Y)/127.0*10000);
     }
     else
       rightDrive.moveVoltage(0);
