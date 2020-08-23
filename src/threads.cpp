@@ -310,6 +310,8 @@ void thread_control(void* p)
 
 void thread_drive(void* p)
 {
+  rightDrive.setCurrentLimit(450);
+  leftDrive.setCurrentLimit(450);
   rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::coast);
   leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::coast);
   while(true) {
