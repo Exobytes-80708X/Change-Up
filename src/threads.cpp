@@ -310,19 +310,17 @@ void thread_control(void* p)
 
 void thread_drive(void* p)
 {
-  rightDrive.setCurrentLimit(450);
-  leftDrive.setCurrentLimit(450);
   rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::coast);
   leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::coast);
   while(true) {
     if(abs(controller.get_analog(ANALOG_LEFT_Y)) > 5) {
-        leftDrive.moveVoltage(controller.get_analog(ANALOG_LEFT_Y)/127.0*10000);
+        leftDrive.moveVoltage(controller.get_analog(ANALOG_LEFT_Y)/127.0*12000);
     }
     else
       leftDrive.moveVoltage(0);
 
     if(abs(controller.get_analog(ANALOG_RIGHT_Y)) > 5) {
-        rightDrive.moveVoltage(controller.get_analog(ANALOG_RIGHT_Y)/127.0*10000);
+        rightDrive.moveVoltage(controller.get_analog(ANALOG_RIGHT_Y)/127.0*12000);
     }
     else
       rightDrive.moveVoltage(0);
