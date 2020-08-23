@@ -1,0 +1,144 @@
+
+double Bezier(double p0, double p1, double p2, double p3,double t){
+   return p0*(1-t)*(1-t)*(1-t) + 3*t*p1*(1-t)*(1-t) + 3*t*t*p2*(1-t) + t*t*t*p3; // basic formula for bezier using 4 points as references. IT IS PARAMETRIC WITH t AS TIME.
+ }
+ double BezierDV(double p0, double p1, double p2, double p3,double t){
+    return 3*(1-t)*(1-t)*(p1 - p0) + 6*t(1-t)*(p2 - p1) + 3*t*t*(p3 - p2); // the derivative of the bezier function, used for smoothing.
+  }
+ void TDMA(double* a, double* b, double* c, double* d, int n) { // OH YEAH OK I COPY PASTED THIS OFF THE INTERNET BUT ASSUME IT WORKS, it solves tridiagonal matrices (look it up)
+															    // and basically a is the lower matrix, b is mid and c is top and d is resultant matrix and n is length of the matrices (has to be the same for all 4)
+    n--;	
+    c[0] /= b[0]; 
+    d[0] /= b[0];
+
+    for (int i = 1; i < n; i++) {
+        c[i] /= b[i] - a[i]*c[i-1];
+        d[i] = (d[i] - a[i]*d[i-1]) / (b[i] - a[i]*c[i-1]);
+    }
+
+    d[n] = (d[n] - a[n]*d[n-1]) / (b[n] - a[n]*c[n-1]);
+
+    for (int i = n; i-- > 0;) {
+        d[i] -= c[i]*d[i+1];
+    }
+}
+
+void curveDrive(int n, double pts[n+1][2]){ // this is using an array of points with x and y coords so point zero is pts[0][0] , pts[0][1] and point z in x,y is pts[z][0] , pts[z][1].
+  double tMax = n;
+  double p0[n][2];
+  double p1[n][2]; // generates the 4 point matrices that are used in the bezier curving.
+  double p2[n][2];
+  double p3[n][2];
+
+  for(int i = 0; i < n; i++){ // ok this is all just a bunch of math but im 100% confident this is the right math but it may not work correctly in c++ as it did in python.
+    p0[i][0] = pts[i][0];
+    p0[i][1] = pts[i][1];
+  }
+  for(int i = 1; i < n+1; i++){
+    p3[i-1][0] = pts[i][0];
+    p3[i-1][1] = pts[i][1];
+  }
+  double bot[n];
+  double mid[n];
+  double top[n];
+  double rX[n];
+  double rY[n];
+  for(int i = 0; i < n; i++){
+    if(i == 0){
+      bot[i] = 0;
+      mid[i] = 2;
+      top[i] = 1;
+      rX[i] = pts[0][0] + 2*pts[1][0];
+      rY[i] = pts[0][1] + 2*pts[1][1];
+    }
+    else if(i == n-1){
+      bot[n-1] = 2;
+      mid[n-1] = 7;
+      top[n-1] = 0;
+      rX[i] = 8*pts[n-1][0] + 2*pts[n][0];
+      rY[i] = 8*pts[n-1][1] + 2*pts[n][1];
+    }
+    else{
+      bot[i] = 1;
+      mid[i] = 4;
+      top[i] = 1;
+      rX[i] = pts[0][0] + 2*pts[1][0];
+      rY[i] = pts[0][1] + 2*pts[1][1];
+    }
+  }
+  TDMA(bot,mid,top,rX,n);
+  for(int i = 0; i < n; i++){
+    if(i == 0){
+      bot[i] = 0;
+      mid[i] = 2;
+      top[i] = 1;
+      rX[i] = pts[0][0] + 2*pts[1][0]; // if ur wondering what this does it basically solves for the points needed for smooth curves given waypoints to touch, its in the document for 2d motion profiling.
+      rY[i] = pts[0][1] + 2*pts[1][1];
+    }
+    else if(i == n-1){
+      bot[n-1] = 2;
+      mid[n-1] = 7;
+      top[n-1] = 0;
+      rX[i] = 8*pts[n-1][0] + 2*pts[n][0];
+      rY[i] = 8*pts[n-1][1] + 2*pts[n][1];
+    }
+    else{
+      bot[i] = 1;
+      mid[i] = 4;
+      top[i] = 1;
+      rX[i] = pts[0][0] + 2*pts[1][0];
+      rY[i] = pts[0][1] + 2*pts[1][1];
+    }
+  }
+  TDMA(bot,mid,top,rY,n);
+  for(int i = 0; i < n; i++){
+    p1[i][0] = rX[i];
+    p1[i][1] = rY[i];
+  }
+  for(int i = 0; i < n-1; i++){
+    p2[i][0] = 2*pts[i+1][0] - p1[i+1][0];
+    p2[i][1] = 2*pts[i+1][1] - p1[i+1][1];
+  }
+  p2[n-1][0] = (pts[n][0] + p1[n-1][0])/2;
+  p2[n-1][1] = (pts[n][1] + p1[n-1][1])/2;
+  
+  // THIS IS THE END OF WHERE IM 100% CONFIDENT, PAST THIS POINT IS THE CODE FOR MAKING IT FOLLOW THE PATH IN PROPERLY AND UPDATE PROPERLY
+
+  /////////////////// OKAY WE HAVE EVERYTHING NOW WE CAN CALL BEZIER WITH THESE POINTS
+  double tX = 0.0; // lots of vars but since this is a test idrc. tX is time X, itX is iteration (what point we're on) of X, tempTX is the temporary time of X, etc.
+  int itX = 0;
+  double tempTX = 0.0;
+  double tY = 0.0;
+  int itY = 0;
+  double tempTY = 0.0;
+  while(tX < tMax && tY < tMax){
+    double x = Bezier(p0[itX][0],p1[itX][0],p2[itX][0],p3[itX][0],tempTX);
+    double y = Bezier(p0[itX][0],p1[itX][0],p2[itX][0],p3[itX][0],tempTX);
+    face(x,y,20); // basically im telling the robot to face and move at speed 20 at the points x,y, which are found by finding how far along the curve we are.
+    move(calcDistance(x,y),20);
+    itX = tX/1; // basically from 0-1 is until the first waypoint, it'll keep going till it ends up at n-1 to n which is the nth (last) waypoint.
+    itY = tY/1;
+    tempTX = tX;
+    tempTY = tY;
+    while(tempTX > 1.0) // this is basically temporary time which just stays between 0-1 regardless of the point so we can still use t for the bezier with no adjustments
+      tempTX -= 1.0;
+    while(tempTY > 1.0)
+      tempTY -= 1.0;
+    double dX = (BezierDV(p0[itX][0],p1[itX][0],p2[itX][0],p3[itX][0],tempTX)); // this is the change in x, there's this BC thing basically since the derivative gives slope of tangent line
+																				// if you go a small distance and update ur you'll be essentially following the curve with the tangent line
+																				// and this should hopefully be a small enough change to make a smooth curve drive
+    if(dX < 0)
+      dX = -dX; // dX must stay positive for this to work
+    tX+= .36 / dX; // idk where i got .36 and .072 but I think I remember doing some math so these values should probably be adjusted if it's working but kinda off
+  double dY = (BezierDV(p0[itY][1],p1[itY][1],p2[itY][1],p3[itY][1],tempTY)); // same thing for Y as x.
+  if(dY < 0)
+    dY = -dY;
+  tY+= .072 / dY; // ok i think .36 and .072 are the meters per 10 milliseconds or something like that.
+  }
+
+
+
+
+}
+
+

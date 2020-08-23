@@ -1,0 +1,26 @@
+[imports]
+
+
+double bezX((double x1, double y1),(double x2, double y2),(double x3, double y3)(double x4, double y4))
+{
+	return x1*(1-t)*(1-t)*(1-t) + 3*t*x2*(1-t)*(1-t) + 3*t*t*x3*(1-t) + t*t*t*x4;
+
+}
+double bezY((double x1, double y1),(double x2, double y2),(double x3, double y3)(double x4, double y4))
+{
+	return y1*(1-t)*(1-t)*(1-t) + 3*t*y2*(1-t)*(1-t) + 3*t*t*y3*(1-t) + t*t*t*y4;
+
+}
+
+[Thomas Algo]
+
+void goBez(double[] kx, double[] ky){
+	int n = kx.getLength() - 1;
+	int[] bot = new int[n];
+	int[] mid = new int[n];
+	int[] top = new int[n];
+
+	for(int i = 0; i < n-2; i++){
+		bot[i] = i;
+}
+}
