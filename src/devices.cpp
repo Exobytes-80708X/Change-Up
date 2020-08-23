@@ -1,7 +1,12 @@
 #include "main.h"
 
-okapi::MotorGroup leftDrive({-6,-20});
-okapi::MotorGroup rightDrive({7,18});
+okapi::Motor ld_1(6,true,okapi::AbstractMotor::gearset::blue,okapi::AbstractMotor::encoderUnits::counts);
+okapi::Motor ld_2(20,true,okapi::AbstractMotor::gearset::blue,okapi::AbstractMotor::encoderUnits::counts);
+okapi::Motor rd_1(7,false,okapi::AbstractMotor::gearset::blue,okapi::AbstractMotor::encoderUnits::counts);
+okapi::Motor rd_2(18,false,okapi::AbstractMotor::gearset::blue,okapi::AbstractMotor::encoderUnits::counts);
+
+okapi::MotorGroup leftDrive({ld_1,ld_2});
+okapi::MotorGroup rightDrive({rd_1,rd_2});
 pros::Motor leftIntake(12,pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor rightIntake(11,pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor topConveyor(15,pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
