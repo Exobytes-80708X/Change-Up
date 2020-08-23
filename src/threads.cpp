@@ -71,7 +71,7 @@ void waitForTopBalltoLower()
 
 void countBalls(int numOfBalls)
 {
-  int timeOut = 750;
+  int timeOut = 500;
   int timer = 0;
   bool noBalls = false;
 
