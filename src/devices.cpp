@@ -19,4 +19,6 @@ pros::ADIAnalogIn ejectDetector ('F');
 
 okapi::ADIEncoder left('C','D',false);
 okapi::ADIEncoder right('A','B',false);
+
+pros::Imu imu (1);
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
