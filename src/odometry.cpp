@@ -1,7 +1,7 @@
 #include "main.h"
 //================ Odometry Variables ================
 
-const double WHEEL_DIAMETER = 2.875 ;
+const double WHEEL_DIAMETER = 2.875;
 const double ENCODER_WIDTH = 7.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
 const double IMU_WEIGHT = 0.5;
@@ -13,19 +13,11 @@ double robotTheta = 0.0;
 double robotX = 0.0;
 double robotY = 0.0;
 
-lv_obj_t * debugLabel1;
-lv_obj_t * debugLabel2;
-lv_obj_t * debugLabel3;
-lv_obj_t * debugLabel4;
-lv_obj_t * debugLabel5;
-lv_obj_t * debugLabel6;
-
 void resetOdometry()
 {
   robotX = 0;
   robotY = 0;
 }
-
 
 void thread_Odometry(void*param)
 {
@@ -46,28 +38,16 @@ void thread_Odometry(void*param)
     double dLeftVal = 0.0;
     double dRightVal = 0.0;
 
-    lv_obj_t * xLabel = lv_label_create(lv_scr_act(), NULL);
-    lv_obj_t * yLabel = lv_label_create(lv_scr_act(), NULL);
-    lv_obj_t * thetaLabel = lv_label_create(lv_scr_act(), NULL);
-    lv_obj_set_pos(xLabel,255,125);
-    lv_obj_set_pos(yLabel,255,145);
-    lv_obj_set_pos(thetaLabel,255,165);
+    xLabel = createTextLabel(xLabel, "", 200, 20);
+    yLabel = createTextLabel(yLabel, "", 200, 40);
+    thetaLabel = createTextLabel(thetaLabel, "", 200, 60);
 
-    /*debugLabel3 = lv_label_create(lv_scr_act(), NULL);
-  	lv_label_set_text(debugLabel3, "");
-  	lv_obj_set_pos(debugLabel3,25,75);
-
-  	debugLabel4 = lv_label_create(lv_scr_act(), NULL);
-  	lv_label_set_text(debugLabel4, "");
-  	lv_obj_set_pos(debugLabel4,25,95);
-
-  	debugLabel5 = lv_label_create(lv_scr_act(), NULL);
-  	lv_label_set_text(debugLabel5, "");
-  	lv_obj_set_pos(debugLabel5,255,75);
-
-  	debugLabel6 = lv_label_create(lv_scr_act(), NULL);
-  	lv_label_set_text(debugLabel6, "");
-  	lv_obj_set_pos(debugLabel6,255,95);*/
+    debugLabel1 = createTextLabel(debugLabel1,"",25,20);
+    debugLabel2 = createTextLabel(debugLabel2,"",25,40);
+    debugLabel3 = createTextLabel(debugLabel3,"",25,60);
+    debugLabel4 = createTextLabel(debugLabel4,"",25,80);
+    debugLabel5 = createTextLabel(debugLabel5,"",25,100);
+    debugLabel6 = createTextLabel(debugLabel6,"",25,120);
 
     int leftReset = left.reset();
     int rightReset = right.reset();
@@ -101,10 +81,10 @@ void thread_Odometry(void*param)
         dX = (dLeftVal + dRightVal)/2 * sin( (robotTheta) ); //calculate change in x
         dY = (dLeftVal + dRightVal)/2 * cos( (robotTheta) ); //calculate change in y
 
-        robotX += dX; //add to current x and y
+        robotX += dX; //add to current x and ys
         robotY += dY;
 
-        std::string x = std::to_string( robotX );
+        /*std::string x = std::to_string( robotX );
         char x_array[x.length()+1];
 
         std::string y = std::to_string( robotY );
@@ -119,8 +99,11 @@ void thread_Odometry(void*param)
 
         lv_label_set_text(xLabel, x_array);
         lv_label_set_text(yLabel, y_array);
-        lv_label_set_text(thetaLabel, theta_array);
+        lv_label_set_text(thetaLabel, theta_array);*/
 
+        updateVarLabel(xLabel, "X", robotX);
+        updateVarLabel(yLabel, "Y", robotY);
+        updateVarLabel(thetaLabel, "T", robotTheta);
 
         pros::delay(10); //reupdate every dT msec
     }
@@ -286,7 +269,6 @@ void driveVector(double currentSpeed, double angleSpeed, double maxV, bool debug
 {
   /*
   Arguments:
-
   currentSpeed  - based off of distance p-controller, uses mV
   angleSpeed    - based off of angle p-controller, uses mV
   maxV          - maximum voltage applid to motors, uses mV
@@ -309,25 +291,10 @@ void driveVector(double currentSpeed, double angleSpeed, double maxV, bool debug
 	}
 
 	if(debugOn) {
-		std::string debug = std::to_string(leftSpeed );
-		char debug_array[debug.length()+1];
-		strcpy(debug_array,debug.c_str());
-		lv_label_set_text(debugLabel3, debug_array);
-
-		std::string debug1 = std::to_string(rightSpeed );
-		char debug_array1[debug1.length()+1];
-		strcpy(debug_array1,debug1.c_str());
-		lv_label_set_text(debugLabel4, debug_array1);
-
-		std::string debug2 = std::to_string(currentSpeed );
-		char debug_array2[debug2.length()+1];
-		strcpy(debug_array2,debug2.c_str());
-		lv_label_set_text(debugLabel5, debug_array2);
-
-		std::string debug3 = std::to_string(angleSpeed );
-		char debug_array3[debug3.length()+1];
-		strcpy(debug_array3,debug3.c_str());
-		lv_label_set_text(debugLabel6, debug_array3);
+    updateVarLabel(debugLabel3,"LS",leftSpeed);
+    updateVarLabel(debugLabel4,"RS",rightSpeed);
+    updateVarLabel(debugLabel5,"CS",currentSpeed);
+    updateVarLabel(debugLabel6,"AS",angleSpeed);
 	}
 
 	leftDrive.moveVoltage(leftSpeed);
@@ -371,9 +338,6 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
 	int timeoutTimer = 0;
   //initialize timers
 
-	lv_obj_t * debugLabel = lv_label_create(lv_scr_act(), NULL);
-	lv_obj_set_pos(debugLabel,25,125);
-
 	while(settleTimer < settleTime && timeoutTimer < timeout)
 	{
 		distError = calcDistance_signed(simX,simY);
@@ -414,16 +378,13 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
     //if robot is with 6 inches of target distance, robot will no longer adjust to face point
     //as that will result in the robot making sudden turns at the end of a straight movement, which is bad for straight movements
 
-    driveVector(currentSpeed,angleSpeed,maxV,false); //send calculated speeds to motors
+    driveVector(currentSpeed,angleSpeed,maxV,true); //send calculated speeds to motors
 		pros::delay(10);
 
-		std::string debug = std::to_string(distError );
-		char debug_array[debug.length()+1];
-		strcpy(debug_array,debug.c_str());
-		lv_label_set_text(debugLabel, debug_array);
+    updateVarLabel(debugLabel1,"DE",distError);
+    updateVarLabel(debugLabel2,"TT",timeoutTimer);
 	}
-	lv_label_set_text(debugLabel, "finished");
-
+	clearDebugLabels();
 	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	rightDrive.moveVelocity(0);
@@ -452,6 +413,7 @@ void face(double x, double y, bool reversed, double accel, double minV, double m
 		double error = calcAngleError(x,y);
     //calculates shortest number of radians needed to turn to face (x,y)
 		double currentSpeed;
+    double pseudoI = 0.0;
 
 		int settleTimer = 0;
 		int timeoutTimer = 0;
@@ -461,16 +423,6 @@ void face(double x, double y, bool reversed, double accel, double minV, double m
 		maxV *= 1000;
 		kP *= 1000;
     //scales all arguments to be the correct units
-
-		lv_obj_t * debugLabel = lv_label_create(lv_scr_act(), NULL);
-		lv_obj_set_pos(debugLabel,25,125);
-		lv_obj_t * debugLabel1 = lv_label_create(lv_scr_act(), NULL);
-		lv_obj_set_pos(debugLabel1,25,145);
-
-		std::string debug = std::to_string(error );
-		char debug_array[debug.length()+1];
-		strcpy(debug_array,debug.c_str());
-		lv_label_set_text(debugLabel, debug_array);
 
 		while(settleTimer < settleTime && timeoutTimer < timeout)
 		{
@@ -501,22 +453,26 @@ void face(double x, double y, bool reversed, double accel, double minV, double m
 					currentSpeed = -minV;
         //makes sure currentSpeed is greater than minV
 
+        if(fabs(error) < 2000/kP) {
+          pseudoI += accel;
+          if(pseudoI > 1000)
+            pseudoI = 1000;
+        }
+        else pseudoI = 0;
+        if(error > 0)
+          currentSpeed += pseudoI;
+        else currentSpeed -= pseudoI;
+
 				leftDrive.moveVoltage(currentSpeed);
 				rightDrive.moveVoltage(-currentSpeed);
         //send voltages to motors
 				pros::delay(10);
 
-				std::string debug = std::to_string(error );
-				char debug_array[debug.length()+1];
-				strcpy(debug_array,debug.c_str());
-				lv_label_set_text(debugLabel, debug_array);
-
-				std::string debug1 = std::to_string(currentSpeed );
-				char debug_array1[debug1.length()+1];
-				strcpy(debug_array1,debug1.c_str());
-				lv_label_set_text(debugLabel1, debug_array1);
+        updateVarLabel(debugLabel1,"E",error);
+        updateVarLabel(debugLabel2,"CS",currentSpeed);
+        updateVarLabel(debugLabel2,"PI",pseudoI);
 		}
-		lv_label_set_text(debugLabel, "finished");
+		clearDebugLabels();
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		rightDrive.moveVelocity(0);
@@ -528,21 +484,13 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 {
 		double error = calcAngleError(theta);
 		double currentSpeed;
+    double pseudoI = 0.0;
 		int settleTimer = 0;
 		int timeoutTimer = 0;
 		accel *= 12000;
 		minV *= 1000;
 		maxV *= 1000;
 		kP *= 1000;
-		lv_obj_t * debugLabel = lv_label_create(lv_scr_act(), NULL);
-		lv_obj_set_pos(debugLabel,25,125);
-		lv_obj_t * debugLabel1 = lv_label_create(lv_scr_act(), NULL);
-		lv_obj_set_pos(debugLabel1,25,145);
-
-		std::string debug = std::to_string(error );
-		char debug_array[debug.length()+1];
-		strcpy(debug_array,debug.c_str());
-		lv_label_set_text(debugLabel, debug_array);
 
 		while(settleTimer < settleTime && timeoutTimer < timeout)
 		{
@@ -569,21 +517,25 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 				else if(currentSpeed < 0 && fabs(currentSpeed) < minV)
 					currentSpeed = -minV;
 
+        if(fabs(error) < 2000/kP) {
+          pseudoI += accel;
+          if(pseudoI > 1000)
+            pseudoI = 1000;
+        }
+        else pseudoI = 0;
+        if(error > 0)
+          currentSpeed += pseudoI;
+        else currentSpeed -= pseudoI;
+
 				leftDrive.moveVoltage(currentSpeed);
 				rightDrive.moveVoltage(-currentSpeed);
 				pros::delay(10);
 
-				std::string debug = std::to_string(error );
-				char debug_array[debug.length()+1];
-				strcpy(debug_array,debug.c_str());
-				lv_label_set_text(debugLabel, debug_array);
-
-				std::string debug1 = std::to_string(currentSpeed );
-				char debug_array1[debug1.length()+1];
-				strcpy(debug_array1,debug1.c_str());
-				lv_label_set_text(debugLabel1, debug_array1);
+        updateVarLabel(debugLabel1,"ER",error);
+        updateVarLabel(debugLabel2,"CS",currentSpeed);
+        updateVarLabel(debugLabel3,"PI",pseudoI);
 		}
-		lv_label_set_text(debugLabel, "finished");
+    clearDebugLabels();
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		rightDrive.moveVelocity(0);
@@ -592,12 +544,12 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 
 void face(double x, double y)
 {
-  face(x,y,false,0,1.5,10,6.7,250,5000);
+  face(x,y,false,0.05,1.0,10,6.5,250,5000);
 }
 
 void face(double theta)
 {
-  face(theta,false,0,1.5,10,6.7,250,5000);
+  face(theta,false,0.001,1.0,10,6.5,250,20000);
 }
 
 void adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout, bool debugOn)
@@ -650,7 +602,7 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 	double minSpeedMargin = 3.0; //if robot is this distance from the target point, don't decrease in speed anymore
   //measured in inches
 
-	debugLabel1 = lv_label_create(lv_scr_act(), NULL);
+	/*debugLabel1 = lv_label_create(lv_scr_act(), NULL);
 	lv_label_set_text(debugLabel1, "");
 	lv_obj_set_pos(debugLabel1,25,125);
 
@@ -672,7 +624,7 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 
 	debugLabel6 = lv_label_create(lv_scr_act(), NULL);
 	lv_label_set_text(debugLabel6, "");
-	lv_obj_set_pos(debugLabel6,255,95);
+	lv_obj_set_pos(debugLabel6,255,95);*/
 
 	while(settleTimer < settleTime && timeoutTimer < timeout)
 	{
@@ -724,7 +676,7 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 		pros::delay(10);
 
 		if(debugOn) {
-			std::string debug = std::to_string(distError );
+			/*std::string debug = std::to_string(distError );
 			char debug_array[debug.length()+1];
 			strcpy(debug_array,debug.c_str());
 			lv_label_set_text(debugLabel1, debug_array);
@@ -732,7 +684,10 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 			std::string debug1 = std::to_string(angleError );
 			char debug_array1[debug1.length()+1];
 			strcpy(debug_array1,debug1.c_str());
-			lv_label_set_text(debugLabel2, debug_array1);
+			lv_label_set_text(debugLabel2, debug_array1);*/
+
+      updateVarLabel(debugLabel1,"dE",distError);
+      updateVarLabel(debugLabel2,"aE",angleError);
 		}
 	}
 	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
@@ -741,19 +696,11 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
   leftDrive.moveVelocity(0);
 
 	if(debugOn) {
-		lv_label_set_text(debugLabel1, "finished");
-		lv_label_set_text(debugLabel2, "finished");
-		pros::delay(10000);
-		lv_obj_del(debugLabel1);
-		lv_obj_del(debugLabel2);
-		lv_label_set_text(debugLabel3, "");
-		lv_label_set_text(debugLabel4, "");
-		lv_label_set_text(debugLabel5, "");
-		lv_label_set_text(debugLabel6, "");
+		clearDebugLabels();
 	}
 }
 
 void adaptiveDrive(double x, double y, double maxV)
 {
-	adaptiveDrive(x,y,0.05,maxV,0.65,4.0,1.0,250,10000,true);
+	adaptiveDrive(x,y,0.05,maxV,0.65,5.0,1.0,250,10000,true);
 }

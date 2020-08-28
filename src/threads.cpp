@@ -10,11 +10,6 @@ int ejecting = 2;
 int macro1_trigger = 3;
 int macro2_trigger = 4;
 
-//bool shooting = false;
-//bool ejecting = false;
-//bool macro1_trigger = false;
-//bool macro2_trigger = false;
-
 bool topBall_low;
 bool topBall_high;
 bool botBall;

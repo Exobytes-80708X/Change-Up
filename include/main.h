@@ -95,3 +95,8 @@ void opcontrol(void);
 #define ODOMETRY
 #include "odometry.h"
 #endif
+
+#ifndef GUI
+#define GUI
+#include "gui.h"
+#endif
