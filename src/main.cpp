@@ -15,7 +15,7 @@ void disabled()
 }
 
 void competition_initialize()
-{
+{ 
 
 }
 
