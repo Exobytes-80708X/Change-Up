@@ -2,6 +2,9 @@
 int auton = 0;
 const int NUM_OF_AUTONS = 4;
 const std::string AUTON_HEADING = "Auton Selected: ";
+
+const int DEBUG_X_1 = 25;
+const int DEBUG_X_2 = 255;
 lv_obj_t * xLabel;
 lv_obj_t * yLabel;
 lv_obj_t * thetaLabel;
@@ -21,6 +24,9 @@ lv_obj_t * LD2_temp_label;
 lv_obj_t * RD1_temp_label;
 lv_obj_t * RD2_temp_label;
 
+lv_obj_t * imuLabel;
+lv_obj_t * imuButton;
+
 
 lv_obj_t* createBtn(lv_obj_t * parent, lv_coord_t x, lv_coord_t y, lv_coord_t width, lv_coord_t height, int id, const char* title)
 {
@@ -34,6 +40,25 @@ lv_obj_t* createBtn(lv_obj_t * parent, lv_coord_t x, lv_coord_t y, lv_coord_t wi
 
   return parent;
 }
+
+lv_obj_t* createBtn(lv_obj_t * parent, lv_coord_t x, lv_coord_t y, lv_coord_t width, lv_coord_t height, int id)
+{
+  parent = lv_btn_create(lv_scr_act(), NULL);
+  lv_obj_set_pos(parent, x, y);
+  lv_obj_set_size(parent,width,height);
+  lv_obj_set_free_num(parent, id);
+
+  return parent;
+}
+
+lv_obj_t* createBtnLabel(lv_obj_t* label, lv_obj_t * parent, const char* title)
+{
+  label = lv_label_create(parent, NULL);
+  lv_label_set_text(label, title);
+
+  return label;
+}
+
 
 lv_obj_t * createTextLabel(lv_obj_t *parent, const char* text, lv_coord_t x, lv_coord_t y)
 {
@@ -56,16 +81,16 @@ void updateVarLabel(lv_obj_t *parent, std::string varName, double var, std::stri
 
 void initDebugLabels()
 {
-  xLabel = createTextLabel(xLabel, "", 200, 20);
-  yLabel = createTextLabel(yLabel, "", 200, 40);
-  thetaLabel = createTextLabel(thetaLabel, "", 200, 60);
+  xLabel = createTextLabel(xLabel, "", DEBUG_X_2, 20);
+  yLabel = createTextLabel(yLabel, "", DEBUG_X_2, 40);
+  thetaLabel = createTextLabel(thetaLabel, "", DEBUG_X_2, 60);
 
-  debugLabel1 = createTextLabel(debugLabel1,"",25,20);
-  debugLabel2 = createTextLabel(debugLabel2,"",25,40);
-  debugLabel3 = createTextLabel(debugLabel3,"",25,60);
-  debugLabel4 = createTextLabel(debugLabel4,"",25,80);
-  debugLabel5 = createTextLabel(debugLabel5,"",25,100);
-  debugLabel6 = createTextLabel(debugLabel6,"",25,120);
+  debugLabel1 = createTextLabel(debugLabel1,"",DEBUG_X_1,20);
+  debugLabel2 = createTextLabel(debugLabel2,"",DEBUG_X_1,40);
+  debugLabel3 = createTextLabel(debugLabel3,"",DEBUG_X_1,60);
+  debugLabel4 = createTextLabel(debugLabel4,"",DEBUG_X_1,80);
+  debugLabel5 = createTextLabel(debugLabel5,"",DEBUG_X_1,100);
+  debugLabel6 = createTextLabel(debugLabel6,"",DEBUG_X_1,120);
 }
 
 void clearDebugLabels()
@@ -94,10 +119,10 @@ void delDebugLables()
 
 void initMotorTempLabels()
 {
-  LD1_temp_label = createTextLabel(LD1_temp_label, "", 200, 100);
-  LD2_temp_label = createTextLabel(LD2_temp_label, "", 200, 120);
-  RD1_temp_label = createTextLabel(RD1_temp_label, "", 200, 160);
-  RD2_temp_label = createTextLabel(RD2_temp_label, "", 200, 180);
+  LD1_temp_label = createTextLabel(LD1_temp_label, "", DEBUG_X_2, 120);
+  LD2_temp_label = createTextLabel(LD2_temp_label, "", DEBUG_X_2, 140);
+  RD1_temp_label = createTextLabel(RD1_temp_label, "", DEBUG_X_2, 180);
+  RD2_temp_label = createTextLabel(RD2_temp_label, "", DEBUG_X_2, 200);
 }
 
 void updateMotorTempLabels()
@@ -154,14 +179,29 @@ static lv_res_t autonPrev_action(lv_obj_t * btn)
   return LV_RES_OK;
 }
 
+static lv_res_t imuButton_action(lv_obj_t * btn)
+{
+  imu.reset();
+  pros::delay(100);
+  while(imu.is_calibrating()) {
+    pros::delay(10);
+  }
+  lv_label_set_text(imuLabel,"Calibrated");
+  return LV_RES_OK;
+}
+
+
 void initAutonGUI()
 {
   autonLabel = createTextLabel(autonLabel, "Auton Selected: None",230,25);
   autonPrev_button = createBtn(autonNext_button,10,10,100,50,2,"Prev");
   autonNext_button = createBtn(autonNext_button,120,10,100,50,1,"Next");
+  imuButton = createBtn(imuButton,10,70,210,50,1);
+  imuLabel = createBtnLabel(imuLabel,imuButton, "Not Calibrated");
 
   lv_btn_set_action(autonNext_button,LV_BTN_ACTION_CLICK, autonNext_action);
   lv_btn_set_action(autonPrev_button,LV_BTN_ACTION_CLICK, autonPrev_action);
+  lv_btn_set_action(imuButton,LV_BTN_ACTION_CLICK, imuButton_action);
 }
 
 void delAutonGUI()
@@ -169,6 +209,8 @@ void delAutonGUI()
   lv_obj_del(autonLabel);
   lv_obj_del(autonNext_button);
   lv_obj_del(autonPrev_button);
+  lv_obj_del(imuLabel);
+  lv_obj_del(imuButton);
 }
 
 void thread_motorTemps(void*p)
