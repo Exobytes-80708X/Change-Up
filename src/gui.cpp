@@ -1,8 +1,11 @@
 #include "main.h"
+#include "display/lvgl.h"
+#include "display/lv_core/lv_style.h"
 int auton = 0;
 const int NUM_OF_AUTONS = 4;
-const std::string AUTON_HEADING = "Auton Selected: ";
+const std::string AUTON_HEADING = "AUTON SELECTED: ";
 
+LV_FONT_DECLARE(armadura_solid);
 const int DEBUG_X_1 = 25;
 const int DEBUG_X_2 = 255;
 lv_obj_t * xLabel;
@@ -27,15 +30,37 @@ lv_obj_t * RD2_temp_label;
 lv_obj_t * imuLabel;
 lv_obj_t * imuButton;
 
+lv_obj_t * nameLabel;
+static lv_style_t style1;
+static lv_style_t style2;
+static lv_style_t style3;
+void initStyles()
+{
+  lv_style_copy(&style1, &lv_style_plain);
+  style1.text.color = LV_COLOR_WHITE;
+  style1.text.font = &armadura_solid;
+
+  lv_style_copy(&style2, &lv_style_btn_rel);
+  style2.body.border.color = LV_COLOR_GREEN;
+  style2.body.main_color = LV_COLOR_BLACK;
+  style2.body.grad_color = LV_COLOR_BLACK;
+
+  lv_style_copy(&style3, &lv_style_btn_pr);
+  style3.body.main_color = LV_COLOR_GREEN;
+  style3.body.grad_color = LV_COLOR_GREEN;
+}
 
 lv_obj_t* createBtn(lv_obj_t * parent, lv_coord_t x, lv_coord_t y, lv_coord_t width, lv_coord_t height, int id, const char* title)
 {
   parent = lv_btn_create(lv_scr_act(), NULL);
   lv_obj_set_pos(parent, x, y);
   lv_obj_set_size(parent,width,height);
+  lv_btn_set_style(parent,LV_BTN_STYLE_REL, &style2);
+  lv_btn_set_style(parent,LV_BTN_STYLE_PR, &style3);
   lv_obj_set_free_num(parent, id);
 
   lv_obj_t * label = lv_label_create(parent, NULL);
+  lv_label_set_style(label, &style1);
   lv_label_set_text(label, title);
 
   return parent;
@@ -46,6 +71,8 @@ lv_obj_t* createBtn(lv_obj_t * parent, lv_coord_t x, lv_coord_t y, lv_coord_t wi
   parent = lv_btn_create(lv_scr_act(), NULL);
   lv_obj_set_pos(parent, x, y);
   lv_obj_set_size(parent,width,height);
+  lv_btn_set_style(parent,LV_BTN_STYLE_REL, &style2);
+  lv_btn_set_style(parent,LV_BTN_STYLE_PR, &style3);
   lv_obj_set_free_num(parent, id);
 
   return parent;
@@ -54,29 +81,29 @@ lv_obj_t* createBtn(lv_obj_t * parent, lv_coord_t x, lv_coord_t y, lv_coord_t wi
 lv_obj_t* createBtnLabel(lv_obj_t* label, lv_obj_t * parent, const char* title)
 {
   label = lv_label_create(parent, NULL);
+  lv_label_set_style(label, &style1);
   lv_label_set_text(label, title);
-
   return label;
 }
 
 
-lv_obj_t * createTextLabel(lv_obj_t *parent, const char* text, lv_coord_t x, lv_coord_t y)
+lv_obj_t* createTextLabel(lv_obj_t *parent, const char* text, lv_coord_t x, lv_coord_t y)
 {
   parent = lv_label_create(lv_scr_act(), NULL);
-  lv_label_set_text(parent,text);
+  lv_label_set_recolor(parent, true);
+  lv_label_set_style(parent, &style1);
+  lv_label_set_text(parent, text);
   lv_obj_set_pos(parent,x,y);
-
   return parent;
 }
 
 void updateVarLabel(lv_obj_t *parent, std::string varName, double var, std::string varUnits)
 {
-  std::string varValue = std::to_string(var);
-  std::string var_str = varName + " = " + varValue.substr(0,8) + " " + varUnits;
-  char var_array[var_str.length()+1];
-  strcpy(var_array,var_str.c_str());
-
-  lv_label_set_text(parent, var_array);
+  std::string text = varName + " = " + std::to_string(var).substr(0,8) + " " + varUnits;
+  char text_array[text.length()+1];
+  strcpy(text_array,text.c_str());
+  lv_label_set_style(parent, &style1);
+  lv_label_set_text(parent, text_array);
 }
 
 void initDebugLabels()
@@ -146,16 +173,16 @@ void updateAutonLabel(lv_obj_t * label, int autonNumber)
   std::string label_str = "";
   switch(autonNumber) {
       case 0:
-        label_str = AUTON_HEADING + "None";
+        label_str = AUTON_HEADING + "NONE";
         break;
       case 1:
-        label_str = AUTON_HEADING + "Red";
+        label_str = AUTON_HEADING + "#FF3333 RED#";
         break;
       case 2:
-        label_str = AUTON_HEADING + "Blue";
+        label_str = AUTON_HEADING + "#3333FF BLUE#";
         break;
       case 3:
-        label_str = AUTON_HEADING + "Skills";
+        label_str = AUTON_HEADING + "#FFFF33 SKILLS#";
         break;
   }
   char label_array[label_str.length()+1];
@@ -186,18 +213,20 @@ static lv_res_t imuButton_action(lv_obj_t * btn)
   while(imu.is_calibrating()) {
     pros::delay(10);
   }
-  lv_label_set_text(imuLabel,"Calibrated");
+  lv_label_set_text(imuLabel,"CALIBRATED");
   return LV_RES_OK;
 }
 
 
 void initAutonGUI()
 {
-  autonLabel = createTextLabel(autonLabel, "Auton Selected: None",230,25);
-  autonPrev_button = createBtn(autonNext_button,10,10,100,50,2,"Prev");
-  autonNext_button = createBtn(autonNext_button,120,10,100,50,1,"Next");
+  autonLabel = createTextLabel(autonLabel, "AUTON SELECTED: NONE",230,25);
+  autonPrev_button = createBtn(autonNext_button,10,10,100,50,2,"PREV");
+  autonNext_button = createBtn(autonNext_button,120,10,100,50,1,"NEXT");
   imuButton = createBtn(imuButton,10,70,210,50,1);
-  imuLabel = createBtnLabel(imuLabel,imuButton, "Not Calibrated");
+  imuLabel = createBtnLabel(imuLabel,imuButton, "NOT CALIBRATED");
+
+  nameLabel = createTextLabel(nameLabel, "#00FF00 EXO##FFFFFF BYTES#",50,150);
 
   lv_btn_set_action(autonNext_button,LV_BTN_ACTION_CLICK, autonNext_action);
   lv_btn_set_action(autonPrev_button,LV_BTN_ACTION_CLICK, autonPrev_action);
@@ -211,6 +240,7 @@ void delAutonGUI()
   lv_obj_del(autonPrev_button);
   lv_obj_del(imuLabel);
   lv_obj_del(imuButton);
+  lv_obj_del(nameLabel);
 }
 
 void thread_motorTemps(void*p)
@@ -225,6 +255,7 @@ void thread_motorTemps(void*p)
 
 void initGUI(void*p)
 {
+  initStyles();
   initAutonGUI();
   pros::Task task_motorTemps (thread_motorTemps, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   while(isRobotDisabled) pros::delay(10);
