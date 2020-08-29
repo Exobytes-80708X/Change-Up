@@ -1,5 +1,10 @@
 #include "main.h"
 
+extern okapi::Motor ld_1;
+extern okapi::Motor ld_2;
+extern okapi::Motor rd_1;
+extern okapi::Motor rd_2;
+
 extern okapi::MotorGroup leftDrive;
 extern okapi::MotorGroup rightDrive;
 extern pros::Motor leftIntake;

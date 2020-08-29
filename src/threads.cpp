@@ -1,7 +1,6 @@
 #include "main.h"
 
 int intakeState = 2;
-
 int conveyorState = 0;
 
 int idle = 0;

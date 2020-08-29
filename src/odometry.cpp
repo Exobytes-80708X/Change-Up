@@ -5,6 +5,7 @@ const double WHEEL_DIAMETER = 2.875;
 const double ENCODER_WIDTH = 7.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
 const double IMU_WEIGHT = 0.5;
+const bool DEBUGGING_ENABLED = false;
 int test = 0;
 
 double robotTheta_imu = 0.0;
@@ -38,16 +39,8 @@ void thread_Odometry(void*param)
     double dLeftVal = 0.0;
     double dRightVal = 0.0;
 
-    xLabel = createTextLabel(xLabel, "", 200, 20);
-    yLabel = createTextLabel(yLabel, "", 200, 40);
-    thetaLabel = createTextLabel(thetaLabel, "", 200, 60);
-
-    debugLabel1 = createTextLabel(debugLabel1,"",25,20);
-    debugLabel2 = createTextLabel(debugLabel2,"",25,40);
-    debugLabel3 = createTextLabel(debugLabel3,"",25,60);
-    debugLabel4 = createTextLabel(debugLabel4,"",25,80);
-    debugLabel5 = createTextLabel(debugLabel5,"",25,100);
-    debugLabel6 = createTextLabel(debugLabel6,"",25,120);
+    if(DEBUGGING_ENABLED)
+      initDebugLabels();
 
     int leftReset = left.reset();
     int rightReset = right.reset();
@@ -84,26 +77,11 @@ void thread_Odometry(void*param)
         robotX += dX; //add to current x and ys
         robotY += dY;
 
-        /*std::string x = std::to_string( robotX );
-        char x_array[x.length()+1];
-
-        std::string y = std::to_string( robotY );
-        char y_array[y.length()+1];
-
-        std::string theta = std::to_string( robotTheta );
-        char theta_array[theta.length() + 1];
-
-        strcpy(x_array,x.c_str());
-        strcpy(y_array,y.c_str());
-        strcpy(theta_array,theta.c_str());
-
-        lv_label_set_text(xLabel, x_array);
-        lv_label_set_text(yLabel, y_array);
-        lv_label_set_text(thetaLabel, theta_array);*/
-
-        updateVarLabel(xLabel, "X", robotX);
-        updateVarLabel(yLabel, "Y", robotY);
-        updateVarLabel(thetaLabel, "T", robotTheta);
+        if(DEBUGGING_ENABLED) {
+          updateVarLabel(xLabel, "X", robotX, "in");
+          updateVarLabel(yLabel, "Y", robotY, "in");
+          updateVarLabel(thetaLabel, "T", robotTheta, "in");
+        }
 
         pros::delay(10); //reupdate every dT msec
     }
@@ -265,7 +243,7 @@ double* calcPointOfIntersection(double x1, double y1, double theta1) //calulates
 
 //===========================================Movement Methods====================================================================================================================
 
-void driveVector(double currentSpeed, double angleSpeed, double maxV, bool debugOn)
+void driveVector(double currentSpeed, double angleSpeed, double maxV)
 {
   /*
   Arguments:
@@ -290,11 +268,11 @@ void driveVector(double currentSpeed, double angleSpeed, double maxV, bool debug
 		rightSpeed /= speedScale;
 	}
 
-	if(debugOn) {
-    updateVarLabel(debugLabel3,"LS",leftSpeed);
-    updateVarLabel(debugLabel4,"RS",rightSpeed);
-    updateVarLabel(debugLabel5,"CS",currentSpeed);
-    updateVarLabel(debugLabel6,"AS",angleSpeed);
+	if(DEBUGGING_ENABLED) {
+    updateVarLabel(debugLabel3,"LS",leftSpeed,"mV");
+    updateVarLabel(debugLabel4,"RS",rightSpeed,"mV");
+    updateVarLabel(debugLabel5,"CS",currentSpeed,"mV");
+    updateVarLabel(debugLabel6,"AS",angleSpeed,"mV");
 	}
 
 	leftDrive.moveVoltage(leftSpeed);
@@ -378,11 +356,13 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
     //if robot is with 6 inches of target distance, robot will no longer adjust to face point
     //as that will result in the robot making sudden turns at the end of a straight movement, which is bad for straight movements
 
-    driveVector(currentSpeed,angleSpeed,maxV,true); //send calculated speeds to motors
+    driveVector(currentSpeed,angleSpeed,maxV); //send calculated speeds to motors
 		pros::delay(10);
 
-    updateVarLabel(debugLabel1,"DE",distError);
-    updateVarLabel(debugLabel2,"TT",timeoutTimer);
+    if(DEBUGGING_ENABLED) {
+      updateVarLabel(debugLabel1,"DE",distError,"in");
+      updateVarLabel(debugLabel2,"TT",timeoutTimer,"s");
+    }
 	}
 	clearDebugLabels();
 	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
@@ -468,9 +448,11 @@ void face(double x, double y, bool reversed, double accel, double minV, double m
         //send voltages to motors
 				pros::delay(10);
 
-        updateVarLabel(debugLabel1,"E",error);
-        updateVarLabel(debugLabel2,"CS",currentSpeed);
-        updateVarLabel(debugLabel2,"PI",pseudoI);
+        if(DEBUGGING_ENABLED) {
+          updateVarLabel(debugLabel1,"E",error,"rad");
+          updateVarLabel(debugLabel2,"CS",currentSpeed,"mV");
+          updateVarLabel(debugLabel2,"PI",pseudoI,"mV");
+        }
 		}
 		clearDebugLabels();
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
@@ -531,9 +513,11 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 				rightDrive.moveVoltage(-currentSpeed);
 				pros::delay(10);
 
-        updateVarLabel(debugLabel1,"ER",error);
-        updateVarLabel(debugLabel2,"CS",currentSpeed);
-        updateVarLabel(debugLabel3,"PI",pseudoI);
+        if(DEBUGGING_ENABLED) {
+          updateVarLabel(debugLabel1,"ER",error,"rad");
+          updateVarLabel(debugLabel2,"CS",currentSpeed,"mV");
+          updateVarLabel(debugLabel3,"PI",pseudoI,"mV");
+        }
 		}
     clearDebugLabels();
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
@@ -552,7 +536,7 @@ void face(double theta)
   face(theta,false,0.001,1.0,10,6.5,250,20000);
 }
 
-void adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout, bool debugOn)
+void adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)
 {
   /*
   Arguments:
@@ -602,30 +586,6 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 	double minSpeedMargin = 3.0; //if robot is this distance from the target point, don't decrease in speed anymore
   //measured in inches
 
-	/*debugLabel1 = lv_label_create(lv_scr_act(), NULL);
-	lv_label_set_text(debugLabel1, "");
-	lv_obj_set_pos(debugLabel1,25,125);
-
-	debugLabel2 = lv_label_create(lv_scr_act(), NULL);
-	lv_label_set_text(debugLabel2, "");
-	lv_obj_set_pos(debugLabel2,25,145);
-
-	debugLabel3 = lv_label_create(lv_scr_act(), NULL);
-	lv_label_set_text(debugLabel3, "");
-	lv_obj_set_pos(debugLabel3,25,75);
-
-	debugLabel4 = lv_label_create(lv_scr_act(), NULL);
-	lv_label_set_text(debugLabel4, "");
-	lv_obj_set_pos(debugLabel4,25,95);
-
-	debugLabel5 = lv_label_create(lv_scr_act(), NULL);
-	lv_label_set_text(debugLabel5, "");
-	lv_obj_set_pos(debugLabel5,255,75);
-
-	debugLabel6 = lv_label_create(lv_scr_act(), NULL);
-	lv_label_set_text(debugLabel6, "");
-	lv_obj_set_pos(debugLabel6,255,95);*/
-
 	while(settleTimer < settleTime && timeoutTimer < timeout)
 	{
 		distError = calcDistance(x,y);
@@ -672,35 +632,22 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
     //distSpeed is aways positive and robot doesn't go backwards, so if currentSpeed < distSpeed then accelerate
     //if decelerating let p-controllers determine speed
 
-		driveVector(currentSpeed,angleSpeed,maxV,debugOn); //send speeds to motors
+		driveVector(currentSpeed,angleSpeed,maxV); //send speeds to motors
 		pros::delay(10);
 
-		if(debugOn) {
-			/*std::string debug = std::to_string(distError );
-			char debug_array[debug.length()+1];
-			strcpy(debug_array,debug.c_str());
-			lv_label_set_text(debugLabel1, debug_array);
-
-			std::string debug1 = std::to_string(angleError );
-			char debug_array1[debug1.length()+1];
-			strcpy(debug_array1,debug1.c_str());
-			lv_label_set_text(debugLabel2, debug_array1);*/
-
-      updateVarLabel(debugLabel1,"dE",distError);
-      updateVarLabel(debugLabel2,"aE",angleError);
-		}
+    if(DEBUGGING_ENABLED) {
+      updateVarLabel(debugLabel1,"dE",distError,"in");
+      updateVarLabel(debugLabel2,"aE",angleError,"rad");
+    }
 	}
+  clearDebugLabels();
 	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	rightDrive.moveVelocity(0);
   leftDrive.moveVelocity(0);
-
-	if(debugOn) {
-		clearDebugLabels();
-	}
 }
 
 void adaptiveDrive(double x, double y, double maxV)
 {
-	adaptiveDrive(x,y,0.05,maxV,0.65,5.0,1.0,250,10000,true);
+	adaptiveDrive(x,y,0.05,maxV,0.65,5.0,1.0,250,10000);
 }

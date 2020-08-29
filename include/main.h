@@ -81,6 +81,8 @@ void opcontrol(void);
 
 #endif  // _PROS_MAIN_H_
 
+extern bool isRobotDisabled;
+
 #ifndef DEVICES
 #define DEVICES
 #include "devices.h"
