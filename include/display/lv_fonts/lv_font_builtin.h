@@ -145,9 +145,6 @@ LV_FONT_DECLARE(pros_font_dejavu_mono_40_latin_sup);
 #if USE_PROS_FONT_DEJAVU_MONO_40_LATIN_SUP
 LV_FONT_DECLARE(pros_font_dejavu_mono_40_latin_sup);
 #endif
-#if USE_PROS_FONT_DEJAVU_MONO_40_LATIN_SUP
-LV_FONT_DECLARE(armadura_solid);
-#endif
 
 #ifdef __cplusplus
 } /* extern "C" */

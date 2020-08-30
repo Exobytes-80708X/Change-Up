@@ -5,7 +5,7 @@ const double WHEEL_DIAMETER = 2.875;
 const double ENCODER_WIDTH = 7.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
 const double IMU_WEIGHT = 0.5;
-const bool DEBUGGING_ENABLED = false;
+const bool DEBUGGING_ENABLED = true;
 int test = 0;
 
 double robotTheta_imu = 0.0;
@@ -38,9 +38,6 @@ void thread_Odometry(void*param)
 
     double dLeftVal = 0.0;
     double dRightVal = 0.0;
-
-    if(DEBUGGING_ENABLED)
-      initDebugLabels();
 
     int leftReset = left.reset();
     int rightReset = right.reset();
@@ -78,11 +75,10 @@ void thread_Odometry(void*param)
         robotY += dY;
 
         if(DEBUGGING_ENABLED) {
-          updateVarLabel(xLabel, "X", robotX, "in");
-          updateVarLabel(yLabel, "Y", robotY, "in");
-          updateVarLabel(thetaLabel, "T", robotTheta, "in");
+          updateValueLabel(xValue,robotX, "IN",5);
+          updateValueLabel(yValue,robotY, "IN",5);
+          updateValueLabel(thetaValue,robotTheta,"RAD",4);
         }
-
         pros::delay(10); //reupdate every dT msec
     }
 }
@@ -269,10 +265,10 @@ void driveVector(double currentSpeed, double angleSpeed, double maxV)
 	}
 
 	if(DEBUGGING_ENABLED) {
-    updateVarLabel(debugLabel3,"LS",leftSpeed,"mV");
-    updateVarLabel(debugLabel4,"RS",rightSpeed,"mV");
-    updateVarLabel(debugLabel5,"CS",currentSpeed,"mV");
-    updateVarLabel(debugLabel6,"AS",angleSpeed,"mV");
+    updateVarLabel(debugLabel3,"LEFT SPEED",debugValue3,leftSpeed,"mV",7);
+    updateVarLabel(debugLabel4,"RIGHT SPEED",debugValue4,rightSpeed,"mV",7);
+    updateVarLabel(debugLabel5,"CURRENT SPEED",debugValue5,currentSpeed,"mV",7);
+    updateVarLabel(debugLabel6,"ANGLE SPEED",debugValue6,angleSpeed,"mV",7);
 	}
 
 	leftDrive.moveVoltage(leftSpeed);
@@ -360,11 +356,10 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
 		pros::delay(10);
 
     if(DEBUGGING_ENABLED) {
-      updateVarLabel(debugLabel1,"DE",distError,"in");
-      updateVarLabel(debugLabel2,"TT",timeoutTimer,"s");
+      updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",5);
+      updateVarLabel(debugLabel2,"TIMEOUT TIMER",debugValue2,timeoutTimer,"SEC",4);
     }
 	}
-	clearDebugLabels();
 	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	rightDrive.moveVelocity(0);
@@ -449,12 +444,11 @@ void face(double x, double y, bool reversed, double accel, double minV, double m
 				pros::delay(10);
 
         if(DEBUGGING_ENABLED) {
-          updateVarLabel(debugLabel1,"E",error,"rad");
-          updateVarLabel(debugLabel2,"CS",currentSpeed,"mV");
-          updateVarLabel(debugLabel2,"PI",pseudoI,"mV");
+          updateVarLabel(debugLabel1,"ERROR",debugValue1,error,"RAD",4);
+          updateVarLabel(debugLabel2,"CURRENT SPEED",debugValue2,currentSpeed,"mV",7);
+          updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",7);
         }
 		}
-		clearDebugLabels();
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		rightDrive.moveVelocity(0);
@@ -514,12 +508,11 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 				pros::delay(10);
 
         if(DEBUGGING_ENABLED) {
-          updateVarLabel(debugLabel1,"ER",error,"rad");
-          updateVarLabel(debugLabel2,"CS",currentSpeed,"mV");
-          updateVarLabel(debugLabel3,"PI",pseudoI,"mV");
+          updateVarLabel(debugLabel1,"ERROR",debugValue1,error,"RAD",4);
+          updateVarLabel(debugLabel2,"CURRENT SPEED",debugValue2,currentSpeed,"mV",7);
+          updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",7);
         }
 		}
-    clearDebugLabels();
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		rightDrive.moveVelocity(0);
@@ -636,11 +629,10 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 		pros::delay(10);
 
     if(DEBUGGING_ENABLED) {
-      updateVarLabel(debugLabel1,"dE",distError,"in");
-      updateVarLabel(debugLabel2,"aE",angleError,"rad");
+      updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",5);
+      updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError,"RAD",4);
     }
 	}
-  clearDebugLabels();
 	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	rightDrive.moveVelocity(0);
