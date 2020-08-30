@@ -7,7 +7,7 @@ const std::string AUTON_HEADING = "AUTON SELECTED: ";
 
 LV_FONT_DECLARE(armadura_solid);
 LV_FONT_DECLARE(armadura_solid_big);
-bool onHomeScreen = true;
+
 const int DEBUG_X_1 = 100;
 const int DEBUG_X_2 = 300;
 lv_obj_t * xLabel;
@@ -31,6 +31,7 @@ lv_obj_t * debugValue5;
 lv_obj_t * debugValue6;
 
 lv_obj_t * autonLabel;
+lv_obj_t * autonSelect;
 lv_obj_t * autonNext_button;
 lv_obj_t * autonPrev_button;
 
@@ -155,27 +156,39 @@ void updateVarLabel(lv_obj_t *parent, std::string varName, double var, std::stri
   lv_label_set_text(parent, text_array);
 }
 
-void updateValueLabel(lv_obj_t *parent, double var, std::string varUnits, int numOfSpaces)
+void updateValueLabel(lv_obj_t *parent, double var, std::string varUnits, int ppd)
 {
-  std::string text = std::to_string(var).substr(0,numOfSpaces) + " " + varUnits;
+  std::string varString = std::to_string(var);
+  int decimal_place = varString.find(".");
+  if(ppd > 0)
+    varString = varString.substr(0,decimal_place+ppd+1);
+  else
+    varString = varString.substr(0,decimal_place);
+  std::string text = varString + " " + varUnits;
   char text_array[text.length()+1];
   strcpy(text_array,text.c_str());
   lv_label_set_text(parent, text_array);
 }
 
-void updateVarLabel(lv_obj_t *nameLabel, std::string varName, lv_obj_t* valueLabel, double var, std::string varUnits, int numOfSpaces)
+void updateVarLabel(lv_obj_t *nameLabel, std::string varName, lv_obj_t* valueLabel, double var, std::string varUnits, int ppd)
 {
   char text_array[varName.length()+1];
   strcpy(text_array,varName.c_str());
   lv_label_set_text(nameLabel, text_array);
 
-  std::string text = std::to_string(var).substr(0,numOfSpaces) + " " + varUnits;
+  std::string varString = std::to_string(var);
+  int decimal_place = varString.find(".");
+  if(ppd > 0)
+    varString = varString.substr(0,decimal_place+ppd+1);
+  else
+    varString = varString.substr(0,decimal_place);
+  std::string text = varString + " " + varUnits;
   char text_array2[text.length()+1];
   strcpy(text_array2,text.c_str());
   lv_label_set_text(valueLabel, text_array2);
 }
 
-void animate_x(lv_obj_t *obj,int x1,int x2,int duration)
+void animate_x_ease_out(lv_obj_t *obj,int x1,int x2,int duration)
 {
 
   a.var = obj;                             /*Variable to animate*/
@@ -202,6 +215,25 @@ void animate_x_linear(lv_obj_t *obj,int x1,int x2,int duration)
   a.end = x2;                                 /*End value*/
   a.fp = (lv_anim_fp_t)lv_obj_set_x;                                 /*Function to be used to animate*/
   a.path = lv_anim_path_linear;                                            /*Path of animation*/
+  a.end_cb = NULL;                               /*Callback when the animation is ready*/
+  a.act_time = 0;                                 /*Set < 0 to make a delay [ms]*/
+  a.time = duration;                                 /*Animation length [ms]*/
+  a.playback = 0;                                 /*1: animate in reverse direction too when the normal is ready*/
+  a.playback_pause = 0;                                 /*Wait before playback [ms]*/
+  a.repeat = 0;                                 /*1: Repeat the animation (with or without playback)*/
+  a.repeat_pause = 0;                             /*Wait before repeat [ms]*/
+
+  lv_anim_create(&a);                          /*Start the animation*/
+}
+
+void animate_x_ease_in(lv_obj_t *obj,int x1,int x2,int duration)
+{
+
+  a.var = obj;                             /*Variable to animate*/
+  a.start = x1;                                 /*Start value*/
+  a.end = x2;                                 /*End value*/
+  a.fp = (lv_anim_fp_t)lv_obj_set_x;                                 /*Function to be used to animate*/
+  a.path = lv_anim_path_ease_in;                                            /*Path of animation*/
   a.end_cb = NULL;                               /*Callback when the animation is ready*/
   a.act_time = 0;                                 /*Set < 0 to make a delay [ms]*/
   a.time = duration;                                 /*Animation length [ms]*/
@@ -296,8 +328,9 @@ void animateHomeScreen()
 {
   animate_y(nameLabel,lv_obj_get_y(nameLabel)-272,lv_obj_get_y(nameLabel),500);
   animate_y(autonLabel,lv_obj_get_y(autonLabel)-272,lv_obj_get_y(autonLabel),500);
-  animate_x(autonPrev_button,lv_obj_get_x(autonPrev_button)-480,lv_obj_get_x(autonPrev_button),500);
-  animate_x(autonNext_button,lv_obj_get_x(autonNext_button)+480,lv_obj_get_x(autonNext_button),500);
+  animate_y(autonSelect,lv_obj_get_y(autonSelect)-272,lv_obj_get_y(autonSelect),500);
+  animate_x_ease_out(autonPrev_button,lv_obj_get_x(autonPrev_button)-480,lv_obj_get_x(autonPrev_button),500);
+  animate_x_ease_out(autonNext_button,lv_obj_get_x(autonNext_button)+480,lv_obj_get_x(autonNext_button),500);
   animate_y(imuButton,lv_obj_get_y(imuButton)+272,lv_obj_get_y(imuButton),500);
   animate_y(sensorDebug_button,lv_obj_get_y(sensorDebug_button)+272,lv_obj_get_y(sensorDebug_button),500);
   animate_y(autonDebug_button,lv_obj_get_y(autonDebug_button)+272,lv_obj_get_y(autonDebug_button),500);
@@ -305,16 +338,17 @@ void animateHomeScreen()
 
 void animateHomeScreenLeft()
 {
-  /*animate_x(nameLabel,lv_obj_get_x(nameLabel),lv_obj_get_x(nameLabel)-480,500);
-  animate_x(autonLabel,lv_obj_get_x(autonLabel),lv_obj_get_x(autonLabel)-480,500);
-  animate_x(autonPrev_button,lv_obj_get_x(autonPrev_button),lv_obj_get_x(autonPrev_button)-480,500);
-  animate_x(autonNext_button,lv_obj_get_x(autonNext_button),lv_obj_get_x(autonNext_button)-480,500);
-  animate_x(imuButton,lv_obj_get_x(imuButton),lv_obj_get_x(imuButton)-480,500);
-  animate_x(sensorDebug_button,lv_obj_get_x(sensorDebug_button),lv_obj_get_x(sensorDebug_button)-480,500);
-  animate_x(autonDebug_button,lv_obj_get_x(autonDebug_button),lv_obj_get_x(autonDebug_button)-480,500);*/
+  /*animate_x_ease_out(nameLabel,lv_obj_get_x(nameLabel),lv_obj_get_x(nameLabel)-480,500);
+  animate_x_ease_out(autonLabel,lv_obj_get_x(autonLabel),lv_obj_get_x(autonLabel)-480,500);
+  animate_x_ease_out(autonPrev_button,lv_obj_get_x(autonPrev_button),lv_obj_get_x(autonPrev_button)-480,500);
+  animate_x_ease_out(autonNext_button,lv_obj_get_x(autonNext_button),lv_obj_get_x(autonNext_button)-480,500);
+  animate_x_ease_out(imuButton,lv_obj_get_x(imuButton),lv_obj_get_x(imuButton)-480,500);
+  animate_x_ease_out(sensorDebug_button,lv_obj_get_x(sensorDebug_button),lv_obj_get_x(sensorDebug_button)-480,500);
+  animate_x_ease_out(autonDebug_button,lv_obj_get_x(autonDebug_button),lv_obj_get_x(autonDebug_button)-480,500);*/
 
   animate_y_linear(nameLabel,lv_obj_get_y(nameLabel),lv_obj_get_y(nameLabel)-272,500);
   animate_y_linear(autonLabel,lv_obj_get_y(autonLabel),lv_obj_get_y(autonLabel)+272,500);
+  animate_y_linear(autonSelect,lv_obj_get_y(autonSelect),lv_obj_get_y(autonSelect)+272,500);
   animate_y_linear(autonPrev_button,lv_obj_get_y(autonPrev_button),lv_obj_get_y(autonPrev_button)-272,500);
   animate_y_linear(autonNext_button,lv_obj_get_y(autonNext_button),lv_obj_get_y(autonNext_button)-272,500);
   animate_y_linear(imuButton,lv_obj_get_y(imuButton),lv_obj_get_y(imuButton)+272,500);
@@ -324,16 +358,17 @@ void animateHomeScreenLeft()
 
 void animateHomeScreenRight()
 {
-  /*animate_x(nameLabel,lv_obj_get_x(nameLabel),lv_obj_get_x(nameLabel)+480,500);
-  animate_x(autonLabel,lv_obj_get_x(autonLabel),lv_obj_get_x(autonLabel)+480,500);
-  animate_x(autonPrev_button,lv_obj_get_x(autonPrev_button),lv_obj_get_x(autonPrev_button)+480,500);
-  animate_x(autonNext_button,lv_obj_get_x(autonNext_button),lv_obj_get_x(autonNext_button)+480,500);
-  animate_x(imuButton,lv_obj_get_x(imuButton),lv_obj_get_x(imuButton)+480,500);
-  animate_x(sensorDebug_button,lv_obj_get_x(sensorDebug_button),lv_obj_get_x(sensorDebug_button)+480,500);
-  animate_x(autonDebug_button,lv_obj_get_x(autonDebug_button),lv_obj_get_x(autonDebug_button)+480,500);*/
+  /*animate_x_ease_out(nameLabel,lv_obj_get_x(nameLabel),lv_obj_get_x(nameLabel)+480,500);
+  animate_x_ease_out(autonLabel,lv_obj_get_x(autonLabel),lv_obj_get_x(autonLabel)+480,500);
+  animate_x_ease_out(autonPrev_button,lv_obj_get_x(autonPrev_button),lv_obj_get_x(autonPrev_button)+480,500);
+  animate_x_ease_out(autonNext_button,lv_obj_get_x(autonNext_button),lv_obj_get_x(autonNext_button)+480,500);
+  animate_x_ease_out(imuButton,lv_obj_get_x(imuButton),lv_obj_get_x(imuButton)+480,500);
+  animate_x_ease_out(sensorDebug_button,lv_obj_get_x(sensorDebug_button),lv_obj_get_x(sensorDebug_button)+480,500);
+  animate_x_ease_out(autonDebug_button,lv_obj_get_x(autonDebug_button),lv_obj_get_x(autonDebug_button)+480,500);*/
 
   animate_y(nameLabel,lv_obj_get_y(nameLabel),lv_obj_get_y(nameLabel)+272,500);
   animate_y(autonLabel,lv_obj_get_y(autonLabel),lv_obj_get_y(autonLabel)-272,500);
+  animate_y(autonSelect,lv_obj_get_y(autonSelect),lv_obj_get_y(autonSelect)-272,500);
   animate_y(autonPrev_button,lv_obj_get_y(autonPrev_button),lv_obj_get_y(autonPrev_button)+272,500);
   animate_y(autonNext_button,lv_obj_get_y(autonNext_button),lv_obj_get_y(autonNext_button)+272,500);
   animate_y(imuButton,lv_obj_get_y(imuButton),lv_obj_get_y(imuButton)-272,500);
@@ -343,7 +378,6 @@ void animateHomeScreenRight()
 
 void hideHomeScreen()
 {
-  onHomeScreen = false;
   lv_obj_set_hidden(nameLabel,true);
   lv_obj_set_hidden(autonLabel,true);
 
@@ -356,7 +390,6 @@ void hideHomeScreen()
 
 void showHomeScreen()
 {
-  onHomeScreen = true;
   lv_obj_set_hidden(nameLabel,false);
   lv_obj_set_hidden(autonLabel,false);
 
@@ -483,48 +516,48 @@ void initAutonDebug()
 
 void animateAutonDebugLeft()
 {
-  animate_x(xLabel,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(yLabel,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(thetaLabel,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(debugLabel1,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(debugLabel2,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(debugLabel3,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(debugLabel4,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(debugLabel5,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(debugLabel6,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(xLabel,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(yLabel,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(thetaLabel,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(debugLabel1,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(debugLabel2,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(debugLabel3,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(debugLabel4,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(debugLabel5,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(debugLabel6,DEBUG_X_1+480,DEBUG_X_1,500);
 
-  animate_x(xValue,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(yValue,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(thetaValue,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(debugValue1,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(debugValue2,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(debugValue3,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(debugValue4,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(debugValue5,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(debugValue6,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(xValue,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(yValue,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(thetaValue,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(debugValue1,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(debugValue2,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(debugValue3,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(debugValue4,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(debugValue5,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(debugValue6,DEBUG_X_2+480,DEBUG_X_2,500);
 }
 
 void animateAutonDebugRight()
 {
-  animate_x(xLabel,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(yLabel,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(thetaLabel,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(debugLabel1,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(debugLabel2,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(debugLabel3,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(debugLabel4,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(debugLabel5,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(debugLabel6,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(xLabel,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(yLabel,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(thetaLabel,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(debugLabel1,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(debugLabel2,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(debugLabel3,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(debugLabel4,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(debugLabel5,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(debugLabel6,DEBUG_X_1,DEBUG_X_1+480,500);
 
-  animate_x(xValue,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(yValue,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(thetaValue,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(debugValue1,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(debugValue2,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(debugValue3,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(debugValue4,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(debugValue5,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(debugValue6,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(xValue,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(yValue,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(thetaValue,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(debugValue1,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(debugValue2,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(debugValue3,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(debugValue4,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(debugValue5,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(debugValue6,DEBUG_X_2,DEBUG_X_2+480,500);
 }
 
 //Motor Temp ==================================================================================================================================
@@ -537,10 +570,10 @@ void updateMotorTempLabels()
   updateVarLabel(sensorLabel7,"RD1",rd_1.getTemperature(),"C",2);
   updateVarLabel(sensorLabel8,"RD2",rd_2.getTemperature(),"C",2);*/
 
-  updateValueLabel(sensorValue5,ld_1.getTemperature(),"C",2);
-  updateValueLabel(sensorValue6,ld_2.getTemperature(),"C",2);
-  updateValueLabel(sensorValue7,rd_1.getTemperature(),"C",2);
-  updateValueLabel(sensorValue8,rd_2.getTemperature(),"C",2);
+  updateValueLabel(sensorValue5,ld_1.getTemperature(),"C",0);
+  updateValueLabel(sensorValue6,ld_2.getTemperature(),"C",0);
+  updateValueLabel(sensorValue7,rd_1.getTemperature(),"C",0);
+  updateValueLabel(sensorValue8,rd_2.getTemperature(),"C",0);
 }
 
 void thread_motorTemps(void*p)
@@ -591,10 +624,10 @@ void showMotorTempLabels()
 void thread_sensorDebug(void*p)
 {
   while(true) {
-    updateValueLabel(sensorValue1,topDetector.get_value(),"",4);
-    updateValueLabel(sensorValue4,topDetector2.get_value(),"",4);
-    updateValueLabel(sensorValue3,botDetector.get_value(),"",4);
-    updateValueLabel(sensorValue2,ejectDetector.get_value(),"",4);
+    updateValueLabel(sensorValue1,topDetector.get_value(),"",0);
+    updateValueLabel(sensorValue4,topDetector2.get_value(),"",0);
+    updateValueLabel(sensorValue3,botDetector.get_value(),"",0);
+    updateValueLabel(sensorValue2,ejectDetector.get_value(),"",0);
     updateMotorTempLabels();
     pros::delay(100);
   }
@@ -681,44 +714,44 @@ void initSensorDebug()
 
 void animateSensorDebugLeft()
 {
-  animate_x(sensorLabel1,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(sensorLabel2,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(sensorLabel3,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(sensorLabel4,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(sensorLabel5,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(sensorLabel6,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(sensorLabel7,DEBUG_X_1+480,DEBUG_X_1,500);
-  animate_x(sensorLabel8,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(sensorLabel1,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(sensorLabel2,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(sensorLabel3,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(sensorLabel4,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(sensorLabel5,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(sensorLabel6,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(sensorLabel7,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(sensorLabel8,DEBUG_X_1+480,DEBUG_X_1,500);
 
-  animate_x(sensorValue1,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(sensorValue2,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(sensorValue3,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(sensorValue4,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(sensorValue5,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(sensorValue6,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(sensorValue7,DEBUG_X_2+480,DEBUG_X_2,500);
-  animate_x(sensorValue8,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(sensorValue1,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(sensorValue2,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(sensorValue3,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(sensorValue4,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(sensorValue5,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(sensorValue6,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(sensorValue7,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(sensorValue8,DEBUG_X_2+480,DEBUG_X_2,500);
 }
 
 void animateSensorDebugRight()
 {
-  animate_x(sensorLabel1,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(sensorLabel2,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(sensorLabel3,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(sensorLabel4,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(sensorLabel5,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(sensorLabel6,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(sensorLabel7,DEBUG_X_1,DEBUG_X_1+480,500);
-  animate_x(sensorLabel8,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(sensorLabel1,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(sensorLabel2,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(sensorLabel3,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(sensorLabel4,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(sensorLabel5,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(sensorLabel6,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(sensorLabel7,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(sensorLabel8,DEBUG_X_1,DEBUG_X_1+480,500);
 
-  animate_x(sensorValue1,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(sensorValue2,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(sensorValue3,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(sensorValue4,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(sensorValue5,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(sensorValue6,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(sensorValue7,DEBUG_X_2,DEBUG_X_2+480,500);
-  animate_x(sensorValue8,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(sensorValue1,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(sensorValue2,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(sensorValue3,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(sensorValue4,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(sensorValue5,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(sensorValue6,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(sensorValue7,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(sensorValue8,DEBUG_X_2,DEBUG_X_2+480,500);
 }
 
 //Button Actions ==================================================================================================================================
@@ -726,18 +759,18 @@ void animateSensorDebugRight()
 void updateAutonLabel(lv_obj_t * label, int autonNumber)
 {
   std::string label_str = "";
-  switch(autonNumber) {
+  switch(autonNumber%NUM_OF_AUTONS) {
       case 0:
-        label_str = AUTON_HEADING + "  #00FF00 NONE#";
+        label_str = "#00FF00 NONE#";
         break;
       case 1:
-        label_str = AUTON_HEADING + "  #FF3333 RED#";
+        label_str = "#FF3333 RED#";
         break;
       case 2:
-        label_str = AUTON_HEADING + "  #3333FF BLUE#";
+        label_str = "#3333FF BLUE#";
         break;
       case 3:
-        label_str = AUTON_HEADING + "#FFFF33 SKILLS#";
+        label_str = "#FFFF33 SKILLS#";
         break;
   }
   char label_array[label_str.length()+1];
@@ -747,26 +780,27 @@ void updateAutonLabel(lv_obj_t * label, int autonNumber)
 
 void animate_autonNext(void*p)
 {
-  int x = lv_obj_get_x(autonLabel);
-  animate_x_linear(autonLabel,x,-1*lv_obj_get_width(autonLabel),250);
+  int x = lv_obj_get_x(autonSelect);
+  animate_x_ease_in(autonSelect,x,130,250);
   pros::delay(250);
-  updateAutonLabel(autonLabel,auton);
-  animate_x(autonLabel,480,x,250);
+  updateAutonLabel(autonSelect,auton);
+  lv_obj_align(autonSelect, NULL, LV_ALIGN_IN_TOP_MID, 0, 107);
+  animate_x_ease_out(autonSelect,350-lv_obj_get_width(autonSelect),lv_obj_get_x(autonSelect),250);
 }
 
 void animate_autonPrev(void*p)
 {
-  int x = lv_obj_get_x(autonLabel);
-  animate_x_linear(autonLabel,x,480,250);
+  int x = lv_obj_get_x(autonSelect);
+  animate_x_ease_in(autonSelect,x,350-lv_obj_get_width(autonSelect),250);
   pros::delay(250);
-  updateAutonLabel(autonLabel,auton);
-  animate_x(autonLabel,-1*lv_obj_get_width(autonLabel),x,250);
+  updateAutonLabel(autonSelect,auton);
+  lv_obj_align(autonSelect, NULL, LV_ALIGN_IN_TOP_MID, 0, 107);
+  animate_x_ease_out(autonSelect,130,lv_obj_get_x(autonSelect),250);
 }
 
 static lv_res_t autonNext_action(lv_obj_t * btn)
 {
   auton++;
-  auton = auton % NUM_OF_AUTONS;
   pros::Task anim (animate_autonNext, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   return LV_RES_OK;
 }
@@ -798,24 +832,41 @@ static lv_res_t imuButton_action(lv_obj_t * btn)
   return LV_RES_OK;
 }
 
+int debugging_mode;
+
 void anim_sensorDebug(void*p)
 {
+  debugging_mode = 0;
   animateHomeScreenLeft();
   pros::delay(250);
   showSensorDebug();
   lv_obj_set_hidden(back_button,false);
-  animate_x(back_button,lv_obj_get_x(back_button)+480,lv_obj_get_x(back_button),500);
+  animate_x_ease_out(back_button,20+480,20,500);
   animateSensorDebugLeft();
 }
 
 void anim_autonDebug(void*p)
 {
+  debugging_mode = 1;
   animateHomeScreenLeft();
   pros::delay(250);
   showAutonDebug();
   lv_obj_set_hidden(back_button,false);
-  animate_x(back_button,lv_obj_get_x(back_button)+480,lv_obj_get_x(back_button),500);
+  animate_x_ease_out(back_button,20+480,20,500);
   animateAutonDebugLeft();
+}
+
+void anim_back(void*p)
+{
+  switch(debugging_mode) {
+    case 0:
+      animateSensorDebugRight(); break;
+    case 1:
+      animateAutonDebugRight(); break;
+  }
+  animate_x_linear(back_button,20,20+480,500);
+  pros::delay(250);
+  animateHomeScreenRight();
 }
 
 
@@ -833,10 +884,7 @@ static lv_res_t autonDebugButton_action(lv_obj_t * btn)
 
 static lv_res_t back_action(lv_obj_t * btn)
 {
-  animateAutonDebugRight();
-  animateSensorDebugRight();
-  animateHomeScreenRight();
-  lv_obj_set_hidden(back_button,true);
+  pros::Task anim (anim_back, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   return LV_RES_OK;
 }
 
@@ -848,9 +896,12 @@ void initAutonGUI()
   lv_label_set_style(nameLabel, &style4);
   lv_obj_align(nameLabel, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
 
-  autonLabel = createTextLabel(autonLabel, "AUTON SELECTED:  #00FF00 NONE# ",230,25);
-  lv_obj_align(autonLabel, NULL, LV_ALIGN_IN_TOP_MID, 0, 97);
-  updateAutonLabel(autonLabel, auton);
+  autonLabel = createTextLabel(autonLabel, "AUTONOMOUS:",230,25);
+  lv_obj_align(autonLabel, NULL, LV_ALIGN_IN_TOP_MID, 0, 87);
+
+  autonSelect = createTextLabel(autonSelect, "#00FF00 NONE#",230,25);
+  lv_obj_align(autonSelect, NULL, LV_ALIGN_IN_TOP_MID, 0, 107);
+  updateAutonLabel(autonSelect, auton);
 
   autonPrev_button = createBtn(autonPrev_button,10,10,110,95,2,"<");
   lv_btn_set_action(autonPrev_button,LV_BTN_ACTION_CLICK, autonPrev_action);
@@ -873,9 +924,8 @@ void initAutonGUI()
   lv_obj_align(autonDebug_button, NULL, LV_ALIGN_IN_TOP_RIGHT,-10,180);
   lv_btn_set_action(autonDebug_button,LV_BTN_ACTION_CLICK, autonDebugButton_action);
 
-
-  back_button = createBtn(back_button,10,10,50,50,2,"<");
-  lv_obj_align(back_button, NULL, LV_ALIGN_IN_TOP_LEFT,10,10);
+  back_button = createBtn(back_button,20,20,50,50,2,"<");
+  lv_obj_align(back_button, NULL, LV_ALIGN_IN_TOP_LEFT,20,10);
   lv_btn_set_action(back_button,LV_BTN_ACTION_CLICK, back_action);
   lv_obj_set_hidden(back_button,true);
 
@@ -890,8 +940,6 @@ void delAutonGUI()
   lv_obj_del(imuLabel);
   lv_obj_del(imuButton);
 }
-
-
 
 void initGUI(void*p)
 {
