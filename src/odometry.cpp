@@ -77,7 +77,7 @@ void thread_Odometry(void*param)
         if(DEBUGGING_ENABLED) {
           updateValueLabel(xValue,robotX, "IN",5);
           updateValueLabel(yValue,robotY, "IN",5);
-          updateValueLabel(thetaValue,robotTheta,"RAD",4);
+          updateValueLabel(thetaValue,robotTheta*180/M_PI,"DEG",5);
         }
         pros::delay(10); //reupdate every dT msec
     }
