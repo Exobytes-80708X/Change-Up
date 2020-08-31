@@ -356,8 +356,8 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
 		pros::delay(10);
 
     if(DEBUGGING_ENABLED) {
-      updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",5);
-      updateVarLabel(debugLabel2,"TIMEOUT TIMER",debugValue2,timeoutTimer,"SEC",4);
+      updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
+      updateVarLabel(debugLabel2,"TIMEOUT TIMER",debugValue2,timeoutTimer,"SEC",0);
     }
 	}
 	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
@@ -444,9 +444,9 @@ void face(double x, double y, bool reversed, double accel, double minV, double m
 				pros::delay(10);
 
         if(DEBUGGING_ENABLED) {
-          updateVarLabel(debugLabel1,"ERROR",debugValue1,error,"RAD",4);
-          updateVarLabel(debugLabel2,"CURRENT SPEED",debugValue2,currentSpeed,"mV",7);
-          updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",7);
+          updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
+          updateVarLabel(debugLabel2,"CURRENT SPEED",debugValue2,currentSpeed,"mV",0);
+          updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",0);
         }
 		}
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
@@ -508,9 +508,9 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 				pros::delay(10);
 
         if(DEBUGGING_ENABLED) {
-          updateVarLabel(debugLabel1,"ERROR",debugValue1,error,"RAD",4);
-          updateVarLabel(debugLabel2,"CURRENT SPEED",debugValue2,currentSpeed,"mV",7);
-          updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",7);
+          updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
+          updateVarLabel(debugLabel2,"CURRENT SPEED",debugValue2,currentSpeed,"mV",0);
+          updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",0);
         }
 		}
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
@@ -629,8 +629,8 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 		pros::delay(10);
 
     if(DEBUGGING_ENABLED) {
-      updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",5);
-      updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError,"RAD",4);
+      updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
+      updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
     }
 	}
 	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
