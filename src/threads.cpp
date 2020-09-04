@@ -83,7 +83,7 @@ void countBalls(int numOfBalls)
   for(int n = 0; n < numOfBalls; n++) {
     timer = 0;
     if(n == numOfBalls-1)
-      botConveyor.move_velocity(100);
+      botConveyor.move_velocity(0);
 
     while(topBall_high) pros::delay(10);
 
@@ -98,19 +98,10 @@ void countBalls(int numOfBalls)
       }
     }
     else {
-      pros::delay(400);
+      pros::delay(200);
     }
     if(noBalls) break;
   }
-}
-
-void ejecting_macro(int numOfBalls )
-{
-  if(!secondBall)
-    return;
-
-
-
 }
 
 void shooting_macro(int numOfBalls)
@@ -118,10 +109,10 @@ void shooting_macro(int numOfBalls)
   if(!firstBall)
     return;
 
-  topConveyor.move_velocity(440);
+  topConveyor.move_velocity(600);
   botConveyor.move_velocity(0);
-  pros::delay(400);
-  botConveyor.move_velocity(300);
+  pros::delay(200);
+  botConveyor.move_velocity(600);
   countBalls(numOfBalls-1);
 }
 
@@ -178,9 +169,9 @@ void thread_conveyor(void* p)
       case 1: //shooting manually
         if(firstBall)
           botConveyor.move_velocity(0);
-        topConveyor.move_velocity(440);
+        topConveyor.move_velocity(600);
         pros::delay(400);
-        botConveyor.move_velocity(300);
+        botConveyor.move_velocity(600);
         while(conveyorState == shooting)
           pros::delay(10);
 
