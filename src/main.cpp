@@ -20,6 +20,11 @@ void competition_initialize()
 
 }
 
+void intake(int state){
+  // state - What intake state to switch to. in = 0, out = 1, stop = 2
+  intakeState = state;
+}
+
 void autonomous()
 {
   pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
@@ -32,7 +37,7 @@ void autonomous()
     break;
 
     case 1: //red auton
-
+    driveDistance(12,10);
     break;
 
     case 2: //blue auton
