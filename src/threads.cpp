@@ -65,12 +65,13 @@ void waitForTopBalltoLower()
 
 void countBalls(int numOfBalls)
 {
+  if(numOfBalls == 0) return;
   int timeOut = 500;
   int timer = 0;
   bool noBalls = false;
-
-  while(topBall_high) pros::delay(10);
-
+  botConveyor.move_velocity(600);
+  while(topBall_high)
+    pros::delay(10);
   while(!topBall_high) {
     pros::delay(10);
     timer += 10;
@@ -112,7 +113,6 @@ void shooting_macro(int numOfBalls)
   topConveyor.move_velocity(600);
   botConveyor.move_velocity(0);
   pros::delay(200);
-  botConveyor.move_velocity(600);
   countBalls(numOfBalls-1);
 }
 
