@@ -394,7 +394,7 @@ void face(double x, double y, bool reversed, double accel, double minV, double m
 		int settleTimer = 0;
 		int timeoutTimer = 0;
     //initialize timers
-		accel *= 12000;
+		accel *= 1000;
 		minV *= 1000;
 		maxV *= 1000;
 		kP *= 1000;
@@ -431,8 +431,8 @@ void face(double x, double y, bool reversed, double accel, double minV, double m
 
         if(fabs(error) < 2000/kP) {
           pseudoI += accel;
-          if(pseudoI > 1000)
-            pseudoI = 1000;
+          if(pseudoI > 2000 - minV)
+            pseudoI = 2000 - minV;
         }
         else pseudoI = 0;
         if(error > 0)
@@ -464,7 +464,7 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
     double pseudoI = 0.0;
 		int settleTimer = 0;
 		int timeoutTimer = 0;
-		accel *= 12000;
+		accel *= 1000;
 		minV *= 1000;
 		maxV *= 1000;
 		kP *= 1000;
@@ -522,12 +522,12 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 
 void face(double x, double y)
 {
-  face(x,y,false,0.035,0.3,10,5.9,250,5000);
+  face(x,y,false,0.035,0.3,10,5.7,250,10000);
 }
 
 void face(double theta)
 {
-  face(theta,false,0.035,0.3,10,5.9,250,20000);
+  face(theta,false,0.035,0.3,10,5.7,250,20000);
 }
 
 void adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)

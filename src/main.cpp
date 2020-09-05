@@ -42,16 +42,20 @@ void shoot(int numBalls){
 }
 
 void eject(int numBalls){
-  switch(numBalls){
-    case 1:
-      break;
-    case 2:
-      conveyorState = 5;
-      break;
-    case 3:
-      break;
-  }
-  pros::delay(100);
+  // switch(numBalls){
+  //   case 1:
+  //     break;
+  //   case 2:
+  //     conveyorState = 5;
+  //     break;
+  //   case 3:
+  //     break;
+  //}
+  //pros::delay(100);
+  //conveyorState = 0;
+
+  conveyorState = 2;
+  pros::delay(200*numBalls);
   conveyorState = 0;
 }
 
@@ -76,14 +80,14 @@ void autonomous()
     intake(outward);
     driveDistance(-24,8);
     intake(stop);
-    face(10,60);
+    face(10,63);
     eject(2);
     intake(inward);
-    driveDistance(calcDistance(10,60),10);
+    driveDistance(calcDistance(10,63),10);
     intake(stop);
-    face(-10,60);
+    face(-10,63);
     intake(inward);
-    driveDistance(calcDistance(-10,60),7);
+    driveDistance(calcDistance(-10,63),7);
     delayDrive(700,5500);
     intake(stop);
     shoot(2);
@@ -93,7 +97,11 @@ void autonomous()
     pros::delay(500);
     driveDistance(-20,8);
     intake(stop);
-    face(0,100);
+    face(3,100);
+    intake(inward);
+    eject(1);
+    driveDistance(calcDistance(3,100),10);
+    intake(stop);
     break;
 
     case 1: //red auton
