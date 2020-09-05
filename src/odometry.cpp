@@ -429,10 +429,10 @@ void face(double x, double y, bool reversed, double accel, double minV, double m
 					currentSpeed = -minV;
         //makes sure currentSpeed is greater than minV
 
-        if(fabs(error) < 2000/kP) {
+        if(fabs(error) < 3000/kP) {
           pseudoI += accel;
-          if(pseudoI > 2000 - minV)
-            pseudoI = 2000 - minV;
+          if(pseudoI > 3000 - minV)
+            pseudoI = 3000 - minV;
         }
         else pseudoI = 0;
         if(error > 0)
@@ -494,10 +494,10 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 				else if(currentSpeed < 0 && fabs(currentSpeed) < minV)
 					currentSpeed = -minV;
 
-        if(fabs(error) < 2000/kP) {
+        if(fabs(error) < 3000/kP) {
           pseudoI += accel;
-          if(pseudoI > 2000-minV)
-            pseudoI = 2000-minV;
+          if(pseudoI > 3000-minV)
+            pseudoI = 3000-minV;
         }
         else pseudoI = 0;
         if(error > 0)
@@ -522,12 +522,12 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 
 void face(double x, double y)
 {
-  face(x,y,false,0.035,0.3,10,5.7,250,10000);
+  face(x,y,false,0.01,0.3,10,5.8,250,10000);
 }
 
 void face(double theta)
 {
-  face(theta,false,0.035,0.3,10,5.7,250,20000);
+  face(theta,false,0.01,0.3,10,5.8,250,20000);
 }
 
 void adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)
