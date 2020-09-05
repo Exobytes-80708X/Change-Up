@@ -522,12 +522,12 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 
 void face(double x, double y)
 {
-  face(x,y,false,0.03,1.0,10,6.5,250,5000);
+  face(x,y,false,0.035,0.3,10,5.9,250,5000);
 }
 
 void face(double theta)
 {
-  face(theta,false,0.03,1.0,10,6.5,250,20000);
+  face(theta,false,0.035,0.3,10,5.9,250,20000);
 }
 
 void adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)
@@ -643,4 +643,13 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 void adaptiveDrive(double x, double y, double maxV)
 {
 	adaptiveDrive(x,y,0.05,maxV,0.65,5.0,1.0,250,10000);
+}
+
+void delayDrive(int ms,double vel){
+  rightDrive.moveVoltage(vel);
+  leftDrive.moveVoltage(vel);
+  pros::delay(ms);
+  rightDrive.moveVoltage(0);
+  leftDrive.moveVoltage(0);
+
 }

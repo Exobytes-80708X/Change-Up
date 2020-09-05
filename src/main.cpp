@@ -64,10 +64,11 @@ void autonomous()
   switch(auton) {
     case 0: //no auton
     intake(inward);
-    driveDistance(10,10);
+    driveDistance(15,10);
     intake(stop);
-    face(240);
-    driveDistance(24,8);
+    face(-26,-1);
+    driveDistance(18,8);
+    delayDrive(700, 5500);
     while(!firstBall) pros::delay(10);
     shoot(2);
     intake(inward);
@@ -75,15 +76,24 @@ void autonomous()
     intake(outward);
     driveDistance(-24,8);
     intake(stop);
-    face(0);
-
-    //intake(inward);
-    //driveDistance(36,10);
-    //intake(stop);
-    // face(270);
-    // driveDistance(17,8);
-    // shoot(1);
-
+    face(10,60);
+    eject(2);
+    intake(inward);
+    driveDistance(calcDistance(10,60),10);
+    intake(stop);
+    face(-10,60);
+    intake(inward);
+    driveDistance(calcDistance(-10,60),7);
+    delayDrive(700,5500);
+    intake(stop);
+    shoot(2);
+    intake(inward);
+    pros::delay(150);
+    intake(outward);
+    pros::delay(500);
+    driveDistance(-20,8);
+    intake(stop);
+    face(0,100);
     break;
 
     case 1: //red auton
