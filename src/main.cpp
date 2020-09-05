@@ -37,7 +37,24 @@ void shoot(int numBalls){
       conveyorState = 3;
       break;
   }
+  pros::delay(100);
+  conveyorState = 0;
 }
+
+void eject(int numBalls){
+  switch(numBalls){
+    case 1:
+      break;
+    case 2:
+      conveyorState = 5;
+      break;
+    case 3:
+      break;
+  }
+  pros::delay(100);
+  conveyorState = 0;
+}
+
 void autonomous()
 {
   pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
@@ -46,15 +63,27 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-    //intake(inward);
-    //driveDistance(10,10);
-    //intake(stop);
-    //face(250);
-    //driveDistance(20,8);
-    //while(!firstBall) pros::delay(10);
-    //shooting_macro(2);
+    intake(inward);
+    driveDistance(10,10);
+    intake(stop);
+    face(240);
+    driveDistance(24,8);
+    while(!firstBall) pros::delay(10);
+    shoot(2);
+    intake(inward);
+    pros::delay(1000);
+    intake(outward);
+    driveDistance(-24,8);
+    intake(stop);
+    face(0);
 
-    shoot(1);
+    //intake(inward);
+    //driveDistance(36,10);
+    //intake(stop);
+    // face(270);
+    // driveDistance(17,8);
+    // shoot(1);
+
     break;
 
     case 1: //red auton
