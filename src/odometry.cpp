@@ -372,7 +372,48 @@ void driveDistance(double distance, double maxV)
   driveDistance(distance,0.05,2.5,maxV,0.7,4,250,5000);
 }
 
-void face(double x, double y, bool reversed, double accel, double minV, double maxV, double kP, int settleTime, int timeout)
+double pseudoI = 0.0;
+
+void face_alg(double error, double accelTime, double minV, double medV, double maxV, double kP)
+{
+  double currentSpeed = error*kP; //scales error
+
+  if(currentSpeed < -maxV)
+    currentSpeed = -maxV;
+  else if(currentSpeed > maxV)
+    currentSpeed = maxV;
+  //limits currentSpeed to maxV
+
+  if(error > 0 && fabs(currentSpeed) < minV)
+    currentSpeed = minV;
+  else if(error < 0 && fabs(currentSpeed) < minV)
+    currentSpeed = -minV;
+  //makes sure currentSpeed is greater than minV
+
+  if(fabs(error) < medV/kP && fabs(error) > 0.04) {
+    pseudoI += medV/accelTime*10;
+    if(pseudoI > medV - minV)
+      pseudoI = medV - minV;
+  }
+  else pseudoI = 0;
+
+  if(error > 0)
+    currentSpeed += pseudoI;
+  else currentSpeed -= pseudoI;
+
+  leftDrive.moveVoltage(currentSpeed);
+  rightDrive.moveVoltage(-currentSpeed);
+  //send voltages to motors
+  pros::delay(10);
+
+  if(DEBUGGING_ENABLED) {
+    updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
+    updateVarLabel(debugLabel2,"CURRENT SPEED",debugValue2,currentSpeed,"mV",0);
+    updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",0);
+  }
+}
+
+void face(double x, double y, bool reversed, double accelTime, double minV, double medV, double maxV, double kP, int settleTime, int timeout)
 {
     /*
     Arguments:
@@ -389,13 +430,14 @@ void face(double x, double y, bool reversed, double accel, double minV, double m
 		double error = calcAngleError(x,y);
     //calculates shortest number of radians needed to turn to face (x,y)
 		double currentSpeed;
-    double pseudoI = 0.0;
+    pseudoI = 0.0;
 
 		int settleTimer = 0;
 		int timeoutTimer = 0;
     //initialize timers
-		accel *= 1000;
+		//accel *= 1000;
 		minV *= 1000;
+    medV *= 1000;
 		maxV *= 1000;
 		kP *= 1000;
     //scales all arguments to be the correct units
@@ -407,65 +449,34 @@ void face(double x, double y, bool reversed, double accel, double minV, double m
 				else
 					error = calcAngleError(x,y); //calculate angle error based off front of robot
 
-				currentSpeed = error*kP; //scales error
-
-				if(fabs(error) < 0.02)
+				if(fabs(error) < 0.04)
 					settleTimer+=10;
         else
           settleTimer = 0;
-        //if robot is within 0.02 radians (1.2 degrees) of facing (x,y), increase settleTimer
+        //if robot is within 0.04 radians (2.5 degrees) of facing (x,y), increase settleTimer
         //else reset settleTimer
 				timeoutTimer+=10;
 
-				if(currentSpeed < -maxV)
-					currentSpeed = -maxV;
-				else if(currentSpeed > maxV)
-					currentSpeed = maxV;
-        //limits currentSpeed to maxV
-
-				if(currentSpeed > 0 && fabs(currentSpeed) < minV)
-					currentSpeed = minV;
-				else if(currentSpeed < 0 && fabs(currentSpeed) < minV)
-					currentSpeed = -minV;
-        //makes sure currentSpeed is greater than minV
-
-        if(fabs(error) < 3000/kP) {
-          pseudoI += accel;
-          if(pseudoI > 3000 - minV)
-            pseudoI = 3000 - minV;
-        }
-        else pseudoI = 0;
-        if(error > 0)
-          currentSpeed += pseudoI;
-        else currentSpeed -= pseudoI;
-
-				leftDrive.moveVoltage(currentSpeed);
-				rightDrive.moveVoltage(-currentSpeed);
-        //send voltages to motors
-				pros::delay(10);
-
-        if(DEBUGGING_ENABLED) {
-          updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
-          updateVarLabel(debugLabel2,"CURRENT SPEED",debugValue2,currentSpeed,"mV",0);
-          updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",0);
-        }
+      face_alg(error,accelTime,minV,medV,maxV,kP);
 		}
+    resetAutonDebug();
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		rightDrive.moveVelocity(0);
 	  leftDrive.moveVelocity(0);
 }
 
-void face(double theta, bool reversed, double accel, double minV, double maxV, double kP, int settleTime, int timeout)
+void face(double theta, bool reversed, double accelTime, double minV, double medV, double maxV, double kP, int settleTime, int timeout)
 //does exact same thing as the other face, but instead of inputting (x,y) point, it takes a specific absolute theta as an argument
 {
 		double error = calcAngleError(theta);
 		double currentSpeed;
-    double pseudoI = 0.0;
+    pseudoI = 0.0;
 		int settleTimer = 0;
 		int timeoutTimer = 0;
-		accel *= 1000;
+		//accel *= 1000;
 		minV *= 1000;
+    medV *= 1000;
 		maxV *= 1000;
 		kP *= 1000;
 
@@ -476,44 +487,15 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 				else
 					error = calcAngleError(theta);
 
-					currentSpeed = error*kP;
-
-				if(fabs(error) < 0.02) //~2 deg each side
+				if(fabs(error) < 0.04)
 					settleTimer+=10;
         else
           settleTimer = 0;
 				timeoutTimer+=10;
 
-				if(currentSpeed < -maxV)
-					currentSpeed = -maxV;
-				else if(currentSpeed > maxV)
-					currentSpeed = maxV;
-
-				if(currentSpeed > 0 && fabs(currentSpeed) < minV)
-					currentSpeed = minV;
-				else if(currentSpeed < 0 && fabs(currentSpeed) < minV)
-					currentSpeed = -minV;
-
-        if(fabs(error) < 3000/kP) {
-          pseudoI += accel;
-          if(pseudoI > 3000-minV)
-            pseudoI = 3000-minV;
-        }
-        else pseudoI = 0;
-        if(error > 0)
-          currentSpeed += pseudoI;
-        else currentSpeed -= pseudoI;
-
-				leftDrive.moveVoltage(currentSpeed);
-				rightDrive.moveVoltage(-currentSpeed);
-				pros::delay(10);
-
-        if(DEBUGGING_ENABLED) {
-          updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
-          updateVarLabel(debugLabel2,"CURRENT SPEED",debugValue2,currentSpeed,"mV",0);
-          updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",0);
-        }
+				face_alg(error,accelTime,minV,medV,maxV,kP);
 		}
+    resetAutonDebug();
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		rightDrive.moveVelocity(0);
@@ -522,12 +504,12 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 
 void face(double x, double y)
 {
-  face(x,y,false,0.01,0.3,10,5.8,250,10000);
+  face(x,y,false,500,0,2.5,10,5.8,250,20000);
 }
 
 void face(double theta)
 {
-  face(theta,false,0.01,0.3,10,5.8,250,20000);
+  face(theta,false,500,0,2.5,10,5.8,250,20000);
 }
 
 void adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)

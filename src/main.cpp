@@ -67,6 +67,19 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
+    face(90);
+
+    face(0);
+    break;
+
+    case 1: //red auton
+    break;
+
+    case 2: //blue auton
+
+    break;
+
+    case 3: //skills auton
     intake(inward);
     driveDistance(15,10);
     intake(stop);
@@ -102,17 +115,6 @@ void autonomous()
     eject(1);
     driveDistance(calcDistance(3,100),10);
     intake(stop);
-    break;
-
-    case 1: //red auton
-    break;
-
-    case 2: //blue auton
-
-    break;
-
-    case 3: //skills autnon
-
     break;
 
   }

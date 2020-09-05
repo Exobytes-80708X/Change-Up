@@ -215,6 +215,10 @@ void thread_conveyor(void* p)
           topConveyor.move_velocity(-600);
           botConveyor.move_velocity(600);
           waitForBallToEject();
+
+          botConveyor.move_velocity(0);
+          topConveyor.move_velocity(200);
+          pros::delay(100);
         }
         break;
 
