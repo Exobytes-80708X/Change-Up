@@ -333,9 +333,9 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
     //if going reverse, accelerate backwards
     //if decelerating (whether forwards or backwards), let p-controllers determine speed
 
-		if(currentSpeed > 0 && currentSpeed < minV)
+		if(distError > 0 && currentSpeed < minV)
 			currentSpeed = minV;
-		else if(currentSpeed < 0 && currentSpeed > -minV)
+		else if(distError < 0 && currentSpeed > -minV)
 			currentSpeed = -minV;
     //makes sure currentSpeed is greater than minV
 
@@ -360,6 +360,7 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
       updateVarLabel(debugLabel2,"TIMEOUT TIMER",debugValue2,timeoutTimer,"SEC",0);
     }
 	}
+  resetAutonDebug();
 	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	rightDrive.moveVelocity(0);
