@@ -218,6 +218,9 @@ void thread_conveyor(void* p)
         }
         break;
 
+      case 6:
+        shooting_macro(1);
+        break;
     }
     pros::delay(10);
   }

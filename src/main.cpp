@@ -25,6 +25,19 @@ void intake(int state){
   intakeState = state;
 }
 
+void shoot(int numBalls){
+  switch(numBalls){
+    case 1:
+      conveyorState = 6;
+      break;
+    case 2:
+      conveyorState = 4;
+      break;
+    case 3:
+      conveyorState = 3;
+      break;
+  }
+}
 void autonomous()
 {
   pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
@@ -33,11 +46,18 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
+    //intake(inward);
+    //driveDistance(10,10);
+    //intake(stop);
+    //face(250);
+    //driveDistance(20,8);
+    //while(!firstBall) pros::delay(10);
+    //shooting_macro(2);
 
+    shoot(1);
     break;
 
     case 1: //red auton
-    driveDistance(12,10);
     break;
 
     case 2: //blue auton
