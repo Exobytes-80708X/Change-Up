@@ -496,8 +496,8 @@ void face(double theta, bool reversed, double accel, double minV, double maxV, d
 
         if(fabs(error) < 2000/kP) {
           pseudoI += accel;
-          if(pseudoI > 1000)
-            pseudoI = 1000;
+          if(pseudoI > 2000-minV)
+            pseudoI = 2000-minV;
         }
         else pseudoI = 0;
         if(error > 0)
