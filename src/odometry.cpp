@@ -104,11 +104,11 @@ double calcDistance_signed(double x2, double y2) //distance formula in inches, u
 
 double calcAngleError(double theta) //calculate shortest angle error in radians from current robot theta
 {
-  theta = theta*M_PI/180.0;
+  theta = theta*M_PI/180.0; //comvert deg to rad
   double radius = 100;
-  double predictedX = radius*sin(robotTheta) + robotX;
+  double predictedX = radius*sin(robotTheta) + robotX; //simulate point 100 units away from robot at current theta
   double predictedY = radius*cos(robotTheta) + robotY;
-  double targetX = radius*sin(theta) + robotX;
+  double targetX = radius*sin(theta) + robotX; //simulate point 100 units away from robot at desired theta
   double targetY = radius*cos(theta) + robotY;
   double chord = calcDistance(predictedX, predictedY, targetX, targetY);
 
