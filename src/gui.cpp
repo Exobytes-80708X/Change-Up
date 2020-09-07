@@ -53,6 +53,7 @@ lv_obj_t * img;
 
 lv_obj_t * sensorDebug_button;
 lv_obj_t * autonDebug_button;
+lv_obj_t * deviceDebug_button;
 lv_obj_t * back_button;
 
 lv_obj_t * sensorLabel1;
@@ -334,6 +335,7 @@ void animateHomeScreen()
   animate_y(imuButton,lv_obj_get_y(imuButton)+272,lv_obj_get_y(imuButton),500);
   animate_y(sensorDebug_button,lv_obj_get_y(sensorDebug_button)+272,lv_obj_get_y(sensorDebug_button),500);
   animate_y(autonDebug_button,lv_obj_get_y(autonDebug_button)+272,lv_obj_get_y(autonDebug_button),500);
+  animate_y(deviceDebug_button,lv_obj_get_y(deviceDebug_button)+272,lv_obj_get_y(deviceDebug_button),500);
 }
 
 void animateHomeScreenLeft()
@@ -354,6 +356,7 @@ void animateHomeScreenLeft()
   animate_y_linear(imuButton,lv_obj_get_y(imuButton),lv_obj_get_y(imuButton)+272,500);
   animate_y_linear(sensorDebug_button,lv_obj_get_y(sensorDebug_button),lv_obj_get_y(sensorDebug_button)+272,500);
   animate_y_linear(autonDebug_button,lv_obj_get_y(autonDebug_button),lv_obj_get_y(autonDebug_button)+272,500);
+  animate_y_linear(deviceDebug_button,lv_obj_get_y(deviceDebug_button),lv_obj_get_y(deviceDebug_button)+272,500);
 }
 
 void animateHomeScreenRight()
@@ -374,6 +377,7 @@ void animateHomeScreenRight()
   animate_y(imuButton,lv_obj_get_y(imuButton),lv_obj_get_y(imuButton)-272,500);
   animate_y(sensorDebug_button,lv_obj_get_y(sensorDebug_button),lv_obj_get_y(sensorDebug_button)-272,500);
   animate_y(autonDebug_button,lv_obj_get_y(autonDebug_button),lv_obj_get_y(autonDebug_button)-272,500);
+  animate_y(deviceDebug_button,lv_obj_get_y(deviceDebug_button),lv_obj_get_y(deviceDebug_button)-272,500);
 }
 
 void hideHomeScreen()
@@ -882,6 +886,12 @@ static lv_res_t autonDebugButton_action(lv_obj_t * btn)
   return LV_RES_OK;
 }
 
+static lv_res_t deviceDebugButton_action(lv_obj_t * btn)
+{
+  //pros::Task anim (anim_autonDebug, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  return LV_RES_OK;
+}
+
 static lv_res_t back_action(lv_obj_t * btn)
 {
   pros::Task anim (anim_back, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
@@ -916,13 +926,21 @@ void initAutonGUI()
   lv_btn_set_action(imuButton,LV_BTN_ACTION_PR, imuButton_action);
   lv_obj_align(imuButton, NULL, LV_ALIGN_IN_TOP_MID,0,125);
 
-  sensorDebug_button = createBtn(sensorDebug_button,10,10,225,50,2,"SENSOR DEBUG");
+  sensorDebug_button = createBtn(sensorDebug_button,10,10,150,50,2,"SENSOR DEBUG");
   lv_obj_align(sensorDebug_button, NULL, LV_ALIGN_IN_TOP_LEFT,10,180);
   lv_btn_set_action(sensorDebug_button,LV_BTN_ACTION_CLICK, sensorDebugButton_action);
 
-  autonDebug_button = createBtn(autonDebug_button,10,10,225,50,2,"AUTON DEBUG");
+  /*autonDebug_button = createBtn(autonDebug_button,10,10,225,50,2,"AUTON DEBUG");
   lv_obj_align(autonDebug_button, NULL, LV_ALIGN_IN_TOP_RIGHT,-10,180);
+  lv_btn_set_action(autonDebug_button,LV_BTN_ACTION_CLICK, autonDebugButton_action);*/
+
+  autonDebug_button = createBtn(autonDebug_button,10,10,150,50,2,"AUTON DEBUG");
+  lv_obj_align(autonDebug_button, NULL, LV_ALIGN_IN_TOP_MID,0,180);
   lv_btn_set_action(autonDebug_button,LV_BTN_ACTION_CLICK, autonDebugButton_action);
+
+  deviceDebug_button = createBtn(deviceDebug_button,10,10,150,50,2,"DEVICE DEBUG");
+  lv_obj_align(deviceDebug_button, NULL, LV_ALIGN_IN_TOP_RIGHT,-10,180);
+  //lv_btn_set_action(deviceDebug_button,LV_BTN_ACTION_CLICK, autonDebugButton_action);
 
   back_button = createBtn(back_button,20,20,50,50,2,"<");
   lv_obj_align(back_button, NULL, LV_ALIGN_IN_TOP_LEFT,20,10);
