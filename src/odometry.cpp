@@ -110,14 +110,14 @@ double calcAngleError(double theta) //calculate shortest angle error in radians 
   double predictedY = radius*cos(robotTheta) + robotY;
   double targetX = radius*sin(theta) + robotX; //simulate point 100 units away from robot at desired theta
   double targetY = radius*cos(theta) + robotY;
-  double chord = calcDistance(predictedX, predictedY, targetX, targetY);
+  double chord = calcDistance(predictedX, predictedY, targetX, targetY); //distance between two simulated points
 
-  double angleError = 2*asin( (chord / 2) / (100) );
+  double angleError = 2*asin( (chord / 2) / (100) ); //calculate angle between simulated points
 
-  predictedX = radius*sin( fmod(angleError + robotTheta, 2*M_PI) ) + robotX;
-  predictedY = radius*cos( fmod(angleError + robotTheta, 2*M_PI) ) + robotY;
+  predictedX = radius*sin( fmod(angleError + robotTheta, 2*M_PI) ) + robotX; //add that angle to robot's theta and calculate another simulated point
+  predictedY = radius*cos( fmod(angleError + robotTheta, 2*M_PI) ) + robotY; //adding angleError is the same as the robot turning right
 
-  if( (predictedX < targetX + 0.1) && (predictedX > targetX - 0.1) && (predictedY < targetY + 0.1) && (predictedY > targetY - 0.1) )
+  if( (predictedX < targetX + 0.1) && (predictedX > targetX - 0.1) && (predictedY < targetY + 0.1) && (predictedY > targetY - 0.1) ) //if the predicted point match up woth the target point, then robot turns right (+angleError), if not turn left (-angleError)
       return angleError;
   else
       return angleError*-1;
