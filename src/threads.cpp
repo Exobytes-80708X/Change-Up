@@ -169,9 +169,11 @@ void thread_conveyor(void* p)
       case 1: //shooting manually
         if(firstBall)
           botConveyor.move_velocity(0);
-        topConveyor.move_velocity(600);
-        pros::delay(400);
-        botConveyor.move_velocity(600);
+        else
+          topConveyor.move_velocity(600);
+        topConveyor.move_voltage(12000);
+        pros::delay(200);
+          botConveyor.move_velocity(600);
         while(conveyorState == shooting)
           pros::delay(10);
 
