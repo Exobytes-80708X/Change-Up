@@ -8,7 +8,7 @@ const std::string AUTON_HEADING = "AUTON SELECTED: ";
 LV_FONT_DECLARE(armadura_solid);
 LV_FONT_DECLARE(armadura_solid_big);
 
-const int DEBUG_X_1 = 100;
+const int DEBUG_X_1 = 75;
 const int DEBUG_X_2 = 300;
 lv_obj_t * xLabel;
 lv_obj_t * yLabel;
@@ -35,16 +35,6 @@ lv_obj_t * autonSelect;
 lv_obj_t * autonNext_button;
 lv_obj_t * autonPrev_button;
 
-lv_obj_t * sensorLabel5;
-lv_obj_t * sensorLabel6;
-lv_obj_t * sensorLabel7;
-lv_obj_t * sensorLabel8;
-
-lv_obj_t * sensorValue5;
-lv_obj_t * sensorValue6;
-lv_obj_t * sensorValue7;
-lv_obj_t * sensorValue8;
-
 lv_obj_t * imuLabel;
 lv_obj_t * imuButton;
 
@@ -57,14 +47,58 @@ lv_obj_t * deviceDebug_button;
 lv_obj_t * back_button;
 
 lv_obj_t * sensorLabel1;
-lv_obj_t * sensorLabel4;
-lv_obj_t * sensorLabel3;
 lv_obj_t * sensorLabel2;
+lv_obj_t * sensorLabel3;
+lv_obj_t * sensorLabel4;
+lv_obj_t * sensorLabel5;
+lv_obj_t * sensorLabel6;
+lv_obj_t * sensorLabel7;
+lv_obj_t * sensorLabel8;
 
 lv_obj_t * sensorValue1;
-lv_obj_t * sensorValue4;
-lv_obj_t * sensorValue3;
 lv_obj_t * sensorValue2;
+lv_obj_t * sensorValue3;
+lv_obj_t * sensorValue4;
+lv_obj_t * sensorValue5;
+lv_obj_t * sensorValue6;
+lv_obj_t * sensorValue7;
+lv_obj_t * sensorValue8;
+
+lv_obj_t * deviceLabel1;
+lv_obj_t * deviceLabel2;
+lv_obj_t * deviceLabel3;
+lv_obj_t * deviceLabel4;
+lv_obj_t * deviceLabel5;
+lv_obj_t * deviceLabel6;
+lv_obj_t * deviceLabel7;
+lv_obj_t * deviceLabel8;
+
+lv_obj_t * deviceVel1;
+lv_obj_t * deviceVel2;
+lv_obj_t * deviceVel3;
+lv_obj_t * deviceVel4;
+lv_obj_t * deviceVel5;
+lv_obj_t * deviceVel6;
+lv_obj_t * deviceVel7;
+lv_obj_t * deviceVel8;
+
+lv_obj_t * deviceTemp1;
+lv_obj_t * deviceTemp2;
+lv_obj_t * deviceTemp3;
+lv_obj_t * deviceTemp4;
+lv_obj_t * deviceTemp5;
+lv_obj_t * deviceTemp6;
+lv_obj_t * deviceTemp7;
+lv_obj_t * deviceTemp8;
+
+lv_obj_t * devicePower1;
+lv_obj_t * devicePower2;
+lv_obj_t * devicePower3;
+lv_obj_t * devicePower4;
+lv_obj_t * devicePower5;
+lv_obj_t * devicePower6;
+lv_obj_t * devicePower7;
+lv_obj_t * devicePower8;
 
 lv_anim_t a;
 
@@ -160,6 +194,8 @@ void updateVarLabel(lv_obj_t *parent, std::string varName, double var, std::stri
 void updateValueLabel(lv_obj_t *parent, double var, std::string varUnits, int ppd)
 {
   std::string varString = std::to_string(var);
+  if(var == 0)
+    varString = varString.substr(varString.find("0"));
   int decimal_place = varString.find(".");
   if(ppd > 0)
     varString = varString.substr(0,decimal_place+ppd+1);
@@ -340,14 +376,6 @@ void animateHomeScreen()
 
 void animateHomeScreenLeft()
 {
-  /*animate_x_ease_out(nameLabel,lv_obj_get_x(nameLabel),lv_obj_get_x(nameLabel)-480,500);
-  animate_x_ease_out(autonLabel,lv_obj_get_x(autonLabel),lv_obj_get_x(autonLabel)-480,500);
-  animate_x_ease_out(autonPrev_button,lv_obj_get_x(autonPrev_button),lv_obj_get_x(autonPrev_button)-480,500);
-  animate_x_ease_out(autonNext_button,lv_obj_get_x(autonNext_button),lv_obj_get_x(autonNext_button)-480,500);
-  animate_x_ease_out(imuButton,lv_obj_get_x(imuButton),lv_obj_get_x(imuButton)-480,500);
-  animate_x_ease_out(sensorDebug_button,lv_obj_get_x(sensorDebug_button),lv_obj_get_x(sensorDebug_button)-480,500);
-  animate_x_ease_out(autonDebug_button,lv_obj_get_x(autonDebug_button),lv_obj_get_x(autonDebug_button)-480,500);*/
-
   animate_y_linear(nameLabel,lv_obj_get_y(nameLabel),lv_obj_get_y(nameLabel)-272,500);
   animate_y_linear(autonLabel,lv_obj_get_y(autonLabel),lv_obj_get_y(autonLabel)+272,500);
   animate_y_linear(autonSelect,lv_obj_get_y(autonSelect),lv_obj_get_y(autonSelect)+272,500);
@@ -361,14 +389,6 @@ void animateHomeScreenLeft()
 
 void animateHomeScreenRight()
 {
-  /*animate_x_ease_out(nameLabel,lv_obj_get_x(nameLabel),lv_obj_get_x(nameLabel)+480,500);
-  animate_x_ease_out(autonLabel,lv_obj_get_x(autonLabel),lv_obj_get_x(autonLabel)+480,500);
-  animate_x_ease_out(autonPrev_button,lv_obj_get_x(autonPrev_button),lv_obj_get_x(autonPrev_button)+480,500);
-  animate_x_ease_out(autonNext_button,lv_obj_get_x(autonNext_button),lv_obj_get_x(autonNext_button)+480,500);
-  animate_x_ease_out(imuButton,lv_obj_get_x(imuButton),lv_obj_get_x(imuButton)+480,500);
-  animate_x_ease_out(sensorDebug_button,lv_obj_get_x(sensorDebug_button),lv_obj_get_x(sensorDebug_button)+480,500);
-  animate_x_ease_out(autonDebug_button,lv_obj_get_x(autonDebug_button),lv_obj_get_x(autonDebug_button)+480,500);*/
-
   animate_y(nameLabel,lv_obj_get_y(nameLabel),lv_obj_get_y(nameLabel)+272,500);
   animate_y(autonLabel,lv_obj_get_y(autonLabel),lv_obj_get_y(autonLabel)-272,500);
   animate_y(autonSelect,lv_obj_get_y(autonSelect),lv_obj_get_y(autonSelect)-272,500);
@@ -402,8 +422,6 @@ void showHomeScreen()
   lv_obj_set_hidden(imuButton,false);
   lv_obj_set_hidden(sensorDebug_button,false);
   lv_obj_set_hidden(autonDebug_button,false);
-
-  //animateHomeScreen();
 }
 
 
@@ -499,7 +517,7 @@ void initAutonDebug()
 
   debugLabel1 = createTextLabel(debugLabel1,"-",DEBUG_X_1,y+60);
   debugLabel2 = createTextLabel(debugLabel2,"-",DEBUG_X_1,y+80);
-  debugLabel3 = createTextLabel(debugLabel3,"-",DEBUG_X_1,y+DEBUG_X_1);
+  debugLabel3 = createTextLabel(debugLabel3,"-",DEBUG_X_1,y+100);
   debugLabel4 = createTextLabel(debugLabel4,"-",DEBUG_X_1,y+120);
   debugLabel5 = createTextLabel(debugLabel5,"-",DEBUG_X_1,y+140);
   debugLabel6 = createTextLabel(debugLabel6,"-",DEBUG_X_1,y+160);
@@ -566,61 +584,228 @@ void animateAutonDebugRight()
 
 //Motor Temp ==================================================================================================================================
 
-
-void updateMotorTempLabels()
+void thread_deviceDebug(void*p)
 {
-  /*updateVarLabel(sensorLabel5,"LD1",ld_1.getTemperature(),"C",2);
-  updateVarLabel(sensorLabel6,"LD2",ld_2.getTemperature(),"C",2);
-  updateVarLabel(sensorLabel7,"RD1",rd_1.getTemperature(),"C",2);
-  updateVarLabel(sensorLabel8,"RD2",rd_2.getTemperature(),"C",2);*/
+  while(true) {
+    updateValueLabel(deviceVel1, ld_1.getActualVelocity(), "RPM", 0);
+    updateValueLabel(deviceVel2, ld_2.getActualVelocity(), "RPM", 0);
+    updateValueLabel(deviceVel3, rd_1.getActualVelocity(), "RPM", 0);
+    updateValueLabel(deviceVel4, rd_2.getActualVelocity(), "RPM", 0);
+    updateValueLabel(deviceVel5, leftIntake.get_actual_velocity(), "RPM", 0);
+    updateValueLabel(deviceVel6, rightIntake.get_actual_velocity(), "RPM", 0);
+    updateValueLabel(deviceVel7, topConveyor.get_actual_velocity(), "RPM", 0);
+    updateValueLabel(deviceVel8, botConveyor.get_actual_velocity(), "RPM", 0);
 
-  updateValueLabel(sensorValue5,ld_1.getTemperature(),"C",0);
-  updateValueLabel(sensorValue6,ld_2.getTemperature(),"C",0);
-  updateValueLabel(sensorValue7,rd_1.getTemperature(),"C",0);
-  updateValueLabel(sensorValue8,rd_2.getTemperature(),"C",0);
-}
+    updateValueLabel(deviceTemp1, ld_1.getTemperature(), "C", 0);
+    updateValueLabel(deviceTemp2, ld_2.getTemperature(), "C", 0);
+    updateValueLabel(deviceTemp3, rd_1.getTemperature(), "C", 0);
+    updateValueLabel(deviceTemp4, rd_2.getTemperature(), "C", 0);
+    updateValueLabel(deviceTemp5, leftIntake.get_temperature(), "C", 0);
+    updateValueLabel(deviceTemp6, rightIntake.get_temperature(), "C", 0);
+    updateValueLabel(deviceTemp7, topConveyor.get_temperature(), "C", 0);
+    updateValueLabel(deviceTemp8, botConveyor.get_temperature(), "C", 0);
 
-void thread_motorTemps(void*p)
-{
-  while(true)
-  {
-    updateMotorTempLabels();
-    pros::delay(1000);
+    pros::delay(100);
   }
 }
 
-void delMotorTempLabels()
+void hideDeviceDebug()
 {
-  lv_obj_del(sensorLabel5);
-  lv_obj_del(sensorLabel6);
-  lv_obj_del(sensorLabel7);
-  lv_obj_del(sensorLabel8);
+  lv_obj_set_hidden(deviceLabel1,true);
+  lv_obj_set_hidden(deviceLabel4,true);
+  lv_obj_set_hidden(deviceLabel3,true);
+  lv_obj_set_hidden(deviceLabel2,true);
+  lv_obj_set_hidden(deviceLabel5,true);
+  lv_obj_set_hidden(deviceLabel6,true);
+  lv_obj_set_hidden(deviceLabel7,true);
+  lv_obj_set_hidden(deviceLabel8,true);
+
+  lv_obj_set_hidden(deviceVel1,true);
+  lv_obj_set_hidden(deviceVel4,true);
+  lv_obj_set_hidden(deviceVel3,true);
+  lv_obj_set_hidden(deviceVel2,true);
+  lv_obj_set_hidden(deviceVel5,true);
+  lv_obj_set_hidden(deviceVel6,true);
+  lv_obj_set_hidden(deviceVel7,true);
+  lv_obj_set_hidden(deviceVel8,true);
+
+  lv_obj_set_hidden(deviceTemp1,true);
+  lv_obj_set_hidden(deviceTemp4,true);
+  lv_obj_set_hidden(deviceTemp3,true);
+  lv_obj_set_hidden(deviceTemp2,true);
+  lv_obj_set_hidden(deviceTemp5,true);
+  lv_obj_set_hidden(deviceTemp6,true);
+  lv_obj_set_hidden(deviceTemp7,true);
+  lv_obj_set_hidden(deviceTemp8,true);
+
+  /*lv_obj_set_hidden(devicePower1,true);
+  lv_obj_set_hidden(devicePower4,true);
+  lv_obj_set_hidden(devicePower3,true);
+  lv_obj_set_hidden(devicePower2,true);
+  lv_obj_set_hidden(devicePower5,true);
+  lv_obj_set_hidden(devicePower6,true);
+  lv_obj_set_hidden(devicePower7,true);
+  lv_obj_set_hidden(devicePower8,true);*/
 }
 
-void hideMotorTempLabels()
+void showDeviceDebug()
 {
-  lv_obj_set_hidden(sensorLabel5,true);
-  lv_obj_set_hidden(sensorLabel6,true);
-  lv_obj_set_hidden(sensorLabel7,true);
-  lv_obj_set_hidden(sensorLabel8,true);
+  lv_obj_set_hidden(deviceLabel1,false);
+  lv_obj_set_hidden(deviceLabel4,false);
+  lv_obj_set_hidden(deviceLabel3,false);
+  lv_obj_set_hidden(deviceLabel2,false);
+  lv_obj_set_hidden(deviceLabel5,false);
+  lv_obj_set_hidden(deviceLabel6,false);
+  lv_obj_set_hidden(deviceLabel7,false);
+  lv_obj_set_hidden(deviceLabel8,false);
 
-  lv_obj_set_hidden(sensorValue5,true);
-  lv_obj_set_hidden(sensorValue6,true);
-  lv_obj_set_hidden(sensorValue7,true);
-  lv_obj_set_hidden(sensorValue8,true);
+  lv_obj_set_hidden(deviceVel1,false);
+  lv_obj_set_hidden(deviceVel4,false);
+  lv_obj_set_hidden(deviceVel3,false);
+  lv_obj_set_hidden(deviceVel2,false);
+  lv_obj_set_hidden(deviceVel5,false);
+  lv_obj_set_hidden(deviceVel6,false);
+  lv_obj_set_hidden(deviceVel7,false);
+  lv_obj_set_hidden(deviceVel8,false);
+
+  lv_obj_set_hidden(deviceTemp1,false);
+  lv_obj_set_hidden(deviceTemp4,false);
+  lv_obj_set_hidden(deviceTemp3,false);
+  lv_obj_set_hidden(deviceTemp2,false);
+  lv_obj_set_hidden(deviceTemp5,false);
+  lv_obj_set_hidden(deviceTemp6,false);
+  lv_obj_set_hidden(deviceTemp7,false);
+  lv_obj_set_hidden(deviceTemp8,false);
+
+  /*lv_obj_set_hidden(devicePower1,false);
+  lv_obj_set_hidden(devicePower4,false);
+  lv_obj_set_hidden(devicePower3,false);
+  lv_obj_set_hidden(devicePower2,false);
+  lv_obj_set_hidden(devicePower5,false);
+  lv_obj_set_hidden(devicePower6,false);
+  lv_obj_set_hidden(devicePower7,false);
+  lv_obj_set_hidden(devicePower8,false);*/
 }
 
-void showMotorTempLabels()
+void initDeviceDebug()
 {
-  lv_obj_set_hidden(sensorLabel5,false);
-  lv_obj_set_hidden(sensorLabel6,false);
-  lv_obj_set_hidden(sensorLabel7,false);
-  lv_obj_set_hidden(sensorLabel8,false);
+  int y=10;
+  deviceLabel1 = createTextLabel(deviceLabel1, "[6] LEFT DRIVE", DEBUG_X_1, y);
+  deviceLabel2 = createTextLabel(deviceLabel2, "[20] LEFT DRIVE", DEBUG_X_1, y+20);
+  deviceLabel3 = createTextLabel(deviceLabel3, "[7] RIGHT DRIVE", DEBUG_X_1, y+40);
+  deviceLabel4 = createTextLabel(deviceLabel4, "[18] RIGHT DRIVE", DEBUG_X_1, y+60);
+  deviceLabel5 = createTextLabel(deviceLabel5, "[12] LEFT INTAKE", DEBUG_X_1, y+80);
+  deviceLabel6 = createTextLabel(deviceLabel6, "[11] RIGHT INTAKE", DEBUG_X_1, y+100);
+  deviceLabel7 = createTextLabel(deviceLabel7, "[15] TOP CONEYOR", DEBUG_X_1, y+120);
+  deviceLabel8 = createTextLabel(deviceLabel8, "[14] BOT CONVEYOR", DEBUG_X_1, y+140);
 
-  lv_obj_set_hidden(sensorValue5,false);
-  lv_obj_set_hidden(sensorValue6,false);
-  lv_obj_set_hidden(sensorValue7,false);
-  lv_obj_set_hidden(sensorValue8,false);
+  deviceVel1 = createTextLabel(deviceVel1, "-", DEBUG_X_2, y);
+  deviceVel2 = createTextLabel(deviceVel2, "-", DEBUG_X_2, y+20);
+  deviceVel3 = createTextLabel(deviceVel3, "-", DEBUG_X_2, y+40);
+  deviceVel4 = createTextLabel(deviceVel4, "-", DEBUG_X_2, y+60);
+  deviceVel5 = createTextLabel(deviceVel5, "-", DEBUG_X_2, y+80);
+  deviceVel6 = createTextLabel(deviceVel6, "-", DEBUG_X_2, y+100);
+  deviceVel7 = createTextLabel(deviceVel7, "-", DEBUG_X_2, y+120);
+  deviceVel8 = createTextLabel(deviceVel8, "-", DEBUG_X_2, y+140);
+
+  deviceTemp1 = createTextLabel(deviceTemp1, "-", DEBUG_X_2+100, y);
+  deviceTemp2 = createTextLabel(deviceTemp2, "-", DEBUG_X_2+100, y+20);
+  deviceTemp3 = createTextLabel(deviceTemp3, "-", DEBUG_X_2+100, y+40);
+  deviceTemp4 = createTextLabel(deviceTemp4, "-", DEBUG_X_2+100, y+60);
+  deviceTemp5 = createTextLabel(deviceTemp5, "-", DEBUG_X_2+100, y+80);
+  deviceTemp6 = createTextLabel(deviceTemp6, "-", DEBUG_X_2+100, y+100);
+  deviceTemp7 = createTextLabel(deviceTemp7, "-", DEBUG_X_2+100, y+120);
+  deviceTemp8 = createTextLabel(deviceTemp8, "-", DEBUG_X_2+100, y+140);
+
+  /*devicePower1 = createTextLabel(devicePower1, "-", DEBUG_X_2+100, y);
+  devicePower2 = createTextLabel(devicePower2, "-", DEBUG_X_2+100, y+20);
+  devicePower3 = createTextLabel(devicePower3, "-", DEBUG_X_2+100, y+40);
+  devicePower4 = createTextLabel(devicePower4, "-", DEBUG_X_2+100, y+60);
+  devicePower5 = createTextLabel(devicePower5, "-", DEBUG_X_2+100, y+80);
+  devicePower6 = createTextLabel(devicePower6, "-", DEBUG_X_2+100, y+100);
+  devicePower7 = createTextLabel(devicePower7, "-", DEBUG_X_2+100, y+120);
+  devicePower8 = createTextLabel(devicePower8, "-", DEBUG_X_2+100, y+140);*/
+
+  hideDeviceDebug();
+  pros::Task device_debug (thread_deviceDebug, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+}
+
+void animateDeviceDebugLeft()
+{
+  animate_x_ease_out(deviceLabel1,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(deviceLabel2,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(deviceLabel3,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(deviceLabel4,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(deviceLabel5,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(deviceLabel6,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(deviceLabel7,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(deviceLabel8,DEBUG_X_1+480,DEBUG_X_1,500);
+
+  animate_x_ease_out(deviceVel1,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(deviceVel2,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(deviceVel3,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(deviceVel4,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(deviceVel5,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(deviceVel6,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(deviceVel7,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(deviceVel8,DEBUG_X_2+480,DEBUG_X_2,500);
+
+  animate_x_ease_out(deviceTemp1,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(deviceTemp2,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(deviceTemp3,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(deviceTemp4,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(deviceTemp5,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(deviceTemp6,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(deviceTemp7,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(deviceTemp8,DEBUG_X_2+580,DEBUG_X_2+100,500);
+
+  /*animate_x_ease_out(devicePower1,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(devicePower2,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(devicePower3,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(devicePower4,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(devicePower5,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(devicePower6,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(devicePower7,DEBUG_X_2+580,DEBUG_X_2+100,500);
+  animate_x_ease_out(devicePower8,DEBUG_X_2+580,DEBUG_X_2+100,500);*/
+}
+
+void animateDeviceDebugRight()
+{
+  animate_x_linear(deviceLabel1,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(deviceLabel2,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(deviceLabel3,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(deviceLabel4,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(deviceLabel5,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(deviceLabel6,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(deviceLabel7,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(deviceLabel8,DEBUG_X_1,DEBUG_X_1+480,500);
+
+  animate_x_linear(deviceVel1,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(deviceVel2,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(deviceVel3,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(deviceVel4,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(deviceVel5,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(deviceVel6,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(deviceVel7,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(deviceVel8,DEBUG_X_2,DEBUG_X_2+480,500);
+
+  animate_x_linear(deviceTemp1,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(deviceTemp2,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(deviceTemp3,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(deviceTemp4,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(deviceTemp5,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(deviceTemp6,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(deviceTemp7,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(deviceTemp8,DEBUG_X_2+100,DEBUG_X_2+580,500);
+
+  /*animate_x_linear(devicePower1,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(devicePower2,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(devicePower3,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(devicePower4,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(devicePower5,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(devicePower6,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(devicePower7,DEBUG_X_2+100,DEBUG_X_2+580,500);
+  animate_x_linear(devicePower8,DEBUG_X_2+100,DEBUG_X_2+580,500);*/
 }
 
 
@@ -632,7 +817,7 @@ void thread_sensorDebug(void*p)
     updateValueLabel(sensorValue4,topDetector2.get_value(),"",0);
     updateValueLabel(sensorValue3,botDetector.get_value(),"",0);
     updateValueLabel(sensorValue2,ejectDetector.get_value(),"",0);
-    updateMotorTempLabels();
+    //updateMotorTempLabels();
     pros::delay(100);
   }
 }
@@ -645,17 +830,15 @@ void showSensorDebug()
   lv_obj_set_hidden(sensorLabel4,false);
   lv_obj_set_hidden(sensorLabel3,false);
   lv_obj_set_hidden(sensorLabel2,false);
-
-  lv_obj_set_hidden(sensorValue1,false);
-  lv_obj_set_hidden(sensorValue4,false);
-  lv_obj_set_hidden(sensorValue3,false);
-  lv_obj_set_hidden(sensorValue2,false);
-
   lv_obj_set_hidden(sensorLabel5,false);
   lv_obj_set_hidden(sensorLabel6,false);
   lv_obj_set_hidden(sensorLabel7,false);
   lv_obj_set_hidden(sensorLabel8,false);
 
+  lv_obj_set_hidden(sensorValue1,false);
+  lv_obj_set_hidden(sensorValue4,false);
+  lv_obj_set_hidden(sensorValue3,false);
+  lv_obj_set_hidden(sensorValue2,false);
   lv_obj_set_hidden(sensorValue5,false);
   lv_obj_set_hidden(sensorValue6,false);
   lv_obj_set_hidden(sensorValue7,false);
@@ -671,17 +854,15 @@ void hideSensorDebug()
   lv_obj_set_hidden(sensorLabel4,true);
   lv_obj_set_hidden(sensorLabel3,true);
   lv_obj_set_hidden(sensorLabel2,true);
-
-  lv_obj_set_hidden(sensorValue1,true);
-  lv_obj_set_hidden(sensorValue4,true);
-  lv_obj_set_hidden(sensorValue3,true);
-  lv_obj_set_hidden(sensorValue2,true);
-
   lv_obj_set_hidden(sensorLabel5,true);
   lv_obj_set_hidden(sensorLabel6,true);
   lv_obj_set_hidden(sensorLabel7,true);
   lv_obj_set_hidden(sensorLabel8,true);
 
+  lv_obj_set_hidden(sensorValue1,true);
+  lv_obj_set_hidden(sensorValue4,true);
+  lv_obj_set_hidden(sensorValue3,true);
+  lv_obj_set_hidden(sensorValue2,true);
   lv_obj_set_hidden(sensorValue5,true);
   lv_obj_set_hidden(sensorValue6,true);
   lv_obj_set_hidden(sensorValue7,true);
@@ -695,18 +876,16 @@ void initSensorDebug()
   sensorLabel2 = createTextLabel(sensorLabel2, "[F] EJECTOR", DEBUG_X_1, y+20);
   sensorLabel3 = createTextLabel(sensorLabel3, "[G] BOTBALL", DEBUG_X_1, y+40);
   sensorLabel4 = createTextLabel(sensorLabel4, "[H] TOPBALL HIGH", DEBUG_X_1, y+60);
+  sensorLabel5 = createTextLabel(sensorLabel5, "-", DEBUG_X_1, y+80);
+  sensorLabel6 = createTextLabel(sensorLabel6, "-", DEBUG_X_1, y+100);
+  sensorLabel7 = createTextLabel(sensorLabel7, "-", DEBUG_X_1, y+120);
+  sensorLabel8 = createTextLabel(sensorLabel8, "-", DEBUG_X_1, y+140);
 
 
   sensorValue1 = createTextLabel(sensorValue1, "-", DEBUG_X_2, y);
   sensorValue2 = createTextLabel(sensorValue2, "-", DEBUG_X_2, y+20);
   sensorValue3 = createTextLabel(sensorValue3, "-", DEBUG_X_2, y+40);
   sensorValue4 = createTextLabel(sensorValue4, "-", DEBUG_X_2, y+60);
-
-  sensorLabel5 = createTextLabel(sensorLabel5, "[6] LEFT DRIVE", DEBUG_X_1, y+80);
-  sensorLabel6 = createTextLabel(sensorLabel6, "[20] LEFT DRIVE", DEBUG_X_1, y+100);
-  sensorLabel7 = createTextLabel(sensorLabel7, "[7] RIGHT DRIVE", DEBUG_X_1, y+120);
-  sensorLabel8 = createTextLabel(sensorLabel8, "[18] RIGHT DRIVE", DEBUG_X_1, y+140);
-
   sensorValue5 = createTextLabel(sensorValue5, "-", DEBUG_X_2, y+80);
   sensorValue6 = createTextLabel(sensorValue6, "-", DEBUG_X_2, y+100);
   sensorValue7 = createTextLabel(sensorValue7, "-", DEBUG_X_2, y+120);
@@ -860,6 +1039,17 @@ void anim_autonDebug(void*p)
   animateAutonDebugLeft();
 }
 
+void anim_deviceDebug(void*p)
+{
+  debugging_mode = 2;
+  animateHomeScreenLeft();
+  pros::delay(250);
+  showDeviceDebug();
+  lv_obj_set_hidden(back_button,false);
+  animate_x_ease_out(back_button,20+480,20,500);
+  animateDeviceDebugLeft();
+}
+
 void anim_back(void*p)
 {
   switch(debugging_mode) {
@@ -867,6 +1057,9 @@ void anim_back(void*p)
       animateSensorDebugRight(); break;
     case 1:
       animateAutonDebugRight(); break;
+    case 2:
+      animateDeviceDebugRight(); break;
+
   }
   animate_x_linear(back_button,20,20+480,500);
   pros::delay(250);
@@ -888,7 +1081,7 @@ static lv_res_t autonDebugButton_action(lv_obj_t * btn)
 
 static lv_res_t deviceDebugButton_action(lv_obj_t * btn)
 {
-  //pros::Task anim (anim_autonDebug, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task anim (anim_deviceDebug, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   return LV_RES_OK;
 }
 
@@ -940,7 +1133,7 @@ void initAutonGUI()
 
   deviceDebug_button = createBtn(deviceDebug_button,10,10,150,50,2,"DEVICE DEBUG");
   lv_obj_align(deviceDebug_button, NULL, LV_ALIGN_IN_TOP_RIGHT,-10,180);
-  //lv_btn_set_action(deviceDebug_button,LV_BTN_ACTION_CLICK, autonDebugButton_action);
+  lv_btn_set_action(deviceDebug_button,LV_BTN_ACTION_CLICK, deviceDebugButton_action);
 
   back_button = createBtn(back_button,20,20,50,50,2,"<");
   lv_obj_align(back_button, NULL, LV_ALIGN_IN_TOP_LEFT,20,10);
@@ -965,4 +1158,5 @@ void initGUI(void*p)
   initAutonGUI();
   initSensorDebug();
   initAutonDebug();
+  initDeviceDebug();
 }
