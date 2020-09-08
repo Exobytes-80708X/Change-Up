@@ -370,8 +370,10 @@ void animateHomeScreen()
   animate_x_ease_out(autonNext_button,lv_obj_get_x(autonNext_button)+480,lv_obj_get_x(autonNext_button),500);
   animate_y(imuButton,lv_obj_get_y(imuButton)+272,lv_obj_get_y(imuButton),500);
   animate_y(sensorDebug_button,lv_obj_get_y(sensorDebug_button)+272,lv_obj_get_y(sensorDebug_button),500);
+  animate_x_ease_out(sensorDebug_button,lv_obj_get_x(sensorDebug_button)-480,lv_obj_get_x(sensorDebug_button),500);
   animate_y(autonDebug_button,lv_obj_get_y(autonDebug_button)+272,lv_obj_get_y(autonDebug_button),500);
   animate_y(deviceDebug_button,lv_obj_get_y(deviceDebug_button)+272,lv_obj_get_y(deviceDebug_button),500);
+  animate_x_ease_out(deviceDebug_button,lv_obj_get_x(deviceDebug_button)+480,lv_obj_get_x(deviceDebug_button),500);
 }
 
 void animateHomeScreenLeft()
@@ -637,15 +639,6 @@ void hideDeviceDebug()
   lv_obj_set_hidden(deviceTemp6,true);
   lv_obj_set_hidden(deviceTemp7,true);
   lv_obj_set_hidden(deviceTemp8,true);
-
-  /*lv_obj_set_hidden(devicePower1,true);
-  lv_obj_set_hidden(devicePower4,true);
-  lv_obj_set_hidden(devicePower3,true);
-  lv_obj_set_hidden(devicePower2,true);
-  lv_obj_set_hidden(devicePower5,true);
-  lv_obj_set_hidden(devicePower6,true);
-  lv_obj_set_hidden(devicePower7,true);
-  lv_obj_set_hidden(devicePower8,true);*/
 }
 
 void showDeviceDebug()
@@ -676,15 +669,6 @@ void showDeviceDebug()
   lv_obj_set_hidden(deviceTemp6,false);
   lv_obj_set_hidden(deviceTemp7,false);
   lv_obj_set_hidden(deviceTemp8,false);
-
-  /*lv_obj_set_hidden(devicePower1,false);
-  lv_obj_set_hidden(devicePower4,false);
-  lv_obj_set_hidden(devicePower3,false);
-  lv_obj_set_hidden(devicePower2,false);
-  lv_obj_set_hidden(devicePower5,false);
-  lv_obj_set_hidden(devicePower6,false);
-  lv_obj_set_hidden(devicePower7,false);
-  lv_obj_set_hidden(devicePower8,false);*/
 }
 
 void initDeviceDebug()
@@ -716,15 +700,6 @@ void initDeviceDebug()
   deviceTemp6 = createTextLabel(deviceTemp6, "-", DEBUG_X_2+100, y+100);
   deviceTemp7 = createTextLabel(deviceTemp7, "-", DEBUG_X_2+100, y+120);
   deviceTemp8 = createTextLabel(deviceTemp8, "-", DEBUG_X_2+100, y+140);
-
-  /*devicePower1 = createTextLabel(devicePower1, "-", DEBUG_X_2+100, y);
-  devicePower2 = createTextLabel(devicePower2, "-", DEBUG_X_2+100, y+20);
-  devicePower3 = createTextLabel(devicePower3, "-", DEBUG_X_2+100, y+40);
-  devicePower4 = createTextLabel(devicePower4, "-", DEBUG_X_2+100, y+60);
-  devicePower5 = createTextLabel(devicePower5, "-", DEBUG_X_2+100, y+80);
-  devicePower6 = createTextLabel(devicePower6, "-", DEBUG_X_2+100, y+100);
-  devicePower7 = createTextLabel(devicePower7, "-", DEBUG_X_2+100, y+120);
-  devicePower8 = createTextLabel(devicePower8, "-", DEBUG_X_2+100, y+140);*/
 
   hideDeviceDebug();
   pros::Task device_debug (thread_deviceDebug, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
@@ -758,15 +733,6 @@ void animateDeviceDebugLeft()
   animate_x_ease_out(deviceTemp6,DEBUG_X_2+580,DEBUG_X_2+100,500);
   animate_x_ease_out(deviceTemp7,DEBUG_X_2+580,DEBUG_X_2+100,500);
   animate_x_ease_out(deviceTemp8,DEBUG_X_2+580,DEBUG_X_2+100,500);
-
-  /*animate_x_ease_out(devicePower1,DEBUG_X_2+580,DEBUG_X_2+100,500);
-  animate_x_ease_out(devicePower2,DEBUG_X_2+580,DEBUG_X_2+100,500);
-  animate_x_ease_out(devicePower3,DEBUG_X_2+580,DEBUG_X_2+100,500);
-  animate_x_ease_out(devicePower4,DEBUG_X_2+580,DEBUG_X_2+100,500);
-  animate_x_ease_out(devicePower5,DEBUG_X_2+580,DEBUG_X_2+100,500);
-  animate_x_ease_out(devicePower6,DEBUG_X_2+580,DEBUG_X_2+100,500);
-  animate_x_ease_out(devicePower7,DEBUG_X_2+580,DEBUG_X_2+100,500);
-  animate_x_ease_out(devicePower8,DEBUG_X_2+580,DEBUG_X_2+100,500);*/
 }
 
 void animateDeviceDebugRight()
@@ -797,15 +763,6 @@ void animateDeviceDebugRight()
   animate_x_linear(deviceTemp6,DEBUG_X_2+100,DEBUG_X_2+580,500);
   animate_x_linear(deviceTemp7,DEBUG_X_2+100,DEBUG_X_2+580,500);
   animate_x_linear(deviceTemp8,DEBUG_X_2+100,DEBUG_X_2+580,500);
-
-  /*animate_x_linear(devicePower1,DEBUG_X_2+100,DEBUG_X_2+580,500);
-  animate_x_linear(devicePower2,DEBUG_X_2+100,DEBUG_X_2+580,500);
-  animate_x_linear(devicePower3,DEBUG_X_2+100,DEBUG_X_2+580,500);
-  animate_x_linear(devicePower4,DEBUG_X_2+100,DEBUG_X_2+580,500);
-  animate_x_linear(devicePower5,DEBUG_X_2+100,DEBUG_X_2+580,500);
-  animate_x_linear(devicePower6,DEBUG_X_2+100,DEBUG_X_2+580,500);
-  animate_x_linear(devicePower7,DEBUG_X_2+100,DEBUG_X_2+580,500);
-  animate_x_linear(devicePower8,DEBUG_X_2+100,DEBUG_X_2+580,500);*/
 }
 
 
@@ -813,11 +770,13 @@ void animateDeviceDebugRight()
 void thread_sensorDebug(void*p)
 {
   while(true) {
-    updateValueLabel(sensorValue1,topDetector.get_value(),"",0);
-    updateValueLabel(sensorValue4,topDetector2.get_value(),"",0);
-    updateValueLabel(sensorValue3,botDetector.get_value(),"",0);
-    updateValueLabel(sensorValue2,ejectDetector.get_value(),"",0);
-    //updateMotorTempLabels();
+    updateValueLabel(sensorValue4,topDetector.get_value(),"",0);
+    updateValueLabel(sensorValue5,ejectDetector.get_value(),"",0);
+    updateValueLabel(sensorValue6,botDetector.get_value(),"",0);
+    updateValueLabel(sensorValue7,topDetector2.get_value(),"",0);
+    updateValueLabel(sensorValue1,imu.get_heading(),"DEG",3);
+    updateValueLabel(sensorValue2,left.get(),"",0);
+    updateValueLabel(sensorValue3,right.get(),"",0);
     pros::delay(100);
   }
 }
@@ -872,13 +831,13 @@ void hideSensorDebug()
 void initSensorDebug()
 {
   int y=10;
-  sensorLabel1 = createTextLabel(sensorLabel1, "[E] TOPBALL LOW", DEBUG_X_1, y);
-  sensorLabel2 = createTextLabel(sensorLabel2, "[F] EJECTOR", DEBUG_X_1, y+20);
-  sensorLabel3 = createTextLabel(sensorLabel3, "[G] BOTBALL", DEBUG_X_1, y+40);
-  sensorLabel4 = createTextLabel(sensorLabel4, "[H] TOPBALL HIGH", DEBUG_X_1, y+60);
-  sensorLabel5 = createTextLabel(sensorLabel5, "-", DEBUG_X_1, y+80);
-  sensorLabel6 = createTextLabel(sensorLabel6, "-", DEBUG_X_1, y+100);
-  sensorLabel7 = createTextLabel(sensorLabel7, "-", DEBUG_X_1, y+120);
+  sensorLabel1 = createTextLabel(sensorLabel1, "[1] INERTIAL SENSOR", DEBUG_X_1, y);
+  sensorLabel2 = createTextLabel(sensorLabel2, "[AB] LEFT ENCODER", DEBUG_X_1, y+20);
+  sensorLabel3 = createTextLabel(sensorLabel3, "[CD] RIGHT ENCODER", DEBUG_X_1, y+40);
+  sensorLabel4 = createTextLabel(sensorLabel4, "[E] TOPBALL LOW", DEBUG_X_1, y+60);
+  sensorLabel5 = createTextLabel(sensorLabel5, "[F] EJECTOR", DEBUG_X_1, y+80);
+  sensorLabel6 = createTextLabel(sensorLabel6, "[G] BOTBALL", DEBUG_X_1, y+100);
+  sensorLabel7 = createTextLabel(sensorLabel7, "[H] TOPBALL HIGH", DEBUG_X_1, y+120);
   sensorLabel8 = createTextLabel(sensorLabel8, "-", DEBUG_X_1, y+140);
 
 
@@ -1024,7 +983,7 @@ void anim_sensorDebug(void*p)
   pros::delay(250);
   showSensorDebug();
   lv_obj_set_hidden(back_button,false);
-  animate_x_ease_out(back_button,20+480,20,500);
+  animate_x_ease_out(back_button,15+480,15,500);
   animateSensorDebugLeft();
 }
 
@@ -1035,7 +994,7 @@ void anim_autonDebug(void*p)
   pros::delay(250);
   showAutonDebug();
   lv_obj_set_hidden(back_button,false);
-  animate_x_ease_out(back_button,20+480,20,500);
+  animate_x_ease_out(back_button,15+480,15,500);
   animateAutonDebugLeft();
 }
 
@@ -1046,7 +1005,7 @@ void anim_deviceDebug(void*p)
   pros::delay(250);
   showDeviceDebug();
   lv_obj_set_hidden(back_button,false);
-  animate_x_ease_out(back_button,20+480,20,500);
+  animate_x_ease_out(back_button,15+480,15,500);
   animateDeviceDebugLeft();
 }
 
@@ -1061,7 +1020,7 @@ void anim_back(void*p)
       animateDeviceDebugRight(); break;
 
   }
-  animate_x_linear(back_button,20,20+480,500);
+  animate_x_linear(back_button,10,10+480,500);
   pros::delay(250);
   animateHomeScreenRight();
 }
@@ -1123,19 +1082,15 @@ void initAutonGUI()
   lv_obj_align(sensorDebug_button, NULL, LV_ALIGN_IN_TOP_LEFT,10,180);
   lv_btn_set_action(sensorDebug_button,LV_BTN_ACTION_CLICK, sensorDebugButton_action);
 
-  /*autonDebug_button = createBtn(autonDebug_button,10,10,225,50,2,"AUTON DEBUG");
-  lv_obj_align(autonDebug_button, NULL, LV_ALIGN_IN_TOP_RIGHT,-10,180);
-  lv_btn_set_action(autonDebug_button,LV_BTN_ACTION_CLICK, autonDebugButton_action);*/
-
   autonDebug_button = createBtn(autonDebug_button,10,10,150,50,2,"AUTON DEBUG");
   lv_obj_align(autonDebug_button, NULL, LV_ALIGN_IN_TOP_MID,0,180);
   lv_btn_set_action(autonDebug_button,LV_BTN_ACTION_CLICK, autonDebugButton_action);
 
-  deviceDebug_button = createBtn(deviceDebug_button,10,10,150,50,2,"DEVICE DEBUG");
+  deviceDebug_button = createBtn(deviceDebug_button,10,10,150,50,2,"MOTOR DEBUG");
   lv_obj_align(deviceDebug_button, NULL, LV_ALIGN_IN_TOP_RIGHT,-10,180);
   lv_btn_set_action(deviceDebug_button,LV_BTN_ACTION_CLICK, deviceDebugButton_action);
 
-  back_button = createBtn(back_button,20,20,50,50,2,"<");
+  back_button = createBtn(back_button,10,20,50,50,2,"<");
   lv_obj_align(back_button, NULL, LV_ALIGN_IN_TOP_LEFT,20,10);
   lv_btn_set_action(back_button,LV_BTN_ACTION_CLICK, back_action);
   lv_obj_set_hidden(back_button,true);
