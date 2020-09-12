@@ -58,7 +58,54 @@ void eject(int numBalls){
   pros::delay(200*numBalls);
   conveyorState = 0;
 }
+//----------------------------------------------
+double quadX(double x,double y,double t){
+  return 15*t + x;
+}
+double quadY(double x,double y,double t){
+  return -pow(10*(t-.5),2) + y + 25.0;
+}
+double quadDerivX(double x,double y,double t){
+  return 15;
+}
+double quadDerivY(double x,double y,double t){
+  return -2*(10*(t-.5))*10;
+}
+double lineX(double x, double y, double slope, double t){
+  return x + slope * t;
+}
+double lineY(double x, double y, double slope, double t){
+  return y + slope * t;
+}
 
+void followQuad(int numPoints){
+  double t = 0;
+  double deltaT = 1/numPoints;
+  double x = robotX;
+  double y = robotY;
+  for(int i = 0; i < numPoints; i++){
+    face(quadX(x,y,t),quadY(x,y,t));
+    driveDistance(calcDistance(quadX(x,y,t),quadY(x,y,t)), 10);
+    t+=deltaT;
+    pros::delay(deltaT*1000);
+  }
+}
+void followQuadDeriv(int numPoints){
+  double t = 0;
+  double deltaT = 1/numPoints;
+  double x = robotX;
+  double y = robotY;
+  double s = 0.5;
+  for(int i = 0; i < numPoints; i++){
+    double a = lineX(x,y,quadDerivX(x,y,t),s);
+    double b = lineY(x,y,quadDerivY(x,y,t),s);
+    face(a,b);
+    driveDistance(calcDistance(a,b), 10);
+    t+=deltaT;
+    pros::delay(deltaT*1000);
+  }
+}
+//------------------------------------------------------
 void autonomous()
 {
   pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
