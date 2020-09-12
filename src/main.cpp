@@ -80,6 +80,7 @@ double lineY(double x, double y, double slope, double t){
 
 void followQuad(int numPoints){
   double deltaT = 1.0/numPoints;
+  double len = 63.829;
   double t = deltaT;
   double x = robotX;
   double y = robotY;
