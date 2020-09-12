@@ -648,13 +648,16 @@ double quadDerivX(double x,double y,double t){
 double quadDerivY(double x,double y,double t){
   return -2*(10*(t-.5))*10;
 }
+double dydx(double x, double y, double t){
+  return quadDerivY(x,y,t)/quadDerivX(x,y,t);
+}
+
 double lineX(double x, double y, double slope, double t){
   return x + slope * t;
 }
 double lineY(double x, double y, double slope, double t){
   return y + slope * t;
 }
-
 void followQuad(int numPoints){
   double deltaT = 1.0/numPoints;
   double len = 63.829;
@@ -691,4 +694,176 @@ void followQuadDeriv(int numPoints){
     t+=deltaT;
     pros::delay(deltaT*20);
   }
+}
+double findLength(double startT, double endT, int numPoints){
+    double t = (endT - startT)/numPoints;
+    double total = 0;
+    while(startT < endT){
+      double p1x = quadX(robotX,robotY,startT);
+      double p2x = quadX(robotX,robotY,startT + t);
+      double p1y = quadY(robotX,robotY,startT);
+      double p2y = quadY(robotX,robotY,startT + t);
+      total += calcDistance(p1x,p1y,p2x,p2y);
+      startT += t;
+    }
+    return total;
+}
+
+double findLength(std::pair<double,double> points[], int cPoint, int numPoints, double deltaT, double x1, double y1)
+{
+  double total = 0;
+  //double t = deltaT;
+  for(int n = cPoint; n < numPoints; n++)
+  {
+    double p1x = quadX(x1,y1,n*deltaT);
+    double p2x = quadX(x1,y1,(n+1)*deltaT);
+    double p1y = quadY(x1,y1,n*deltaT);
+    double p2y = quadY(x1,y1,(n+1)*deltaT);
+    total += calcDistance(p1x,p1y,p2x,p2y);
+  }
+  return total;
+}
+
+void followQuadDrive(int numPoints, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout, double dkP)
+{
+  double deltaT = 1.0/numPoints;
+  double t = 0;
+  double initX = robotX;
+	double initY = robotY;
+	double initTheta = robotTheta;
+  //saves intial position the robot
+
+	double distError; //distance from robots current position to target point
+  double subDistError;
+	double angleError; //how much robot has to turn to face the target point
+
+	double distSpeed; //speed based on distError*distkP
+	double angleSpeed; //speed based on angleError*anglekP
+	double currentSpeed; //speed sent to robot based on distkP, used for controlling acceleration
+
+	double projection; //vector projection to calculate how far robot has to travel to get as close to target point WITHOUT changing its heading
+	double distkPScale; //used to scale distkP
+	double scaledDistkP; //scaled distkP value
+
+	double leftSpeed; //speed of left side
+	double rightSpeed; //speed of right side
+
+	accel *= 12000;
+	//minV *= 1000;
+	maxV *= 1000;
+	distkP *= 1000;
+	anglekP *= 1000;
+  dkP *= 1000;
+  //scales all arguments to be the correct units
+
+	int settleTimer = 0;
+	int timeoutTimer = 0;
+  //initialize timers
+
+	double settleMargin = 0.5; //if robot is this distance from target point, robot is settling
+	double adjustMargin = 6.0; //if robot is this distance from the target point, stop adjusting angle
+	double minSpeedMargin = 3.0; //if robot is this distance from the target point, don't decrease in speed anymore
+
+  double x;
+  double y;
+  double deriv;
+  double derivAdjust;
+
+  int pointCounter = 0;
+  std::pair <double, double> waypoints[numPoints];
+  for(int n = 0; n < numPoints; n++) { //fill waypoints
+    t += deltaT;
+    waypoints[n].first = quadX(initX,initY,t);
+    waypoints[n].second = quadY(initX,initY,t);
+  }
+  while(settleTimer < settleTime && timeoutTimer < timeout)
+  {
+    x = waypoints[pointCounter].first;
+    y = waypoints[pointCounter].second;
+    deriv = dydx(initX,initY,(pointCounter+1)*deltaT);
+
+    subDistError = calcDistance(x,y);
+
+    distError = calcDistance(x,y) + findLength(waypoints,pointCounter,numPoints-2,deltaT,initX,initY);
+    //calculate distance to target point
+		angleError = calcAngleError(x,y);
+    //calculate shortest angle to face target point
+		projection = fabs(distError)*cos(angleError);
+    //if you represent the robot as a unit vector with a direction of robotTheta (call this robot vector), and represent the distance and angle between the target point and the robot as another vector (call this point vector)
+    //you can prorject the robot's vector onto the point vector. The magnitude of the projected vector represents how far the robot can travel to get as close to the target point as possible without changing its heading
+    //as the robot's heading is adjusted by the angle p-controller, the magnitude of the projected vector will become closer and closer to the actual distError
+		if(projection < 0) projection = 0;
+    //prevents robot from moving backwards
+    //with adaptiveDrive, robot should only be able allowed to move ONE direction, allowing it to have the option to move forwards and backwards whenever it chooses creates strange and erratic behavior
+		distkPScale = pow(fabs(projection/distError),scalePower);
+    scaledDistkP = distkP * distkPScale;
+    //calculates a new scaled distkP based on projection/distError
+    //scale power is used to tune sensitivity of scaled kP
+
+		if(fabs(distError) < settleMargin || (fabs(distError) < adjustMargin && fabs(angleError) > 85.0*M_PI/180.0) )
+			settleTimer+=10;
+    else
+      settleTimer = 0;
+		timeoutTimer+=10;
+    //if robot is within settleMargin of point or robot is with adjustMargin and is roughly perpendicular to the point settleTimer will increase
+
+		if(fabs(subDistError) < minSpeedMargin) {
+      pointCounter++;
+      if(pointCounter > numPoints-1)
+        pointCounter = numPoints-1;
+			angleSpeed = 0;
+			distSpeed = (distError/fabs(distError))*minSpeedMargin*distkP;
+		}
+		else if(fabs(distError) < adjustMargin) {
+			angleSpeed = 0;
+			distSpeed = distError*distkP;
+      //if robot is within adjustMargin of the target point, robot's speed is still p-controlled, but angleSpeed is set to 0
+		}
+		else {
+      angleSpeed = angleError*anglekP;
+			distSpeed = distError*scaledDistkP;
+      //if robot is outside either of those margins, angle and dist speed are controlled by p-controller
+    }
+
+    if(currentSpeed < distSpeed)	currentSpeed += accel;
+		else currentSpeed = distSpeed;
+    //distSpeed is aways positive and robot doesn't go backwards, so if currentSpeed < distSpeed then accelerate
+    //if decelerating let p-controllers determine speed
+
+    if(currentSpeed > maxV) currentSpeed = maxV;
+
+    if(abs(deriv) < 2) {
+      derivAdjust = (1/abs(deriv)+0.0000001)*dkP;
+      if(derivAdjust >= maxV-5000) derivAdjust = maxV-5000;
+    }
+    else derivAdjust = 0;
+
+		driveVector(currentSpeed-derivAdjust,angleSpeed,maxV); //send speeds to motors
+		pros::delay(10);
+
+    if(true) {
+      updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
+      updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
+      updateVarLabel(debugLabel3,"CURRENT POINT",debugValue3,pointCounter,"",0);
+      updateVarLabel(debugLabel4,"CURRENT X",debugValue4,x,"IN",0);
+      updateVarLabel(debugLabel5,"CURRENT Y",debugValue5,y,"IN",0);
+      updateVarLabel(debugLabel6,"DERIV",debugValue6,deriv,"",3);
+
+      /*updateVarLabel(debugLabel1,"POINT 1 X",debugValue1,waypoints[6].first,"IN",3);
+      updateVarLabel(debugLabel2,"POINT 1 Y",debugValue2,waypoints[6].second,"IN",3);
+      updateVarLabel(debugLabel3,"POINT 2 X",debugValue3,waypoints[7].first,"IN",0);
+      updateVarLabel(debugLabel4,"POINT 2 Y",debugValue4,waypoints[7].second,"IN",0);
+      updateVarLabel(debugLabel5,"POINT 3 X",debugValue5,waypoints[8].first,"IN",0);
+      updateVarLabel(debugLabel6,"POINT 3 X",debugValue6,waypoints[8].second,"IN",0);*/
+    }
+  }
+  rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	rightDrive.moveVelocity(0);
+  leftDrive.moveVelocity(0);
+}
+
+void followQuadDrive(int numPoints, double maxV)
+{
+  followQuadDrive(numPoints,0.05,maxV,0.65,6.0,2.0,250,20000,0.3);
 }
