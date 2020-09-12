@@ -60,7 +60,7 @@ void eject(int numBalls){
 }
 //----------------------------------------------
 double quadX(double x,double y,double t){
-  return 15*t + x;
+  return 45*t + x;
 }
 double quadY(double x,double y,double t){
   return -pow(10*(t-.5),2) + y + 25.0;
@@ -87,7 +87,7 @@ void followQuad(int numPoints){
     face(quadX(x,y,t),quadY(x,y,t));
     driveDistance(calcDistance(quadX(x,y,t),quadY(x,y,t)), 10);
     t+=deltaT;
-    pros::delay(deltaT*1000);
+    pros::delay(deltaT*20);
   }
 }
 void followQuadDeriv(int numPoints){
@@ -100,9 +100,9 @@ void followQuadDeriv(int numPoints){
     double a = lineX(x,y,quadDerivX(x,y,t),s);
     double b = lineY(x,y,quadDerivY(x,y,t),s);
     face(a,b);
-    driveDistance(calcDistance(a,b), 10);
+    driveDistance(calcDistance(a,b), 8);
     t+=deltaT;
-    pros::delay(deltaT*1000);
+    pros::delay(deltaT*20);
   }
 }
 //------------------------------------------------------
@@ -123,7 +123,7 @@ void autonomous()
     break;
 
     case 2: //blue auton
-
+      followQuad(10);
     break;
 
     case 3: //skills auton
