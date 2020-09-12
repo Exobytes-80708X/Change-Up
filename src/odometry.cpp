@@ -5,7 +5,7 @@ const double WHEEL_DIAMETER = 2.875;
 const double ENCODER_WIDTH = 7.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
 const double IMU_WEIGHT = 0.5;
-const bool DEBUGGING_ENABLED = true;
+const bool DEBUGGING_ENABLED = false;
 int test = 0;
 
 double robotTheta_imu = 0.0;
@@ -74,11 +74,11 @@ void thread_Odometry(void*param)
         robotX += dX; //add to current x and ys
         robotY += dY;
 
-        if(DEBUGGING_ENABLED) {
+        //if(DEBUGGING_ENABLED) {
           updateValueLabel(xValue,robotX, "IN",3);
           updateValueLabel(yValue,robotY, "IN",3);
           updateValueLabel(thetaValue,robotTheta*180/M_PI,"DEG",3);
-        }
+        //}
         pros::delay(10); //reupdate every dT msec
     }
 }
@@ -360,7 +360,7 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
       updateVarLabel(debugLabel2,"TIMEOUT TIMER",debugValue2,timeoutTimer,"SEC",0);
     }
 	}
-  resetAutonDebug();
+  if(DEBUGGING_ENABLED) resetAutonDebug();
 	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 	rightDrive.moveVelocity(0);
@@ -459,7 +459,7 @@ void face(double x, double y, bool reversed, double accelTime, double minV, doub
 
       face_alg(error,accelTime,minV,medV,maxV,kP);
 		}
-    resetAutonDebug();
+    if(DEBUGGING_ENABLED) resetAutonDebug();
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		rightDrive.moveVelocity(0);
@@ -495,7 +495,7 @@ void face(double theta, bool reversed, double accelTime, double minV, double med
 
 				face_alg(error,accelTime,minV,medV,maxV,kP);
 		}
-    resetAutonDebug();
+    if(DEBUGGING_ENABLED) resetAutonDebug();
 		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
 		rightDrive.moveVelocity(0);

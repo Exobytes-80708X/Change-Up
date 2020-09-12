@@ -83,7 +83,11 @@ void followQuad(int numPoints){
   double deltaT = 1/numPoints;
   double x = robotX;
   double y = robotY;
-  for(int i = 0; i < numPoints; i++){
+  for(int i = 0; i <= numPoints; i++){
+    double x1 = quadX(x,y,t);
+    double y1 = quadY(x,y,t);
+    updateVarLabel(debugLabel1,"QUAD X",debugValue1,x1,"IN",3);
+    updateVarLabel(debugLabel2,"QUAD Y",debugValue1,y1,"IN",3);
     face(quadX(x,y,t),quadY(x,y,t));
     driveDistance(calcDistance(quadX(x,y,t),quadY(x,y,t)), 10);
     t+=deltaT;
@@ -96,9 +100,11 @@ void followQuadDeriv(int numPoints){
   double x = robotX;
   double y = robotY;
   double s = 0.5;
-  for(int i = 0; i < numPoints; i++){
+  for(int i = 0; i <= numPoints; i++){
     double a = lineX(x,y,quadDerivX(x,y,t),s);
     double b = lineY(x,y,quadDerivY(x,y,t),s);
+    updateVarLabel(debugLabel1,"QUAD X",debugValue1,a,"IN",3);
+    updateVarLabel(debugLabel2,"QUAD Y",debugValue1,b,"IN",3);
     face(a,b);
     driveDistance(calcDistance(a,b), 8);
     t+=deltaT;
