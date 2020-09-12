@@ -79,24 +79,27 @@ double lineY(double x, double y, double slope, double t){
 }
 
 void followQuad(int numPoints){
-  double t = 0;
-  double deltaT = 1/numPoints;
+  double deltaT = 1.0/numPoints;
+  double t = deltaT;
   double x = robotX;
   double y = robotY;
-  for(int i = 0; i <= numPoints; i++){
+  for(int i = 1; i <= numPoints; i++){
     double x1 = quadX(x,y,t);
     double y1 = quadY(x,y,t);
     updateVarLabel(debugLabel1,"QUAD X",debugValue1,x1,"IN",3);
-    updateVarLabel(debugLabel2,"QUAD Y",debugValue1,y1,"IN",3);
-    face(quadX(x,y,t),quadY(x,y,t));
-    driveDistance(calcDistance(quadX(x,y,t),quadY(x,y,t)), 10);
+    updateVarLabel(debugLabel2,"QUAD Y",debugValue2,y1,"IN",3);
+    updateVarLabel(debugLabel3,"t",debugValue3,t,"SECONDS",3);
+    updateVarLabel(debugLabel4,"dt",debugValue4,deltaT,"SECONDS",3);
+    //face(x1,y1);
+    //driveDistance(calcDistance(quadX(x,y,t),quadY(x,y,t)), 10);
+    adaptiveDrive(x1, y1, 8);
     t+=deltaT;
-    pros::delay(deltaT*20);
+    //pros::delay(deltaT*20);
   }
 }
 void followQuadDeriv(int numPoints){
   double t = 0;
-  double deltaT = 1/numPoints;
+  double deltaT = 1.0/numPoints;
   double x = robotX;
   double y = robotY;
   double s = 0.5;
@@ -129,7 +132,7 @@ void autonomous()
     break;
 
     case 2: //blue auton
-      followQuad(10);
+      followQuad(8);
     break;
 
     case 3: //skills auton
