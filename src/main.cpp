@@ -59,62 +59,7 @@ void eject(int numBalls){
   conveyorState = 0;
 }
 //----------------------------------------------
-double quadX(double x,double y,double t){
-  return 45*t + x;
-}
-double quadY(double x,double y,double t){
-  return -pow(10*(t-.5),2) + y + 25.0;
-}
-double quadDerivX(double x,double y,double t){
-  return 15;
-}
-double quadDerivY(double x,double y,double t){
-  return -2*(10*(t-.5))*10;
-}
-double lineX(double x, double y, double slope, double t){
-  return x + slope * t;
-}
-double lineY(double x, double y, double slope, double t){
-  return y + slope * t;
-}
 
-void followQuad(int numPoints){
-  double deltaT = 1.0/numPoints;
-  double len = 63.829;
-  double t = deltaT;
-  double x = robotX;
-  double y = robotY;
-  for(int i = 1; i <= numPoints; i++){
-    double x1 = quadX(x,y,t);
-    double y1 = quadY(x,y,t);
-    updateVarLabel(debugLabel1,"QUAD X",debugValue1,x1,"IN",3);
-    updateVarLabel(debugLabel2,"QUAD Y",debugValue2,y1,"IN",3);
-    updateVarLabel(debugLabel3,"t",debugValue3,t,"SECONDS",3);
-    updateVarLabel(debugLabel4,"dt",debugValue4,deltaT,"SECONDS",3);
-    //face(x1,y1);
-    //driveDistance(calcDistance(quadX(x,y,t),quadY(x,y,t)), 10);
-    adaptiveDrive(x1, y1, 8);
-    t+=deltaT;
-    //pros::delay(deltaT*20);
-  }
-}
-void followQuadDeriv(int numPoints){
-  double t = 0;
-  double deltaT = 1.0/numPoints;
-  double x = robotX;
-  double y = robotY;
-  double s = 0.5;
-  for(int i = 0; i <= numPoints; i++){
-    double a = lineX(x,y,quadDerivX(x,y,t),s);
-    double b = lineY(x,y,quadDerivY(x,y,t),s);
-    updateVarLabel(debugLabel1,"QUAD X",debugValue1,a,"IN",3);
-    updateVarLabel(debugLabel2,"QUAD Y",debugValue1,b,"IN",3);
-    face(a,b);
-    driveDistance(calcDistance(a,b), 8);
-    t+=deltaT;
-    pros::delay(deltaT*20);
-  }
-}
 //------------------------------------------------------
 void autonomous()
 {
