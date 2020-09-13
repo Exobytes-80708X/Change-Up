@@ -6,7 +6,7 @@
 using namespace std;
 typedef double db;
 
-db bezX(db x1,db x2,db x3,db x4,db t){
+db bezX(db x1,db x2,db x3,db x4,db t){  // THIS IS THE EQUATION OF A BEZIER's X COORD AT A TIME t GIVEN COEFFICIENTS (DWB COEFFICIENTS)
   return x1*(1-t)*(1-t)*(1-t) + 3*t*x2*(1-t)*(1-t) + 3*t*t*x3*(1-t) + t*t*t*x4;
 }
 
@@ -14,7 +14,7 @@ db bezY(db y1,db y2,db y3,db y4,db t){
   return y1*(1-t)*(1-t)*(1-t) + 3*t*y2*(1-t)*(1-t) + 3*t*t*y3*(1-t) + t*t*t*y4;
 }
 
-void thomas(double* a, double* b, double* c, double* d, int n) {
+void thomas(double* a, double* b, double* c, double* d, int n) {  // THIS IS A COPY PASTE OF WIKIPEDIA BUT IT WORKS! ALSO DWBI ITS LINEAR STUFF IDEK HOW IT WORKS TBH
     /*
     // n is the number of unknowns
 
@@ -66,7 +66,7 @@ void thomas(double* a, double* b, double* c, double* d, int n) {
 }
 
 void resetMatrix(db* bot, db* mid, db* top, int n){
-    // ---------------- ASSIGNMENT OF A TRIDIAGONAL MATRIC (BASICALLY 3 DIAGONALS IN A MATRIX FORMAT WITH EVERYTHING NOT ON THE DIAGONAL AS 0) (DWBI)
+    // ASSIGNMENT OF A TRIDIAGONAL MATRIC (BASICALLY 3 DIAGONALS IN A MATRIX FORMAT WITH EVERYTHING NOT ON THE DIAGONAL AS 0) (DWBI)
     bot[0] = 0;
     bot[n-1] = 2;
     for(int i = 1; i < n-1; i++){
@@ -106,9 +106,7 @@ void multiBez(db* x, db* y, int n){
     db p3x[n];
     db p3y[n];
 
-
     resetMatrix(bot,mid,top,n);
-
 
     rX[0] = x[0] + 2*x[1];
     rY[0] = y[0] + 2*y[1];
