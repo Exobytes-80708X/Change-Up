@@ -69,7 +69,7 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-    followQuadDrive(15,8);
+    followQuadDrive(9,8);
     break;
 
     case 1: //red auton

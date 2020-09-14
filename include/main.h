@@ -97,10 +97,16 @@ extern bool isRobotDisabled;
 #include "odometry.h"
 #endif
 
+#ifndef SPLINES
+#define SPLINES
+#include "splines.h"
+#endif
+
+
 #ifndef GUI
 #define GUI
 #include "gui.h"
 #endif
 
-#include <iostream> 
+#include <iostream>
 #include <utility>
