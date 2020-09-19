@@ -81,7 +81,8 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-      adaptiveDrive(0, 24, 10);
+      adaptiveDrive(24,24,10);
+      adaptiveDrive(24,48,10);
     break;
 
     case 1: //red auton

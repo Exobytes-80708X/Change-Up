@@ -546,7 +546,7 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 	double leftSpeed; //speed of left side
 	double rightSpeed; //speed of right side
 
-	accel *= 12000;
+	accel *= 1200;
 	//minV *= 1000;
 	maxV *= 1000;
 	distkP *= 1000;
