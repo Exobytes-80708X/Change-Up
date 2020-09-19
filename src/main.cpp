@@ -55,7 +55,7 @@ void eject(int numBalls){
   //conveyorState = 0;
 
   conveyorState = 2;
-  pros::delay(200*numBalls);
+  pros::delay(250*numBalls);
   conveyorState = 0;
 }
 //----------------------------------------------
@@ -93,7 +93,7 @@ void autonomous()
     intake(outward);
     driveDistance(-24,8);
     intake(stop);
-    face(10,63);
+    face(14,63);
     eject(2);
     intake(inward);
     driveDistance(calcDistance(10,63),10);
@@ -115,6 +115,54 @@ void autonomous()
     eject(1);
     driveDistance(calcDistance(3,100),10);
     intake(stop);
+    face(-20,125);
+    driveDistance(calcDistance(-10,115),10);
+    delayDrive(700,5500);
+    intake(inward);
+    pros::delay(500);
+    shoot(1);
+    pros::delay(500);
+    intake(outward);
+    driveDistance(-30,10);
+    face(35,90);
+    eject(2);
+    intake(inward);
+    driveDistance(calcDistance(40,86),10);
+    face(40,120);
+    driveDistance(20,8);
+    delayDrive(700, 5500);
+    pros::delay(500);
+    shoot(1);
+    pros::delay(500);
+    intake(outward);
+    driveDistance(-20,10);
+    intake(stop);
+    face(85,110);
+    eject(1);
+    intake(inward);
+    driveDistance(calcDistance(90,115),10);
+    face(105,125);
+    intake(stop);
+    driveDistance(calcDistance(100,115),8);
+    intake(inward);
+    delayDrive(600,5500);
+    pros::delay(500);
+    shoot(1);
+    pros::delay(500);
+    intake(outward);
+    driveDistance(-20,10);
+    face(70,55);
+    eject(2);
+    driveDistance(calcDistance(70,55),10);
+    face(200,55);
+    delayDrive(1000,7500);
+    pros::delay(500);
+    shoot(1);
+    pros::delay(500);
+    intake(outward);
+    driveDistance(-20,10);
+
+
     break;
 
   }
