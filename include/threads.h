@@ -12,3 +12,4 @@ extern void thread_control(void*p);
 extern void thread_drive(void*p);
 extern void thread_sensors(void*p);
 extern void shooting_macro(int a);
+extern void waitForBallToEject();
