@@ -48,6 +48,8 @@ void eject_thread(void*p)
   for(int n = 0; n < ejectBalls; n++) {
     waitForBallToEject();
   }
+  ejectBalls = 0;
+  conveyorState = 0;
 }
 
 void eject(int numBalls){
@@ -66,8 +68,7 @@ void eject(int numBalls){
   conveyorState = 2;
   ejectBalls = numBalls;
   pros::Task sub (eject_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  ejectBalls = 0;
-  conveyorState = 0;
+
 }
 //----------------------------------------------
 
