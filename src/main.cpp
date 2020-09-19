@@ -81,7 +81,7 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-    followQuadDrive(9,8);
+      adaptiveDrive(0, 48, 10);
     break;
 
     case 1: //red auton
@@ -98,10 +98,10 @@ void autonomous()
     face(-26,-1);
     driveDistance(18,8);
     delayDrive(700, 5500);
-    while(!firstBall) pros::delay(10);
+    //while(!firstBall) pros::delay(10);
     shoot(2);
     intake(inward);
-    pros::delay(1000);
+    pros::delay(900);
     intake(outward);
     driveDistance(-24,8);
     intake(stop);
@@ -131,7 +131,7 @@ void autonomous()
     driveDistance(calcDistance(-10,115),10);
     delayDrive(700,5500);
     intake(inward);
-    pros::delay(500);
+    //pros::delay(500);
     shoot(1);
     pros::delay(500);
     intake(outward);
@@ -139,41 +139,56 @@ void autonomous()
     face(35,90);
     eject(2);
     intake(inward);
-    driveDistance(calcDistance(40,86),10);
-    face(40,120);
+    driveDistance(calcDistance(43,90),10);
+    face(43,120);
     driveDistance(20,8);
     delayDrive(700, 5500);
-    pros::delay(500);
+    //pros::delay(500);
     shoot(1);
     pros::delay(500);
     intake(outward);
-    driveDistance(-20,10);
+    driveDistance(-10,10);
     intake(stop);
-    face(85,110);
+    face(85,107);
     eject(1);
     intake(inward);
-    driveDistance(calcDistance(90,115),10);
-    face(105,125);
+    driveDistance(calcDistance(85,110)+4,10);
+    face(110,125);
     intake(stop);
     driveDistance(calcDistance(100,115),8);
     intake(inward);
     delayDrive(600,5500);
-    pros::delay(500);
+    //pros::delay(500);
     shoot(1);
     pros::delay(500);
     intake(outward);
     driveDistance(-20,10);
+    intake(inward);
     face(70,55);
     eject(2);
     driveDistance(calcDistance(70,55),10);
-    face(200,55);
+    face(200,58);
     delayDrive(1000,7500);
-    pros::delay(500);
+    //pros::delay(500);
     shoot(1);
     pros::delay(500);
     intake(outward);
     driveDistance(-20,10);
-
+    face(82,10);
+    eject(1);
+    intake(inward);
+    driveDistance(calcDistance(82,10),10);
+    face(100,-1);
+    driveDistance(calcDistance(95,6),10);
+    delayDrive(750,5500);
+    pros::delay(600);
+    shoot(1);
+    pros::delay(700);
+    intake(outward);
+    driveDistance(-30,10);
+    face(30,27);
+    driveDistance(calcDistance(30,27),10);
+    face(30,-1);
 
     break;
 

@@ -4,7 +4,7 @@
 const double WHEEL_DIAMETER = 2.875;
 const double ENCODER_WIDTH = 7.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
-const double IMU_WEIGHT = 0.5;
+const double IMU_WEIGHT = 0.4;
 const bool DEBUGGING_ENABLED = false;
 int test = 0;
 
@@ -504,12 +504,12 @@ void face(double theta, bool reversed, double accelTime, double minV, double med
 
 void face(double x, double y)
 {
-  face(x,y,false,500,0,2.5,10,5.8,250,20000);
+  face(x,y,false,750,0,2.5,10,5.8,250,5000);
 }
 
 void face(double theta)
 {
-  face(theta,false,500,0,2.5,10,5.8,250,20000);
+  face(theta,false,750,0,2.5,10,5.8,250,5000);
 }
 
 void adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)
