@@ -504,7 +504,7 @@ void face(double theta, bool reversed, double accelTime, double minV, double med
 
 void face(double x, double y)
 {
-  face(x,y,false,750,0,2.5,10,5.8,250,5000);
+  face(x,y,false,500,0,2.5,10,5.8,250,5000);
 }
 
 void face(double theta)
