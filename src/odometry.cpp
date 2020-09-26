@@ -624,7 +624,7 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 
 void adaptiveDrive(double x, double y, double maxV)
 {
-	adaptiveDrive(x,y,0.05,maxV,0.7,5.0,1.0,250,10000);
+	adaptiveDrive(x,y,0.2,maxV,0.7,5.0,1.0,250,10000);
 }
 
 void delayDrive(int ms,double vel){
