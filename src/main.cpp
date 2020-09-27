@@ -20,6 +20,72 @@ void competition_initialize()
 
 }
 
+void benchmark_speeds()
+{
+  double prevX;
+  double dX;
+  double prevY;
+  double dY;
+
+  double dS;
+
+  double max_j;
+  double max_a;
+  double max_v;
+
+  double current_a;
+  double prev_a = 0;
+  double dA;
+
+  double current_v;
+  double prev_v = 0;
+  double dV;
+
+  double current_j;
+
+  double start_time = pros::millis()/1000.0;//std::clock();
+  double current_time = start_time;
+  double prev_time = current_time;
+  double dT = current_time - prev_time;
+
+  while(current_time - start_time <= 3)
+  {
+    rightDrive.moveVoltage(8000);
+    leftDrive.moveVoltage(8000);
+    pros::delay(10);
+    current_time = pros::millis()/1000.0;//std::clock();
+    dT = current_time - prev_time;
+    prev_time = current_time;
+
+    dS = calcDistance(prevX,prevY,robotX,robotY);
+    prevX = robotX;
+    prevY = robotY;
+
+    current_v = dS/dT; //inches per second
+    dV = current_v - prev_v;
+    prev_v = current_v;
+
+    if(current_v > max_v) max_v = current_v;
+
+    current_a = dV/dT; //inches per second^2
+    dA = current_a - prev_a;
+    prev_a = current_a;
+
+    if(current_a > max_a) max_v = current_a;
+
+    current_j = dA/dT; //inches per second^3
+
+    if(current_j > max_j) max_j = current_j;
+
+    updateVarLabel(debugLabel1,"MAX VELOCITY",debugValue1,max_v,"IN/S",3);
+    updateVarLabel(debugLabel2,"MAX ACCEL",debugValue2,max_a*180/M_PI,"IN/S^2",3);
+    updateVarLabel(debugLabel3,"MAX JERK",debugValue3,max_j,"IN/S^3",0);
+  }
+  rightDrive.moveVoltage(0);
+  leftDrive.moveVoltage(0);
+
+}
+
 void intake(int state){
   // state - What intake state to switch to. in = 0, out = 1, stop = 2
   intakeState = state;
@@ -81,8 +147,7 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-      adaptiveDrive(24,24,10);
-      adaptiveDrive(24,48,10);
+    benchmark_speeds();
     break;
 
     case 1: //red auton
