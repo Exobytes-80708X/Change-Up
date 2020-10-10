@@ -774,6 +774,7 @@ void thread_sensorDebug(void*p)
     updateValueLabel(sensorValue5,ejectDetector.get_value(),"",0);
     updateValueLabel(sensorValue6,botDetector.get_value(),"",0);
     updateValueLabel(sensorValue7,topDetector2.get_value(),"",0);
+    updateValueLabel(sensorValue8,pros::c::ext_adi_analog_read(5,'a'),"",0);
     updateValueLabel(sensorValue1,imu.get_heading(),"DEG",3);
     updateValueLabel(sensorValue2,left.get(),"",0);
     updateValueLabel(sensorValue3,right.get(),"",0);
@@ -838,7 +839,7 @@ void initSensorDebug()
   sensorLabel5 = createTextLabel(sensorLabel5, "[F] EJECTOR", DEBUG_X_1, y+80);
   sensorLabel6 = createTextLabel(sensorLabel6, "[G] BOTBALL", DEBUG_X_1, y+100);
   sensorLabel7 = createTextLabel(sensorLabel7, "[H] TOPBALL HIGH", DEBUG_X_1, y+120);
-  sensorLabel8 = createTextLabel(sensorLabel8, "-", DEBUG_X_1, y+140);
+  sensorLabel8 = createTextLabel(sensorLabel8, "[EXT] BOTBALL LOW", DEBUG_X_1, y+140);
 
 
   sensorValue1 = createTextLabel(sensorValue1, "-", DEBUG_X_2, y);

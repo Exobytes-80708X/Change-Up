@@ -12,9 +12,12 @@ int macro2_trigger = 4;
 bool topBall_low;
 bool topBall_high;
 bool botBall;
+bool botBall_low;
 bool firstBall;
 bool secondBall;
 bool ballInEjector;
+bool thirdBall;
+
 
 void thread_sensors(void *p)
 {
@@ -35,6 +38,10 @@ void thread_sensors(void *p)
       ballInEjector = true;
     else ballInEjector = false;
 
+    /*if(pros::c::ext_adi_analog_read(5,8) < 2800)
+      botBall_low = true;
+    else botBall_low = false;*/
+
     if(topBall_low || topBall_high)
       firstBall = true;
     else firstBall = false;
@@ -42,6 +49,10 @@ void thread_sensors(void *p)
     if(firstBall && botBall)
       secondBall = true;
     else secondBall = false;
+
+    if(secondBall and botBall_low)
+      thirdBall = true;
+    else thirdBall = false;
 
     pros::delay(10);
   }
@@ -102,6 +113,17 @@ void countBalls(int numOfBalls)
       pros::delay(200);
     }
     if(noBalls) break;
+  }
+}
+
+void countIntakeBalls(int numOfBalls)
+{
+  for(int n = 0; n < numOfBalls; n++) {
+    if(thirdBall) break;
+    while(!botBall_low)
+      pros::delay(10);
+    while(botBall_low)
+      pros::delay(10);
   }
 }
 

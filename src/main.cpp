@@ -7,7 +7,7 @@ void initialize()
   pros::Task task_1 (thread_sensors, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task task_2 (thread_conveyor, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task task_3 (thread_intake, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  pros::Task task_GUI (initGUI, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");;
+  pros::Task task_GUI (initGUI, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
 }
 
 void disabled()
@@ -147,7 +147,11 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-    benchmark_speeds();
+    //benchmark_speeds();
+    intake(inward);
+    countIntakeBalls(3);
+    pros::delay(500);
+    intake(stop);
     break;
 
     case 1: //red auton
