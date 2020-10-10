@@ -1,13 +1,14 @@
 #include "main.h"
 bool isRobotDisabled = true;
+bool driverControl = false;
 
 void initialize()
 {
   imu.reset();
-  pros::Task task_1 (thread_sensors, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  pros::Task task_2 (thread_conveyor, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  pros::Task task_3 (thread_intake, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::c::ext_adi_pin_mode(5, 'A', INPUT_ANALOG);
   pros::Task task_GUI (initGUI, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task task_1 (thread_sensors, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task task_2 (thread_subsystems, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
 }
 
 void disabled()
@@ -149,8 +150,7 @@ void autonomous()
     case 0: //no auton
     //benchmark_speeds();
     intake(inward);
-    countIntakeBalls(3);
-    pros::delay(500);
+    countIntakeBalls(2);
     intake(stop);
     break;
 
@@ -279,6 +279,7 @@ void autonomous()
 void opcontrol()
 {
   isRobotDisabled = false;
+  driverControl = true;
   pros::Task task_4 (thread_drive, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task task_5 (thread_control, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
 }

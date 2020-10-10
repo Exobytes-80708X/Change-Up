@@ -765,16 +765,19 @@ void animateDeviceDebugRight()
   animate_x_linear(deviceTemp8,DEBUG_X_2+100,DEBUG_X_2+580,500);
 }
 
-
 //sensor Debug ==================================================================================================================================
 void thread_sensorDebug(void*p)
 {
+  int store = 5000;
   while(true) {
+    if(store  > (int)pros::c::ext_adi_analog_read(5,'A') && (int)pros::c::ext_adi_analog_read(5,'A') > 100)
+      store = (int)pros::c::ext_adi_analog_read(5,'A');
+
     updateValueLabel(sensorValue4,topDetector.get_value(),"",0);
     updateValueLabel(sensorValue5,ejectDetector.get_value(),"",0);
     updateValueLabel(sensorValue6,botDetector.get_value(),"",0);
     updateValueLabel(sensorValue7,topDetector2.get_value(),"",0);
-    updateValueLabel(sensorValue8,pros::c::ext_adi_analog_read(5,'a'),"",0);
+    updateValueLabel(sensorValue8,store,"",0);
     updateValueLabel(sensorValue1,imu.get_heading(),"DEG",3);
     updateValueLabel(sensorValue2,left.get(),"",0);
     updateValueLabel(sensorValue3,right.get(),"",0);

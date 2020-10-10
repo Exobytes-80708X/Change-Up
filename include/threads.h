@@ -6,7 +6,7 @@ extern int outward;
 extern int stop;
 extern int conveyorState;
 extern bool firstBall;
-extern void thread_conveyor(void*p);
+extern void thread_subsystems(void*p);
 extern void thread_intake(void*p);
 extern void thread_control(void*p);
 extern void thread_drive(void*p);

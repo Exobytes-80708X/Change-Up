@@ -8,6 +8,7 @@ int shooting = 1;
 int ejecting = 2;
 int macro1_trigger = 3;
 int macro2_trigger = 4;
+int macro3_trigger = 6;
 
 bool topBall_low;
 bool topBall_high;
@@ -17,6 +18,8 @@ bool firstBall;
 bool secondBall;
 bool ballInEjector;
 bool thirdBall;
+
+int iBalls = 0;
 
 
 void thread_sensors(void *p)
@@ -38,9 +41,9 @@ void thread_sensors(void *p)
       ballInEjector = true;
     else ballInEjector = false;
 
-    /*if(pros::c::ext_adi_analog_read(5,8) < 2800)
+    if(pros::c::ext_adi_analog_read(5,'A') < 2800)
       botBall_low = true;
-    else botBall_low = false;*/
+    else botBall_low = false;
 
     if(topBall_low || topBall_high)
       firstBall = true;
@@ -50,7 +53,7 @@ void thread_sensors(void *p)
       secondBall = true;
     else secondBall = false;
 
-    if(secondBall and botBall_low)
+    if(secondBall && botBall_low)
       thirdBall = true;
     else thirdBall = false;
 
@@ -118,13 +121,38 @@ void countBalls(int numOfBalls)
 
 void countIntakeBalls(int numOfBalls)
 {
-  for(int n = 0; n < numOfBalls; n++) {
-    if(thirdBall) break;
-    while(!botBall_low)
-      pros::delay(10);
-    while(botBall_low)
-      pros::delay(10);
+  int timer=0;
+  while(botBall_low){
+       pros::delay(10);
   }
+  for(int n = 0; n < numOfBalls; n++) {
+    timer = 0;
+    while(!botBall_low) {
+      timer+=10;
+      pros::delay(10);
+      if(timer > 500){
+        return;
+      }
+    }
+    timer = 0;
+    while(botBall_low) {
+      timer+=10;
+      pros::delay(10);
+      if(timer > 500) {
+        return;
+      }
+    }
+  }
+}
+
+bool intakeFinished = false;
+void intake_subthread(void*p)
+{
+  intakeFinished = false;
+  intakeState = inward;
+  countIntakeBalls(iBalls);
+  intakeState = stop;
+  intakeFinished = true;
 }
 
 void shooting_macro(int numOfBalls)
@@ -167,12 +195,82 @@ void thread_centerTopBall(void*p)
   }
 }
 
-void thread_conveyor(void* p)
+int countHeldBalls()
+{
+  if(thirdBall) return 3;
+  else if(secondBall) return 2;
+  else if(firstBall) return 1;
+  else return 0;
+}
+
+void super_macro(int shootBalls, int intakeBalls)
+{
+  iBalls = intakeBalls;
+  pros::Task subthread (intake_subthread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
+  shooting_macro(shootBalls);
+  while(!intakeFinished) {
+    if(firstBall)
+      centerTopBall();
+    else
+      topConveyor.move_velocity(200);
+
+    if(secondBall && firstBall)
+      botConveyor.move_velocity(0);
+    else
+      botConveyor.move_velocity(400);
+    pros::delay(10);
+  }
+}
+
+void thread_intakecontrol(void*p)
+{
+  while(true) {
+    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+      intakeState = inward;
+    }
+    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+      intakeState = outward;
+    }
+    else {
+      intakeState = stop;
+    }
+    pros::delay(10);
+  }
+}
+
+int inward = 0;
+int outward = 1;
+int stop = 2;
+void thread_intake(void* p)
+{
+  while(true) {
+    switch(intakeState)
+    {
+      case 0:
+        leftIntake.move_voltage(12000);
+        rightIntake.move_voltage(12000);
+        break;
+      case 1:
+        leftIntake.move_voltage(-12000);
+        rightIntake.move_voltage(-12000);
+        break;
+      case 2:
+        leftIntake.move_voltage(0);
+        rightIntake.move_voltage(0);
+        break;
+    }
+    pros::delay(10);
+  }
+}
+
+void thread_subsystems(void* p)
 {
   botConveyor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   topConveyor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
   pros::Task topBall_task (thread_centerTopBall, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
   topBall_task.suspend();
+  pros::Task intake_thread (thread_intake, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task intake_control (thread_intakecontrol, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   while(true) {
     switch(conveyorState) {
       case 0: //idle state
@@ -220,12 +318,14 @@ void thread_conveyor(void* p)
         }
         break;
 
-      case 3: //shooting macro 3 balls
-        shooting_macro(3);
+      case 3: //macro1
+        shooting_macro(countHeldBalls());
         break;
 
-      case 4: //shooting macro 2 balls
-        shooting_macro(2);
+      case 4: //macro2
+        intake_control.suspend();
+        super_macro(countHeldBalls(),1);
+        intake_control.resume();
         break;
 
       case 5: //ejecting macro top 2 balls
@@ -246,51 +346,11 @@ void thread_conveyor(void* p)
         }
         break;
 
-      case 6:
-        shooting_macro(1);
+      case 6: //maro3
+        intake_control.suspend();
+        super_macro(countHeldBalls(),2);
+        intake_control.resume();
         break;
-    }
-    pros::delay(10);
-  }
-}
-
-int inward = 0;
-int outward = 1;
-int stop = 2;
-void thread_intake(void* p)
-{
-  while(true) {
-    switch(intakeState)
-    {
-      case 0:
-        leftIntake.move_voltage(12000);
-        rightIntake.move_voltage(12000);
-        break;
-      case 1:
-        leftIntake.move_voltage(-12000);
-        rightIntake.move_voltage(-12000);
-        break;
-      case 2:
-        leftIntake.move_voltage(0);
-        rightIntake.move_voltage(0);
-        break;
-    }
-
-    pros::delay(10);
-  }
-}
-
-void thread_intake_control(void* p)
-{
-  while(true) {
-    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      intakeState = inward;
-    }
-    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      intakeState = outward;
-    }
-    else {
-      intakeState = stop;
     }
     pros::delay(10);
   }
@@ -298,7 +358,7 @@ void thread_intake_control(void* p)
 
 void thread_control(void* p)
 {
-  pros::Task sub_task (thread_intake_control, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
+  //pros::Task sub_task (thread_intake_control, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
   while(true)
   {
     if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
@@ -307,11 +367,14 @@ void thread_control(void* p)
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       conveyorState = ejecting;
     }
-    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
       conveyorState = macro1_trigger;
     }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
       conveyorState = macro2_trigger;
+    }
+    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+      conveyorState = macro3_trigger;
     }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
       conveyorState = 5;
