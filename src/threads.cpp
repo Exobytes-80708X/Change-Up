@@ -354,6 +354,13 @@ void thread_subsystems(void* p)
         super_macro(countHeldBalls(),2);
         intake_control.resume();
         break;
+
+      case 7: //pause
+        botConveyor.move_velocity(0);
+        topConveyor.move_velocity(0);
+        while(conveyorState == 7)
+          pros::delay(10);
+        break;
     }
     pros::delay(10);
   }
