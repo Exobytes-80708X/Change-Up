@@ -367,15 +367,15 @@ void thread_control(void* p)
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       conveyorState = ejecting;
     }
-    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
       conveyorState = macro1_trigger;
     }
-    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
-      conveyorState = macro2_trigger;
-    }
-    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
-      conveyorState = macro3_trigger;
-    }
+    // else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
+    //   conveyorState = macro2_trigger;
+    // }
+    // else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+    //   conveyorState = macro3_trigger;
+    // }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
       conveyorState = 5;
     }
