@@ -94,7 +94,6 @@ void countBalls(int numOfBalls)
       return;
     }
   }
-
   for(int n = 0; n < numOfBalls; n++) {
     timer = 0;
     if(n == numOfBalls-1)
@@ -143,6 +142,7 @@ void countIntakeBalls(int numOfBalls)
       }
     }
   }
+  //pros::delay(200);
 }
 
 bool intakeFinished = false;
@@ -205,6 +205,7 @@ int countHeldBalls()
 
 void super_macro(int shootBalls, int intakeBalls)
 {
+  intakeFinished = false;
   if(!driverControl)
     conveyorState = 7;
   iBalls = intakeBalls;
@@ -221,9 +222,9 @@ void super_macro(int shootBalls, int intakeBalls)
     else
       botConveyor.move_velocity(400);
     pros::delay(10);
-    if(!driverControl)
-      conveyorState = 0;
   }
+  if(!driverControl)
+    conveyorState = 0;
 }
 
 void thread_intakecontrol(void*p)
