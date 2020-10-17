@@ -141,6 +141,7 @@ void countIntakeBalls(int numOfBalls)
         return;
       }
     }
+    break;
   }
   //pros::delay(200);
 }
