@@ -205,6 +205,8 @@ int countHeldBalls()
 
 void super_macro(int shootBalls, int intakeBalls)
 {
+  if(!driverControl)
+    conveyorState = 7;
   iBalls = intakeBalls;
   pros::Task subthread (intake_subthread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   shooting_macro(shootBalls);
@@ -219,6 +221,8 @@ void super_macro(int shootBalls, int intakeBalls)
     else
       botConveyor.move_velocity(400);
     pros::delay(10);
+    if(!driverControl)
+      conveyorState = 0;
   }
 }
 
@@ -356,8 +360,6 @@ void thread_subsystems(void* p)
         break;
 
       case 7: //pause
-        botConveyor.move_velocity(0);
-        topConveyor.move_velocity(0);
         while(conveyorState == 7)
           pros::delay(10);
         break;

@@ -136,13 +136,7 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-    //benchmark_speeds();
-    //super_macro(2,2);
-      //shooting_macro(2);
-      shoot(7);
-    // intake(inward);
-    // countIntakeBalls(2);
-    // intake(stop);
+      super_macro(2,2);
     break;
 
     case 1: //red auton
