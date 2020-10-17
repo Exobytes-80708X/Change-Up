@@ -135,7 +135,6 @@ void eject(int numBalls){
   conveyorState = 2;
   ejectBalls = numBalls;
   pros::Task sub (eject_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-
 }
 //----------------------------------------------
 
@@ -145,6 +144,7 @@ void autonomous()
   pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::delay(200);
   isRobotDisabled = false;
+  driverControl = false;
 
   switch(auton) {
     case 0: //no auton
