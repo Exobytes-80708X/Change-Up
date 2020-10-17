@@ -11,6 +11,7 @@ extern void thread_intake(void*p);
 extern void thread_control(void*p);
 extern void thread_drive(void*p);
 extern void thread_sensors(void*p);
-extern void shooting_macro(int a);
+extern void shooting_macro(int);
 extern void waitForBallToEject();
 extern void countIntakeBalls(int);
+extern void super_macro(int,int);

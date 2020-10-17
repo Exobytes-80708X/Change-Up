@@ -258,7 +258,7 @@ void thread_intake(void* p)
         break;
       case 2:
         leftIntake.move_voltage(0);
-        rightIntake.move_voltage(0);  
+        rightIntake.move_voltage(0);
         break;
     }
     pros::delay(10);

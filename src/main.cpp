@@ -139,6 +139,16 @@ void eject(int numBalls){
 //----------------------------------------------
 
 //------------------------------------------------------
+void shooting_macro(int numOfBalls)
+{
+  if(!firstBall)
+    return;
+
+  topConveyor.move_velocity(600);
+  botConveyor.move_velocity(0);
+  pros::delay(200);
+  countBalls(numOfBalls-1);
+}
 void autonomous()
 {
   pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
@@ -149,9 +159,11 @@ void autonomous()
   switch(auton) {
     case 0: //no auton
     //benchmark_speeds();
-    intake(inward);
-    countIntakeBalls(2);
-    intake(stop);
+    //super_macro(2,2);
+      shooting_macro(2);
+    // intake(inward);
+    // countIntakeBalls(2);
+    // intake(stop);
     break;
 
     case 1: //red auton
@@ -170,9 +182,10 @@ void autonomous()
     adaptiveDrive(-16,4,7);
     delayDrive(700, 5500);
     //while(!firstBall) pros::delay(10);
-    shoot(2);
-    intake(inward);
-    pros::delay(900);
+    // shoot(2);
+    // intake(inward);
+    // pros::delay(900);
+    super_macro(2,2);
     intake(outward);
     driveDistance(-24,8);
     intake(stop);
