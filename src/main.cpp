@@ -92,20 +92,8 @@ void intake(int state){
   intakeState = state;
 }
 
-void shoot(int numBalls){
-  switch(numBalls){
-    case 1:
-      conveyorState = 6;
-      break;
-    case 2:
-      conveyorState = 4;
-      break;
-    case 3:
-      conveyorState = 3;
-      break;
-  }
-  pros::delay(100);
-  conveyorState = 0;
+void shoot(int a){
+    conveyorState = 3;
 }
 
 int ejectBalls = 0;
@@ -139,16 +127,6 @@ void eject(int numBalls){
 //----------------------------------------------
 
 //------------------------------------------------------
-void shooting_macro(int numOfBalls)
-{
-  if(!firstBall)
-    return;
-
-  topConveyor.move_velocity(600);
-  botConveyor.move_velocity(0);
-  pros::delay(200);
-  countBalls(numOfBalls-1);
-}
 void autonomous()
 {
   pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
@@ -160,13 +138,15 @@ void autonomous()
     case 0: //no auton
     //benchmark_speeds();
     //super_macro(2,2);
-      shooting_macro(2);
+      //shooting_macro(2);
+      shoot(7);
     // intake(inward);
     // countIntakeBalls(2);
     // intake(stop);
     break;
 
     case 1: //red auton
+      shoot(8);
     break;
 
     case 2: //blue auton
