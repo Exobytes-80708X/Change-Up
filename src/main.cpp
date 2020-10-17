@@ -148,22 +148,23 @@ void autonomous()
     break;
 
     case 3: //skills auton
-    intake(inward);
+    intake(inward); //intake first ball
     driveDistance(15,10);
     intake(stop);
     //face(-26,-1);
     //driveDistance(18,8);
-    adaptiveDrive(-16,4,8);
+    adaptiveDrive(-16,4,8); //drive to first goal
     delayDrive(700, 9000);
     //while(!firstBall) pros::delay(10);
     // shoot(2);
     // intake(inward);
     // pros::delay(900);
-    super_macro(2,2);
+    super_macro(2,2); //score and intake 2
+
     intake(outward);
-    driveDistance(-24,8);
+    driveDistance(-24,8); //drive out
     intake(stop);
-    face(8,56);
+    face(15,56); //face 2nd ball set
     intake(inward);
     //adaptiveDrive(14, 55, 10);
     eject(2);

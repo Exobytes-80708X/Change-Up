@@ -130,7 +130,7 @@ void countIntakeBalls(int numOfBalls)
     while(!botBall_low) {
       timer+=10;
       pros::delay(10);
-      if(timer > 500){
+      if(timer > 1000){
         return;
       }
     }
@@ -138,12 +138,12 @@ void countIntakeBalls(int numOfBalls)
     while(botBall_low) {
       timer+=10;
       pros::delay(10);
-      if(timer > 500) {
+      if(timer > 1000) {
         return;
       }
     }
   }
-  pros::delay(250);
+  pros::delay(500);
 }
 
 bool intakeFinished = false;
