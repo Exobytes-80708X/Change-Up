@@ -225,14 +225,16 @@ void super_macro(int shootBalls, int intakeBalls)
 void thread_intakecontrol(void*p)
 {
   while(true) {
-    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      intakeState = inward;
-    }
-    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-      intakeState = outward;
-    }
-    else {
-      intakeState = stop;
+    if(driverControl) {
+      if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+        intakeState = inward;
+      }
+      else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+        intakeState = outward;
+      }
+      else {
+        intakeState = stop;
+      }
     }
     pros::delay(10);
   }
@@ -256,7 +258,7 @@ void thread_intake(void* p)
         break;
       case 2:
         leftIntake.move_voltage(0);
-        rightIntake.move_voltage(0);
+        rightIntake.move_voltage(0);  
         break;
     }
     pros::delay(10);
@@ -271,6 +273,7 @@ void thread_subsystems(void* p)
   topBall_task.suspend();
   pros::Task intake_thread (thread_intake, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task intake_control (thread_intakecontrol, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+
   while(true) {
     switch(conveyorState) {
       case 0: //idle state
