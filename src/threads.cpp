@@ -143,6 +143,7 @@ void countIntakeBalls(int numOfBalls)
       }
     }
   }
+  pros::delay(250);
 }
 
 bool intakeFinished = false;
