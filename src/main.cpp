@@ -164,20 +164,19 @@ void autonomous()
     intake(outward);
     driveDistance(-24,8); //drive out
     intake(stop);
-    face(15,56); //face 2nd ball set
+    face(13,56); //face 2nd ball set
     intake(inward);
     //adaptiveDrive(14, 55, 10);
     eject(2);
 
-    driveDistance(calcDistance(18,56)+7,10);
+    driveDistance(calcDistance(13,56)+7,10);
     driveDistance(-7,10);
     //intake(stop);
     face(-23,56);
     //intake(inward);
     //adaptiveDrive(-10,53,10);
-    driveDistance(calcDistance(-20,56),10);
-    delayDrive(700,9000);
-    intake(stop);
+    driveDistance(calcDistance(-20,56)-5,10);
+    delayDrive(700,5500);
     super_macro(2,1);
     // intake(inward);
     // pros::delay(150);
@@ -215,8 +214,7 @@ void autonomous()
     driveDistance(calcDistance(36,120)-8,8);
     delayDrive(700, 5500);
     //pros::delay(500);
-    shoot(1);
-    pros::delay(500);
+    super_macro(1,1);
     intake(outward);
     driveDistance(-10,10);
     intake(stop);
