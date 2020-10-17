@@ -149,7 +149,7 @@ void autonomous()
 
     case 3: //skills auton
     intake(inward); //intake first ball
-    driveDistance(15,10);
+    driveDistance(10,10);
     intake(stop);
     //face(-26,-1);
     //driveDistance(18,8);
@@ -178,9 +178,9 @@ void autonomous()
     driveDistance(calcDistance(-20,56),10);
     delayDrive(700,9000);
     intake(stop);
-    shoot(2);
-    intake(inward);
-    pros::delay(150);
+    super_macro(2,1);
+    // intake(inward);
+    // pros::delay(150);
     intake(outward);
     pros::delay(500);
     driveDistance(-20,8);
@@ -188,8 +188,8 @@ void autonomous()
     //face(3,100);
     intake(inward);
     eject(1);
-    face(-4,95);
-    driveDistance(calcDistance(-4, 95)+8,10);
+    face(4,95);
+    driveDistance(calcDistance(4, 95)+8,10);
     driveDistance(-8,10);
     //adaptiveDrive(-4, 95, 10);
     //driveDistance(6,10);
@@ -202,8 +202,9 @@ void autonomous()
     delayDrive(700,5500);
     //intake(inward);
     //pros::delay(500);
-    shoot(1);
-    pros::delay(750);
+    // shoot(1);
+    // pros::delay(750);
+    super_macro(1,2);
     intake(outward);
     driveDistance(-30,10);
     face(38,79);
