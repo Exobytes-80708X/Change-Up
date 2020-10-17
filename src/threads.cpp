@@ -206,7 +206,7 @@ int countHeldBalls()
 void super_macro(int shootBalls, int intakeBalls)
 {
   iBalls = intakeBalls;
-  pros::Task subthread (intake_subthread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
+  pros::Task subthread (intake_subthread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   shooting_macro(shootBalls);
   while(!intakeFinished) {
     if(firstBall)
