@@ -413,7 +413,6 @@ void face_alg(double error, double accelTime, double minV, double medV, double m
   }
 }
 void facePID(double x, double y, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout){
-
       /*
       Arguments:
       x         - x value of desired point
@@ -451,7 +450,7 @@ void facePID(double x, double y, bool reversed, double maxV, double kP, double k
   				else
   					error = calcAngleError(x,y); //calculate angle error based off front of robot
 
-  				if(fabs(error) < 0.04)
+  				if(fabs(error) < 0.02)
   					settleTimer+=10;
           else
             settleTimer = 0;
@@ -476,12 +475,89 @@ void facePID(double x, double y, bool reversed, double maxV, double kP, double k
             updateVarLabel(debugLabel4,"D SPEED",debugValue4,dSpeed*kD,"mV",0);
           }
   		}
-      //if(DEBUGGING_ENABLED) resetAutonDebug();
+      if(DEBUGGING_ENABLED) resetAutonDebug();
   		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
   		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
   		rightDrive.moveVelocity(0);
   	  leftDrive.moveVelocity(0);
 }
+
+void facePID(double x, double y)
+{
+  facePID(x, y, false, 12, 8, 0, 1, 200, 5000);
+}
+
+void facePID(double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout){
+      /*
+      Arguments:
+      x         - x value of desired point
+      y         - y value of desired point
+      reversed  - true means front of robot will face, false means back of robot will face
+      accel     - rate of acceleration, usually 0 for turning
+      minV      - minimum voltage
+      maxV      - maximum voltage
+      kP        - constant for tuning angle p-controller
+      settleTime- the amount of time robot must be within a certain range of the target distance before declaring the movement as finished
+      timeout   - maximum amount of time the movement can take
+      */
+  		double error = calcAngleError(theta);
+      //calculates shortest number of radians needed to turn to face (x,y)
+  		double pSpeed = 0;
+      double iSpeed = 0;
+      double dSpeed = 0;
+      double prevError = 0;
+  		int settleTimer = 0;
+  		int timeoutTimer = 0;
+  		maxV *= 1000;
+  		kP *= 1000;
+      kI *= 1000;
+      kD *= 1000;
+      //scales all arguments to be the correct units
+
+  		while(settleTimer < settleTime && timeoutTimer < timeout)
+  		{
+  				if(reversed == true)
+  					error = calcAngleErrorReversed(theta); //calculates angle error based off back of robot
+  				else
+  					error = calcAngleError(theta); //calculate angle error based off front of robot
+
+  				if(fabs(error) < 0.02)
+  					settleTimer+=10;
+          else
+            settleTimer = 0;
+          //if robot is within 0.04 radians (2.5 degrees) of facing (x,y), increase settleTimer
+          //else reset settleTimer
+  				timeoutTimer+=10;
+
+          pSpeed = error;
+          iSpeed = iSpeed + error;
+          dSpeed = error - prevError;
+          prevError = error;
+
+          double currentSpeed = pSpeed * kP + iSpeed * kI + dSpeed * kD;
+
+          leftDrive.moveVoltage(currentSpeed);
+          rightDrive.moveVoltage(-currentSpeed);
+          pros::delay(10);
+          if(DEBUGGING_ENABLED) {
+            updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
+            updateVarLabel(debugLabel2,"P SPEED",debugValue2,pSpeed*kP,"mV",0);
+            updateVarLabel(debugLabel3,"I SPEED",debugValue3,iSpeed*kI,"mV",0);
+            updateVarLabel(debugLabel4,"D SPEED",debugValue4,dSpeed*kD,"mV",0);
+          }
+  		}
+      if(DEBUGGING_ENABLED) resetAutonDebug();
+  		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+  		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+  		rightDrive.moveVelocity(0);
+  	  leftDrive.moveVelocity(0);
+}
+
+void facePID(double theta)
+{
+  facePID(theta, false, 12, 8, 0, 1, 200, 5000);
+}
+
 
 void face(double x, double y, bool reversed, double accelTime, double minV, double medV, double maxV, double kP, int settleTime, int timeout)
 {

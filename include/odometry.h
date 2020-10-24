@@ -18,3 +18,6 @@ extern void delayDrive(int ms, double vel);
 extern void followQuad(int);
 extern void followQuadDrive(int,double);
 extern void facePID(double, double, bool, double, double, double, double, int, int);
+extern void facePID(double, bool, double, double, double, double, int, int);
+extern void facePID(double, double);
+extern void facePID(double);

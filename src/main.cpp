@@ -136,11 +136,20 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-      facePID(-100, 0, false, 12, 8, 0, 0, 200, 5000);
+      facePID(45);
     break;
 
     case 1: //red auton
-      shoot(8);
+      driveDistance(-24,10);
+      facePID(-45);
+      intake(inward);
+      driveDistance(24,10);
+      intake(stop);
+      delayDrive(500,8);
+      super_macro(1,2);
+      driveDistance(-30,10);
+      facePID(90);
+
     break;
 
     case 2: //blue auton
