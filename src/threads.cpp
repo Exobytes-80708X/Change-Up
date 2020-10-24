@@ -356,9 +356,10 @@ void thread_subsystems(void* p)
         break;
 
       case 6: //maro3
-        intake_control.suspend();
-        super_macro(countHeldBalls(),2);
-        intake_control.resume();
+        //intake_control.suspend();
+        //super_macro(countHeldBalls(),2);
+        //intake_control.resume();
+        shooting_macro(2);
         break;
 
       case 7: //pause
@@ -387,9 +388,9 @@ void thread_control(void* p)
     // else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
     //   conveyorState = macro2_trigger;
     // }
-    // else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
-    //   conveyorState = macro3_trigger;
-    // }
+    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+       conveyorState = macro3_trigger;
+    }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
       conveyorState = 5;
     }
