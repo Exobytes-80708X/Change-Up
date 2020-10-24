@@ -452,7 +452,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 
 void driveDistance(double distance, double maxV)
 {
-  driveDistance2(distance,0.5,3,maxV,0.9,1,250,5000);
+  driveDistance2(distance,0.5,3,maxV,0.9,4,250,5000);
 }
 
 void accel(double accel, int ms)
@@ -559,8 +559,12 @@ void facePID(double x, double y, bool reversed, double maxV, double kP, double k
           iSpeed = iSpeed + error;
           dSpeed = error - prevError;
           prevError = error;
+          double currentSpeed;
+          if(error  < .16)
+            currentSpeed = pSpeed * kP + iSpeed * kI + dSpeed * kD;
+          else
+          currentSpeed = pSpeed * kP + dSpeed * kD;
 
-          double currentSpeed = pSpeed * kP + iSpeed * kI + dSpeed * kD;
 
           leftDrive.moveVoltage(currentSpeed);
           rightDrive.moveVoltage(-currentSpeed);
