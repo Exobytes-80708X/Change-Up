@@ -431,7 +431,7 @@ void facePID(double x, double y, bool reversed, db maxV, db kP, db kI, db kD, in
   		double pSpeed;
       double iSpeed;
       double dSpeed;
-
+      db prevError;
   		int settleTimer = 0;
   		int timeoutTimer = 0;
       //initialize timers
@@ -457,7 +457,15 @@ void facePID(double x, double y, bool reversed, db maxV, db kP, db kI, db kD, in
           //else reset settleTimer
   				timeoutTimer+=10;
 
+          pSpeed = error;
+          iSpeed = iSpeed + error;
+          dSpeed = error - prevError;
+          prevError = error;
 
+          db currentSpeed = pSpeed * kP + iSpeed * kI + dSpeed * kD;
+
+          leftDrive.moveVoltage(currentSpeed);
+          rightDrive.moveVoltage(-currentSpeed);
 
           if(DEBUGGING_ENABLED) {
             updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
