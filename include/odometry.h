@@ -21,3 +21,4 @@ extern void facePID(double, double, bool, double, double, double, double, int, i
 extern void facePID(double, bool, double, double, double, double, int, int);
 extern void facePID(double, double,double,double,double);
 extern void facePID(double,double,double,double);
+extern void accel(double, int);

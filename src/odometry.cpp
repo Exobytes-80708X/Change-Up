@@ -414,10 +414,10 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
     //if going reverse, accelerate backwards
     //if decelerating (whether forwards or backwards), let p-controllers determine speed
 
-		if(distError > 0 && currentSpeed < minV)
+		/*if(distError > 0 && currentSpeed < minV)
 			currentSpeed = minV;
 		else if(distError < 0 && currentSpeed > -minV)
-			currentSpeed = -minV;
+			currentSpeed = -minV;*/
     //makes sure currentSpeed is greater than minV
 
 		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0)
@@ -433,9 +433,9 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
     //if robot is with 6 inches of target distance, robot will no longer adjust to face point
     //as that will result in the robot making sudden turns at the end of a straight movement, which is bad for straight movements
 
-    //driveVector(currentSpeed,angleSpeed,maxV); //send calculated speeds to motors
-    leftDrive.moveVoltage(currentSpeed);
-  	rightDrive.moveVoltage(currentSpeed);
+    driveVector(currentSpeed,angleSpeed,maxV); //send calculated speeds to motors
+    //leftDrive.moveVoltage(currentSpeed);
+  	//rightDrive.moveVoltage(currentSpeed);
 		pros::delay(10);
 
     if(DEBUGGING_ENABLED) {
@@ -452,7 +452,21 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 
 void driveDistance(double distance, double maxV)
 {
-  driveDistance2(distance,0.3,3,maxV,0.7,0,250,5000);
+  driveDistance2(distance,0.5,3,maxV,0.9,1,250,5000);
+}
+
+void accel(double accel, int ms)
+{
+  int timer = 0;
+  double currentSpeed = 0;
+  while(timer < ms)
+  {
+    leftDrive.moveVoltage(currentSpeed);
+    rightDrive.moveVoltage(currentSpeed);
+    currentSpeed += accel;
+    pros::delay(10);
+    timer += 10;
+  }
 }
 
 double pseudoI = 0.0;

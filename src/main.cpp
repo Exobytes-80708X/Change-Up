@@ -136,9 +136,8 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-    //facePID(45);
-    driveDistance(24,8);
-    driveDistance(-24,8);
+    driveDistance(24,10);
+    driveDistance(-24,10);
     break;
 
     case 1: //red auton
