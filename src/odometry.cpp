@@ -380,9 +380,9 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 	double angleError;
 	double distSpeed;
 	double angleSpeed;
-	double currentSpeed = 0.0;
+	double currentSpeed = minV*1000 * distance/abs(distance);
 
-	accel *= 10000;
+	accel *= 1000;
 	minV *= 1000;
 	maxV *= 1000;
 	distkP *= 1000;
@@ -452,7 +452,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 
 void driveDistance(double distance, double maxV)
 {
-  driveDistance2(distance,1,2.5,maxV,0.7,0,250,5000);
+  driveDistance2(distance,0.3,3,maxV,0.7,0,250,5000);
 }
 
 double pseudoI = 0.0;
@@ -613,7 +613,10 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
   				timeoutTimer+=10;
 
           pSpeed = error;
-          iSpeed = iSpeed + error;
+          if(fabs(error) < 0.02)
+            iSpeed = 0;
+          else
+            iSpeed = iSpeed + error;
           dSpeed = error - prevError;
           prevError = error;
 

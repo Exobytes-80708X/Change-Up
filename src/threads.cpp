@@ -41,7 +41,7 @@ void thread_sensors(void *p)
       ballInEjector = true;
     else ballInEjector = false;
 
-    if(pros::c::ext_adi_analog_read(5,'A') < 2800)
+    if(pros::c::ext_adi_analog_read(5,'A') < 2650)
       botBall_low = true;
     else botBall_low = false;
 

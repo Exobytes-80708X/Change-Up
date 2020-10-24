@@ -142,17 +142,18 @@ void autonomous()
     break;
 
     case 1: //red auton
-      driveDistance(-24,9);
-      facePID(315,8,0.05,1);
+      driveDistance(-18,9);
+      facePID(315,7.8,0.1,1);
       intake(inward);
-      driveDistance(30,10);
+      driveDistance(20,10);
       intake(stop);
-      delayDrive(500,8000);
+      delayDrive(500,5000);
       super_macro(2,2);
       intake(outward);
-      driveDistance(-30,10);
-      facePID(90,8,0.06,1);
-
+      driveDistance(-20,10);
+      facePID(90,8,0.0,1);
+      eject(1);
+      driveDistance(calcDistance(-35, 20), 7000);
     break;
 
     case 2: //blue auton
