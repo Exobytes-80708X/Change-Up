@@ -151,7 +151,7 @@ void autonomous()
       pros::delay(250);
       intake(outward);
       driveDistance(-20,10);
-      facePID(90,7.8,0.03,1);
+      facePID(90,7,0.05,1);
       eject(1);
       driveDistance(calcDistance(-35, 20), 7000);
     break;
