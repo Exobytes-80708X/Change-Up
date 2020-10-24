@@ -369,12 +369,90 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
 
 void driveDistance2(double distance, double accel, double minV, double maxV, double distkP, double anglekP, int settleTime, int timeout)
 {
+  double simX = distance*sin(robotTheta) + robotX;
+  double simY = distance*cos(robotTheta) + robotY;
+  //calculates a point that is the target distance away from the robots current position
+	double initX = robotX;
+  double initY = robotY;
+	double initTheta = robotTheta;
+  //keeps track of robots intial position before the movement
+	double distError;
+	double angleError;
+	double distSpeed;
+	double angleSpeed;
+	double currentSpeed = 0.0;
 
+	accel *= 10000;
+	minV *= 1000;
+	maxV *= 1000;
+	distkP *= 1000;
+	anglekP *= 1000;
+  //scales all arguments to be the correct units
+
+	int settleTimer = 0;
+	int timeoutTimer = 0;
+  //initialize timers
+
+	while(settleTimer < settleTime && timeoutTimer < timeout)
+	{
+		distError = calcDistance_signed(simX,simY);
+		if(distance < 0)
+			angleError = calcAngleErrorReversed(simX,simY);
+      //angle error based on the back of the robot
+		else
+			angleError = calcAngleError(simX,simY);
+      //angle error based on the front of the robot
+
+		angleSpeed = angleError*anglekP;
+		distSpeed = distError*distkP;
+    //scales angle error and distance error
+
+		if(distSpeed > 0 && currentSpeed < distSpeed)	currentSpeed += accel;
+		else if(distSpeed < 0 && currentSpeed > distSpeed) currentSpeed -= accel;
+		else currentSpeed = distSpeed;
+    //if going forward, accelerate forwards
+    //if going reverse, accelerate backwards
+    //if decelerating (whether forwards or backwards), let p-controllers determine speed
+
+		if(distError > 0 && currentSpeed < minV)
+			currentSpeed = minV;
+		else if(distError < 0 && currentSpeed > -minV)
+			currentSpeed = -minV;
+    //makes sure currentSpeed is greater than minV
+
+		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0)
+			settleTimer+=10;
+    else
+      settleTimer = 0;
+    //if robot is within 0.5 inches of simulated point or is roughly perpendicular to the simulated point, increase the settleTimer
+    //else if robot is outside that range of error, reset settleTimer to 0
+		timeoutTimer+=10;
+
+		if(fabs(distError) < 6.0)
+			angleSpeed = 0;
+    //if robot is with 6 inches of target distance, robot will no longer adjust to face point
+    //as that will result in the robot making sudden turns at the end of a straight movement, which is bad for straight movements
+
+    //driveVector(currentSpeed,angleSpeed,maxV); //send calculated speeds to motors
+    leftDrive.moveVoltage(currentSpeed);
+  	rightDrive.moveVoltage(currentSpeed);
+		pros::delay(10);
+
+    if(DEBUGGING_ENABLED) {
+      updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
+      updateVarLabel(debugLabel2,"TIMEOUT TIMER",debugValue2,timeoutTimer,"SEC",0);
+    }
+	}
+  if(DEBUGGING_ENABLED) resetAutonDebug();
+	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	rightDrive.moveVelocity(0);
+  leftDrive.moveVelocity(0);
 }
 
 void driveDistance(double distance, double maxV)
 {
-  driveDistance(distance,0.05,2.5,maxV,0.7,1,250,5000);
+  driveDistance2(distance,1,2.5,maxV,0.7,0,250,5000);
 }
 
 double pseudoI = 0.0;
