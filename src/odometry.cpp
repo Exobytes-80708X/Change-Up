@@ -258,11 +258,11 @@ void driveVector(double currentSpeed, double angleSpeed, double maxV)
 	double rightSpeed = currentSpeed - angleSpeed;
 	double speedScale;
 
-	if(maxCurrentSpeed > maxV) { //scales down left and right voltage so that it is not greater than maxV
+	/*if(maxCurrentSpeed > maxV) { //scales down left and right voltage so that it is not greater than maxV
 		speedScale = fabs(maxCurrentSpeed/maxV);
 		leftSpeed /= speedScale;
 		rightSpeed /= speedScale;
-	}
+	}*/
 
 	if(DEBUGGING_ENABLED) {
     updateVarLabel(debugLabel3,"LEFT SPEED",debugValue3,leftSpeed,"mV",7);
@@ -367,9 +367,14 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
   leftDrive.moveVelocity(0);
 }
 
+void driveDistance2(double distance, double accel, double minV, double maxV, double distkP, double anglekP, int settleTime, int timeout)
+{
+
+}
+
 void driveDistance(double distance, double maxV)
 {
-  driveDistance(distance,0.05,2.5,maxV,0.7,4,250,5000);
+  driveDistance(distance,0.05,2.5,maxV,0.7,1,250,5000);
 }
 
 double pseudoI = 0.0;
@@ -482,9 +487,9 @@ void facePID(double x, double y, bool reversed, double maxV, double kP, double k
   	  leftDrive.moveVelocity(0);
 }
 
-void facePID(double x, double y)
+void facePID(double x, double y, double kP,double kI, double kD)
 {
-  facePID(x, y, false, 12, 8, 0, 1, 200, 5000);
+  facePID(x, y, false, 12, kP, kI, kD, 200, 5000);
 }
 
 void facePID(double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout){
@@ -553,9 +558,9 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
   	  leftDrive.moveVelocity(0);
 }
 
-void facePID(double theta)
+void facePID(double theta, double kP, double kI, double kD)
 {
-  facePID(theta, false, 12, 8, 0, 1, 200, 5000);
+  facePID(theta, false, 12, kP,kI,kD, 200, 5000);
 }
 
 
