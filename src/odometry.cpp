@@ -5,7 +5,7 @@ const double WHEEL_DIAMETER = 2.875;
 const double ENCODER_WIDTH = 7.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
 const double IMU_WEIGHT = 0.4;
-const bool DEBUGGING_ENABLED = false;
+const bool DEBUGGING_ENABLED = true;
 int test = 0;
 
 double robotTheta_imu = 0.0;
@@ -412,7 +412,7 @@ void face_alg(double error, double accelTime, double minV, double medV, double m
     updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",0);
   }
 }
-void facePID(double x, double y, bool reversed, db maxV, db kP, db kI, db kD, int settleTime, int timeout){
+void facePID(double x, double y, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout){
 
       /*
       Arguments:
@@ -428,10 +428,10 @@ void facePID(double x, double y, bool reversed, db maxV, db kP, db kI, db kD, in
       */
   		double error = calcAngleError(x,y);
       //calculates shortest number of radians needed to turn to face (x,y)
-  		double pSpeed;
-      double iSpeed;
-      double dSpeed;
-      db prevError;
+  		double pSpeed = 0;
+      double iSpeed = 0;
+      double dSpeed = 0;
+      double prevError = 0;
   		int settleTimer = 0;
   		int timeoutTimer = 0;
       //initialize timers
@@ -440,6 +440,8 @@ void facePID(double x, double y, bool reversed, db maxV, db kP, db kI, db kD, in
       //medV *= 1000;
   		maxV *= 1000;
   		kP *= 1000;
+      kI *= 1000;
+      kD *= 1000;
       //scales all arguments to be the correct units
 
   		while(settleTimer < settleTime && timeoutTimer < timeout)
@@ -462,19 +464,19 @@ void facePID(double x, double y, bool reversed, db maxV, db kP, db kI, db kD, in
           dSpeed = error - prevError;
           prevError = error;
 
-          db currentSpeed = pSpeed * kP + iSpeed * kI + dSpeed * kD;
+          double currentSpeed = pSpeed * kP + iSpeed * kI + dSpeed * kD;
 
           leftDrive.moveVoltage(currentSpeed);
           rightDrive.moveVoltage(-currentSpeed);
           pros::delay(10);
           if(DEBUGGING_ENABLED) {
             updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
-            updateVarLabel(debugLabel2,"P SPEED",debugValue2,pSpeed,"mV",0);
-            updateVarLabel(debugLabel3,"I SPEED",debugValue3,iSpeed,"mV",0);
-            updateVarLabel(debugLabel3,"D SPEED",debugValue4,dSpeed,"mV",0);
+            updateVarLabel(debugLabel2,"P SPEED",debugValue2,pSpeed*kP,"mV",0);
+            updateVarLabel(debugLabel3,"I SPEED",debugValue3,iSpeed*kI,"mV",0);
+            updateVarLabel(debugLabel4,"D SPEED",debugValue4,dSpeed*kD,"mV",0);
           }
   		}
-      if(DEBUGGING_ENABLED) resetAutonDebug();
+      //if(DEBUGGING_ENABLED) resetAutonDebug();
   		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
   		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
   		rightDrive.moveVelocity(0);

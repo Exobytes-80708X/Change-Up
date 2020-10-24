@@ -136,7 +136,7 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-      super_macro(2,1);
+      facePID(-100, 0, false, 12, 8, 0, 0, 200, 5000);
     break;
 
     case 1: //red auton
