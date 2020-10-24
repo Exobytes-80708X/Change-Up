@@ -466,7 +466,7 @@ void facePID(double x, double y, bool reversed, db maxV, db kP, db kI, db kD, in
 
           leftDrive.moveVoltage(currentSpeed);
           rightDrive.moveVoltage(-currentSpeed);
-
+          pros::delay(10);
           if(DEBUGGING_ENABLED) {
             updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
             updateVarLabel(debugLabel2,"P SPEED",debugValue2,pSpeed,"mV",0);
