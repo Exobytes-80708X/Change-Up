@@ -412,6 +412,59 @@ void face_alg(double error, double accelTime, double minV, double medV, double m
     updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",0);
   }
 }
+void facePID(double x, double y, bool reversed, double accelTime, double minV, double medV, double maxV, double kP, int settleTime, int timeout){
+
+      /*
+      Arguments:
+      x         - x value of desired point
+      y         - y value of desired point
+      reversed  - true means front of robot will face, false means back of robot will face
+      accel     - rate of acceleration, usually 0 for turning
+      minV      - minimum voltage
+      maxV      - maximum voltage
+      kP        - constant for tuning angle p-controller
+      settleTime- the amount of time robot must be within a certain range of the target distance before declaring the movement as finished
+      timeout   - maximum amount of time the movement can take
+      */
+  		double error = calcAngleError(x,y);
+      //calculates shortest number of radians needed to turn to face (x,y)
+  		double currentSpeed;
+      pseudoI = 0.0;
+
+  		int settleTimer = 0;
+  		int timeoutTimer = 0;
+      //initialize timers
+  		//accel *= 1000;
+  		minV *= 1000;
+      medV *= 1000;
+  		maxV *= 1000;
+  		kP *= 1000;
+      //scales all arguments to be the correct units
+
+  		while(settleTimer < settleTime && timeoutTimer < timeout)
+  		{
+  				if(reversed == true)
+  					error = calcAngleErrorReversed(x,y); //calculates angle error based off back of robot
+  				else
+  					error = calcAngleError(x,y); //calculate angle error based off front of robot
+
+  				if(fabs(error) < 0.04)
+  					settleTimer+=10;
+          else
+            settleTimer = 0;
+          //if robot is within 0.04 radians (2.5 degrees) of facing (x,y), increase settleTimer
+          //else reset settleTimer
+  				timeoutTimer+=10;
+
+        //face_alg(error,accelTime,minV,medV,maxV,kP);
+        
+  		}
+      if(DEBUGGING_ENABLED) resetAutonDebug();
+  		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+  		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+  		rightDrive.moveVelocity(0);
+  	  leftDrive.moveVelocity(0);
+}
 
 void face(double x, double y, bool reversed, double accelTime, double minV, double medV, double maxV, double kP, int settleTime, int timeout)
 {
