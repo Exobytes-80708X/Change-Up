@@ -412,7 +412,7 @@ void face_alg(double error, double accelTime, double minV, double medV, double m
     updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",0);
   }
 }
-void facePID(double x, double y, bool reversed, double accelTime, double minV, double medV, double maxV, double kP, int settleTime, int timeout){
+void facePID(double x, double y, bool reversed, db maxV, db kP, db kI, db kD, int settleTime, int timeout){
 
       /*
       Arguments:
@@ -428,15 +428,16 @@ void facePID(double x, double y, bool reversed, double accelTime, double minV, d
       */
   		double error = calcAngleError(x,y);
       //calculates shortest number of radians needed to turn to face (x,y)
-  		double currentSpeed;
-      pseudoI = 0.0;
+  		double pSpeed;
+      double iSpeed;
+      double dSpeed;
 
   		int settleTimer = 0;
   		int timeoutTimer = 0;
       //initialize timers
   		//accel *= 1000;
-  		minV *= 1000;
-      medV *= 1000;
+  		//minV *= 1000;
+      //medV *= 1000;
   		maxV *= 1000;
   		kP *= 1000;
       //scales all arguments to be the correct units
@@ -456,8 +457,14 @@ void facePID(double x, double y, bool reversed, double accelTime, double minV, d
           //else reset settleTimer
   				timeoutTimer+=10;
 
-        //face_alg(error,accelTime,minV,medV,maxV,kP);
-        
+
+
+          if(DEBUGGING_ENABLED) {
+            updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
+            updateVarLabel(debugLabel2,"P SPEED",debugValue2,pSpeed,"mV",0);
+            updateVarLabel(debugLabel3,"I SPEED",debugValue3,iSpeed,"mV",0);
+            updateVarLabel(debugLabel3,"D SPEED",debugValue4,dSpeed,"mV",0);
+          }
   		}
       if(DEBUGGING_ENABLED) resetAutonDebug();
   		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
