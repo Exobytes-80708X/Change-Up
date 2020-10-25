@@ -136,22 +136,22 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-    driveDistance(24,10);
-    driveDistance(-24,10);
+    facePID(315,30,0,0);
+    facePID(45,30,0,0);
+    //facePID(0,8,0,0);
     break;
 
     case 1: //red auton
       driveDistance(-18,9);
-      facePID(315,7.8,0.03,1);
+      facePID(315,7.8,0.1,1);
       intake(inward);
-      driveDistance(23,10);
+      driveDistance(20,10);
       intake(stop);
       delayDrive(500,5000);
       super_macro(2,2);
-      pros::delay(250);
       intake(outward);
       driveDistance(-20,10);
-      facePID(90,7,0.05,1);
+      facePID(90,8,0.0,1);
       eject(1);
       driveDistance(calcDistance(-35, 20), 7000);
     break;
