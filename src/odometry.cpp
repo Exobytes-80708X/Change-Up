@@ -604,9 +604,9 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
       */
   		double error = calcAngleError(theta);
       //calculates shortest number of radians needed to turn to face (x,y)
-  		double pSpeed = 0;
-      double iSpeed = 0;
-      double dSpeed = 0;
+  		double p = 0;
+      double i = 0;
+      double d = 0;
       double prevError = 0;
   		int settleTimer = 0;
   		int timeoutTimer = 0;
@@ -623,7 +623,7 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
   				else
   					error = calcAngleError(theta); //calculate angle error based off front of robot
 
-  				if(fabs(error) < 0.02)
+  				if(fabs(error) < 0.02 || (fabs(error) < 0.04 && d < 0.01) )
   					settleTimer+=10;
           else
             settleTimer = 0;
@@ -631,15 +631,15 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
           //else reset settleTimer
   				timeoutTimer+=10;
 
-          pSpeed = error;
+          p = error;
           if(fabs(error) < 0.02)
-            iSpeed = 0;
+            i = 0;
           else
-            iSpeed = iSpeed + error;
-          dSpeed = error - prevError;
+            i = i + error;
+          d = error - prevError;
           prevError = error;
 
-          double currentSpeed = pSpeed * kP + iSpeed * kI + dSpeed * kD;
+          double currentSpeed = p * kP + i * kI + d * kD;
           if (fabs(currentSpeed) > 8000) currentSpeed = 8000*currentSpeed/fabs(currentSpeed);
 
           leftDrive.moveVoltage(currentSpeed);
@@ -647,9 +647,9 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
           pros::delay(10);
           if(DEBUGGING_ENABLED) {
             updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
-            updateVarLabel(debugLabel2,"P SPEED",debugValue2,pSpeed*kP,"mV",0);
-            updateVarLabel(debugLabel3,"I SPEED",debugValue3,iSpeed*kI,"mV",0);
-            updateVarLabel(debugLabel4,"D SPEED",debugValue4,dSpeed*kD,"mV",0);
+            updateVarLabel(debugLabel2,"P SPEED",debugValue2,p*kP,"mV",0);
+            updateVarLabel(debugLabel3,"I SPEED",debugValue3,i*kI,"mV",0);
+            updateVarLabel(debugLabel4,"D SPEED",debugValue4,d*kD,"mV",0);
           }
   		}
       if(DEBUGGING_ENABLED) resetAutonDebug();
