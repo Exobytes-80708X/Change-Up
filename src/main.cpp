@@ -141,36 +141,38 @@ void autonomous()
     case 0: //no auton
       intake(inward);
       //driveDistance(10,5);
-      delayDrive(500,5000);
+      delayDrive(200,10000);
       facePID(43,p,i,d);
-      delayDrive(500,5000);
+      delayDrive(200,10000);
       while(!thirdBall)
         pros::delay(10);
-      super_macro(3, 2);
-      pros::delay(200);
+      super_macro(3, 1);
       intake(outward);
-      driveDistance(-10,8);
+      delayDrive(200,-9000);
       intake(stop);
       //facePID(12,p,i,d);
       //driveDistance(-calcDistance(-10,-40),10);
       //facePID(90,p,i,d);
       //adaptiveDrive_reversed()
-      adaptiveDrive_reversed(-15,-45,9);
+      adaptiveDrive_reversed(-16,-45,9.5);
       shooting_macro(1);
       facePID(90,p,i,d);
-      delayDrive(700,8000);
-      super_macro(0, 2);
+      delayDrive(500,10000);
+      super_macro(1, 2);
       shooting_macro(1);
       intake(outward);
-      driveDistance(-10,8);
+      //driveDistance(-10,10);
+      delayDrive(200,-9000);
       shooting_macro(1);
-      adaptiveDrive_reversed(-18, -85, 7);
+      adaptiveDrive_reversed(-18, -81, 10);
       //eject(1);
-      facePID(132,p,i,d);
-      driveDistance(15,10);
-      delayDrive(800,7000);
+      facePID(136,p,i,d);
+      intake(inward);
+      delayDrive(1400,10000);
       super_macro(0, 2);
       shooting_macro(2);
+      //driveDistance(-10,10);
+      delayDrive(200,-9000);
 
     break;
 
