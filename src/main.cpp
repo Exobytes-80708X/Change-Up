@@ -133,12 +133,15 @@ void autonomous()
   pros::delay(200);
   isRobotDisabled = false;
   driverControl = false;
+  double p = 30;
+  double i = 0;
+  double d = 50;
 
   switch(auton) {
     case 0: //no auton
-    facePID(315,30,0,0);
-    facePID(45,30,0,0);
-    //facePID(0,8,0,0);
+      facePID(315,p,i,d);
+      facePID(90,p,i,d);
+      facePID(0,p,i,d);
     break;
 
     case 1: //red auton

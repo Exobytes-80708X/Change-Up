@@ -4,7 +4,7 @@
 const double WHEEL_DIAMETER = 2.875;
 const double ENCODER_WIDTH = 7.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
-const double IMU_WEIGHT = 0.4;
+const double IMU_WEIGHT = 1.0;
 const bool DEBUGGING_ENABLED = true;
 int test = 0;
 
@@ -632,7 +632,7 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
   				timeoutTimer+=10;
 
           p = error;
-          if(fabs(error) < 0.02)
+          if(fabs(error) < 0.02 || fabs(error) > 0.1)
             i = 0;
           else
             i = i + error;
