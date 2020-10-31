@@ -146,7 +146,8 @@ void autonomous()
       delayFacePID(43,false,12,p,i,d,10000,400,8000);
       while(!thirdBall)
         pros::delay(10);
-      super_macro(3, 1);
+      shooting_macro(3);
+      //super_macro(3, 1);
       intake(outward);
       //delayDrive(200,-9000);
       //driveDistance(-10,12);
@@ -157,21 +158,26 @@ void autonomous()
       adaptiveDrive_reversed(-16,-45,9.5);
       shooting_macro(1);
       facePID(90,p,i,d);
-      delayDrive(800,9000);
-      pros::delay(75);
-      super_macro(1, 2);
-      shooting_macro(1);
-      intake(outward);
-      //driveDistance(-10,12);
-      //delayDrive(400,-9000);
-      adaptiveDrive_reversed(-11, -80, 8.5);
-      shooting_macro(1);
-      //eject(1);
-      facePID(3,-110,p,i,d);
       intake(inward);
-      delayDrive(1400,10000);
-      super_macro(0, 2);
-      shooting_macro(2);
+      delayDrive(800,9000);
+      //super_macro(0, 2);
+      pros::delay(400);
+      while(!firstBall)
+        pros::delay(10);
+      shooting_macro(1);
+      pros::delay(500);
+      intake(outward);
+      driveDistance(-35,12);
+      eject(1);
+      //delayDrive(400,-9000);
+      adaptiveDrive(7, -105, 8.5);
+      //shooting_macro(1);
+      //eject(1);
+      //facePID(3,-110,p,i,d);
+      intake(inward);
+      delayDrive(600,10000);
+      //super_macro(0, 2);
+      shooting_macro(1);
       driveDistance(-10,12);
       //delayDrive(400,-9000);
 
