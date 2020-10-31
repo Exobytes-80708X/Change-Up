@@ -175,8 +175,11 @@ void shooting_macro(int numOfBalls)
 {
   if(!driverControl)
     conveyorState = 7;
-  if(!firstBall)
+  if(!firstBall) {
+    if(!driverControl)
+      conveyorState = 0;
     return;
+  }
 
   topConveyor.move_velocity(600);
   botConveyor.move_velocity(0);
@@ -184,7 +187,7 @@ void shooting_macro(int numOfBalls)
   countBalls(numOfBalls-1);
 
   if(!driverControl)
-    conveyorState = 7;
+    conveyorState = 0;
 }
 
 void centerTopBall()
