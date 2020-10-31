@@ -139,9 +139,37 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-      facePID(315,p,i,d);
+      intake(inward);
+      //driveDistance(10,5);
+      delayDrive(500,5000);
+      facePID(43,p,i,d);
+      delayDrive(500,5000);
+      super_macro(3, 2);
+      pros::delay(200);
+      intake(outward);
+      driveDistance(-10,8);
+      intake(stop);
+      //facePID(12,p,i,d);
+      //driveDistance(-calcDistance(-10,-40),10);
+      //facePID(90,p,i,d);
+      //adaptiveDrive_reversed()
+      adaptiveDrive_reversed(-15,-45,9);
+      shooting_macro(1);
       facePID(90,p,i,d);
-      facePID(0,p,i,d);
+      delayDrive(700,8000);
+      super_macro(0, 2);
+      shooting_macro(1);
+      intake(outward);
+      driveDistance(-10,8);
+      shooting_macro(1);
+      adaptiveDrive_reversed(-18, -85, 7);
+      //eject(1);
+      facePID(132,p,i,d);
+      driveDistance(15,10);
+      delayDrive(800,7000);
+      super_macro(0, 2);
+      shooting_macro(2);
+
     break;
 
     case 1: //red auton

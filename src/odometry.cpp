@@ -983,6 +983,9 @@ void adaptiveDrive_reversed(double x, double y, double accel, double maxV, doubl
   leftDrive.moveVelocity(0);
 }
 
+void adaptiveDrive_reversed(double x, double y, double maxV){
+  adaptiveDrive_reversed(x,y,0.2,maxV,0.7,5.0,1.0,250,10000);
+}
 void adaptiveDrive(double x, double y, double maxV)
 {
 	adaptiveDrive(x,y,0.2,maxV,0.7,5.0,1.0,250,10000);
