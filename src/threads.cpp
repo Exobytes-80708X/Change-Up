@@ -21,6 +21,12 @@ bool thirdBall;
 
 int iBalls = 0;
 
+const int NO_BALL = 0;
+const int RED_BALL = 1;
+const int BLUE_BALL = 2;
+
+int optical_state;
+
 
 void thread_sensors(void *p)
 {
@@ -33,9 +39,17 @@ void thread_sensors(void *p)
       topBall_high = true;
     else topBall_high = false;
 
-    if(botDetector.get_value() < 2800)
+    if(botDetector.get_value() < 2800) {
       botBall = true;
-    else botBall = false;
+      if(optical.get_hue() < 100)
+        optical_state = RED_BALL;
+      else
+        optical_state = BLUE_BALL;
+    }
+    else {
+      botBall = false;
+      optical_state = NO_BALL;
+    }
 
     if(ejectDetector.get_value() < 2700)
       ballInEjector = true;
@@ -56,6 +70,7 @@ void thread_sensors(void *p)
     if(secondBall && botBall_low)
       thirdBall = true;
     else thirdBall = false;
+
 
     pros::delay(10);
   }
@@ -129,7 +144,7 @@ void countIntakeBalls(int numOfBalls)
     while(!botBall_low) {
       timer+=10;
       pros::delay(10);
-      if(timer > 2000){
+      if(timer > 5000){
         return;
       }
     }
@@ -137,7 +152,7 @@ void countIntakeBalls(int numOfBalls)
     while(botBall_low) {
       timer+=10;
       pros::delay(10);
-      if(timer > 2000) {
+      if(timer > 5000) {
         return;
       }
     }
@@ -271,6 +286,19 @@ void thread_intake(void* p)
   }
 }
 
+void idleConveyor()
+{
+  if(firstBall)
+    centerTopBall();
+  else
+    topConveyor.move_velocity(200);
+
+  if(secondBall && firstBall)
+    botConveyor.move_velocity(0);
+  else
+    botConveyor.move_velocity(400);
+}
+
 void thread_subsystems(void* p)
 {
   botConveyor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -283,15 +311,37 @@ void thread_subsystems(void* p)
   while(true) {
     switch(conveyorState) {
       case 0: //idle state
-        if(firstBall)
-          centerTopBall();
-        else
-          topConveyor.move_velocity(200);
-
-        if(secondBall && firstBall)
-          botConveyor.move_velocity(0);
-        else
-          botConveyor.move_velocity(400);
+        /*if(auton == 1 && driverControl) { //RED
+          if(optical_state == BLUE_BALL) {
+            if(firstBall){
+              botConveyor.move_velocity(600);
+              topBall_task.resume();
+              waitForBallToEject();
+              topBall_task.suspend();
+            }
+            else {
+              topConveyor.move_velocity(-600);
+              botConveyor.move_velocity(600);
+              waitForBallToEject();
+            }
+          }
+        }
+        else if (auton == 2 && driverControl) { //BLUE
+          if(optical_state == RED_BALL) {
+            if(firstBall){
+              botConveyor.move_velocity(600);
+              topBall_task.resume();
+              waitForBallToEject();
+              topBall_task.suspend();
+            }
+            else {
+              topConveyor.move_velocity(-600);
+              botConveyor.move_velocity(600);
+              waitForBallToEject();
+            }
+          }
+        }*/
+        idleConveyor();
 
         break;
 

@@ -1,7 +1,7 @@
 #include "main.h"
 #include "display/lvgl.h"
 
-int auton = 0;
+int auton = 1;
 const int NUM_OF_AUTONS = 4;
 const std::string AUTON_HEADING = "AUTON SELECTED: ";
 
@@ -54,6 +54,7 @@ lv_obj_t * sensorLabel5;
 lv_obj_t * sensorLabel6;
 lv_obj_t * sensorLabel7;
 lv_obj_t * sensorLabel8;
+lv_obj_t * sensorLabel9;
 
 lv_obj_t * sensorValue1;
 lv_obj_t * sensorValue2;
@@ -63,6 +64,7 @@ lv_obj_t * sensorValue5;
 lv_obj_t * sensorValue6;
 lv_obj_t * sensorValue7;
 lv_obj_t * sensorValue8;
+lv_obj_t * sensorValue9;
 
 lv_obj_t * deviceLabel1;
 lv_obj_t * deviceLabel2;
@@ -781,6 +783,7 @@ void thread_sensorDebug(void*p)
     updateValueLabel(sensorValue1,imu.get_heading(),"DEG",3);
     updateValueLabel(sensorValue2,left.get(),"",0);
     updateValueLabel(sensorValue3,right.get(),"",0);
+    updateValueLabel(sensorValue9,optical.get_hue(),"",0);
     pros::delay(100);
   }
 }
@@ -797,6 +800,7 @@ void showSensorDebug()
   lv_obj_set_hidden(sensorLabel6,false);
   lv_obj_set_hidden(sensorLabel7,false);
   lv_obj_set_hidden(sensorLabel8,false);
+  lv_obj_set_hidden(sensorLabel9,false);
 
   lv_obj_set_hidden(sensorValue1,false);
   lv_obj_set_hidden(sensorValue4,false);
@@ -806,7 +810,7 @@ void showSensorDebug()
   lv_obj_set_hidden(sensorValue6,false);
   lv_obj_set_hidden(sensorValue7,false);
   lv_obj_set_hidden(sensorValue8,false);
-
+  lv_obj_set_hidden(sensorValue9,false);
 }
 
 void hideSensorDebug()
@@ -821,6 +825,7 @@ void hideSensorDebug()
   lv_obj_set_hidden(sensorLabel6,true);
   lv_obj_set_hidden(sensorLabel7,true);
   lv_obj_set_hidden(sensorLabel8,true);
+  lv_obj_set_hidden(sensorLabel9,true);
 
   lv_obj_set_hidden(sensorValue1,true);
   lv_obj_set_hidden(sensorValue4,true);
@@ -830,6 +835,7 @@ void hideSensorDebug()
   lv_obj_set_hidden(sensorValue6,true);
   lv_obj_set_hidden(sensorValue7,true);
   lv_obj_set_hidden(sensorValue8,true);
+  lv_obj_set_hidden(sensorValue9,true);
 }
 
 void initSensorDebug()
@@ -843,6 +849,7 @@ void initSensorDebug()
   sensorLabel6 = createTextLabel(sensorLabel6, "[G] BOTBALL", DEBUG_X_1, y+100);
   sensorLabel7 = createTextLabel(sensorLabel7, "[H] TOPBALL HIGH", DEBUG_X_1, y+120);
   sensorLabel8 = createTextLabel(sensorLabel8, "[EXT] BOTBALL LOW", DEBUG_X_1, y+140);
+  sensorLabel9 = createTextLabel(sensorLabel9, "[4] OPTICAL", DEBUG_X_1, y+160);
 
 
   sensorValue1 = createTextLabel(sensorValue1, "-", DEBUG_X_2, y);
@@ -853,6 +860,7 @@ void initSensorDebug()
   sensorValue6 = createTextLabel(sensorValue6, "-", DEBUG_X_2, y+100);
   sensorValue7 = createTextLabel(sensorValue7, "-", DEBUG_X_2, y+120);
   sensorValue8 = createTextLabel(sensorValue8, "-", DEBUG_X_2, y+140);
+  sensorValue9 = createTextLabel(sensorValue9, "-", DEBUG_X_2, y+160);
 
   hideSensorDebug();
   pros::Task sensor_debug (thread_sensorDebug, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
@@ -868,6 +876,7 @@ void animateSensorDebugLeft()
   animate_x_ease_out(sensorLabel6,DEBUG_X_1+480,DEBUG_X_1,500);
   animate_x_ease_out(sensorLabel7,DEBUG_X_1+480,DEBUG_X_1,500);
   animate_x_ease_out(sensorLabel8,DEBUG_X_1+480,DEBUG_X_1,500);
+  animate_x_ease_out(sensorLabel9,DEBUG_X_1+480,DEBUG_X_1,500);
 
   animate_x_ease_out(sensorValue1,DEBUG_X_2+480,DEBUG_X_2,500);
   animate_x_ease_out(sensorValue2,DEBUG_X_2+480,DEBUG_X_2,500);
@@ -877,6 +886,7 @@ void animateSensorDebugLeft()
   animate_x_ease_out(sensorValue6,DEBUG_X_2+480,DEBUG_X_2,500);
   animate_x_ease_out(sensorValue7,DEBUG_X_2+480,DEBUG_X_2,500);
   animate_x_ease_out(sensorValue8,DEBUG_X_2+480,DEBUG_X_2,500);
+  animate_x_ease_out(sensorValue9,DEBUG_X_2+480,DEBUG_X_2,500);
 }
 
 void animateSensorDebugRight()
@@ -889,6 +899,7 @@ void animateSensorDebugRight()
   animate_x_linear(sensorLabel6,DEBUG_X_1,DEBUG_X_1+480,500);
   animate_x_linear(sensorLabel7,DEBUG_X_1,DEBUG_X_1+480,500);
   animate_x_linear(sensorLabel8,DEBUG_X_1,DEBUG_X_1+480,500);
+  animate_x_linear(sensorLabel9,DEBUG_X_1,DEBUG_X_1+480,500);
 
   animate_x_linear(sensorValue1,DEBUG_X_2,DEBUG_X_2+480,500);
   animate_x_linear(sensorValue2,DEBUG_X_2,DEBUG_X_2+480,500);
@@ -898,6 +909,7 @@ void animateSensorDebugRight()
   animate_x_linear(sensorValue6,DEBUG_X_2,DEBUG_X_2+480,500);
   animate_x_linear(sensorValue7,DEBUG_X_2,DEBUG_X_2+480,500);
   animate_x_linear(sensorValue8,DEBUG_X_2,DEBUG_X_2+480,500);
+  animate_x_linear(sensorValue9,DEBUG_X_2,DEBUG_X_2+480,500);
 }
 
 //Button Actions ==================================================================================================================================

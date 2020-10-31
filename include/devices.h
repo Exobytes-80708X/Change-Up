@@ -19,3 +19,4 @@ extern okapi::ADIEncoder left;
 extern okapi::ADIEncoder right;
 extern pros::Imu imu;
 extern pros::Controller controller;
+extern pros::Optical optical;
