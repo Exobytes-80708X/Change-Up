@@ -70,8 +70,7 @@ void thread_sensors(void *p)
     if(secondBall && botBall_low)
       thirdBall = true;
     else thirdBall = false;
-
-
+    
     pros::delay(10);
   }
 }

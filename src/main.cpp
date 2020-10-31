@@ -144,6 +144,8 @@ void autonomous()
       delayDrive(500,5000);
       facePID(43,p,i,d);
       delayDrive(500,5000);
+      while(!thirdBall)
+        pros::delay(10);
       super_macro(3, 2);
       pros::delay(200);
       intake(outward);
