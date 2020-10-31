@@ -173,6 +173,8 @@ void intake_subthread(void*p)
 
 void shooting_macro(int numOfBalls)
 {
+  if(!driverControl)
+    conveyorState = 7;
   if(!firstBall)
     return;
 
@@ -180,6 +182,9 @@ void shooting_macro(int numOfBalls)
   botConveyor.move_velocity(0);
   pros::delay(200);
   countBalls(numOfBalls-1);
+
+  if(!driverControl)
+    conveyorState = 7;
 }
 
 void centerTopBall()
