@@ -143,7 +143,7 @@ void autonomous()
       //driveDistance(10,5);
       delayDrive(250,8000);
       //facePID(43,p,i,d);
-      delayFacePID(43,false,12,p,i,d,10000,250,9000);
+      delayFacePID(43,false,12,p,i,d,10000,400,8000);
       while(!thirdBall)
         pros::delay(10);
       super_macro(3, 1);
