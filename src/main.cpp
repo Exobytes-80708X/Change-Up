@@ -139,62 +139,56 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-      intake(inward);
-      //driveDistance(10,5);
-      delayDrive(250,8000);
-      //facePID(43,p,i,d);
-      delayFacePID(43,false,12,p,i,d,10000,400,8000);
-      while(!thirdBall)
-        pros::delay(10);
-      shooting_macro(3);
-      //super_macro(3, 1);
-      intake(outward);
-      //delayDrive(200,-9000);
-      //driveDistance(-10,12);
-      //facePID(12,p,i,d);
-      //driveDistance(-calcDistance(-10,-40),10);
-      //facePID(90,p,i,d);
-      //adaptiveDrive_reversed()
-      adaptiveDrive_reversed(-16,-45,9.5);
-      shooting_macro(1);
-      facePID(90,p,i,d);
-      intake(inward);
-      delayDrive(800,9000);
-      //super_macro(0, 2);
-      pros::delay(400);
-      while(!firstBall)
-        pros::delay(10);
-      shooting_macro(1);
-      pros::delay(500);
-      intake(outward);
-      driveDistance(-35,12);
-      eject(1);
-      //delayDrive(400,-9000);
-      adaptiveDrive(7, -105, 8.5);
-      //shooting_macro(1);
-      //eject(1);
-      //facePID(3,-110,p,i,d);
-      intake(inward);
-      delayDrive(600,10000);
-      //super_macro(0, 2);
-      shooting_macro(1);
-      driveDistance(-10,12);
-      //delayDrive(400,-9000);
+      super_macro(3,1);
 
     break;
 
     case 1: //red auton
-      driveDistance(-18,9);
-      facePID(315,p,i,d);
-      intake(inward);
-      driveDistance(20,10);
-      delayDrive(500,5000);
-      super_macro(2,2);
-      intake(outward);
-      driveDistance(-20,10);
-      facePID(90,p,i,d);
-      eject(1);
-      driveDistance(calcDistance(-35, 20), 7000);
+    intake(inward);
+    //driveDistance(10,5);
+    delayDrive(400,8000);
+    //facePID(43,p,i,d);
+    delayFacePID(43,false,12,p,i,d,10000,400,8000);
+    while(!thirdBall)
+      pros::delay(10);
+    //intake(stop);
+    shooting_macro(3);
+    //super_macro(3, 1);
+    intake(outward);
+    //delayDrive(200,-9000);
+    //driveDistance(-10,12);
+    //facePID(12,p,i,d);
+    //driveDistance(-calcDistance(-10,-40),10);
+    //facePID(90,p,i,d);
+    //adaptiveDrive_reversed()
+    adaptiveDrive_reversed(-12,-45,9.5);
+    shooting_macro(1);
+    facePID(90,p,i,d);
+    intake(inward);
+    delayDrive(800,9000);
+    //super_macro(0, 2);
+    pros::delay(400);
+    while(!firstBall)
+      pros::delay(10);
+    shooting_macro(1);
+    pros::delay(500);
+    intake(outward);
+    driveDistance(-35,12);
+    eject(1);
+    //delayDrive(400,-9000);
+    //adaptiveDrive(7, -105, 8.5);
+    //shooting_macro(1);
+    //eject(1);
+    //facePID(3,-110,p,i,d);
+    facePID(12,-108,p,i,d);
+    intake(inward);
+    //delayDrive(600,10000);
+    //super_macro(0, 2);
+
+    //driveDistance(calcDistance(12,-108),10);
+    //shooting_macro(1);
+    //driveDistance(-10,12);
+    //delayDrive(400,-9000);
     break;
 
     case 2: //blue auton

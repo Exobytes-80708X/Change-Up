@@ -55,7 +55,7 @@ void thread_sensors(void *p)
       ballInEjector = true;
     else ballInEjector = false;
 
-    if(pros::c::ext_adi_analog_read(5,'A') < 2650)
+    if(pros::c::ext_adi_analog_read(5,'A') < 2750)
       botBall_low = true;
     else botBall_low = false;
 
@@ -70,7 +70,7 @@ void thread_sensors(void *p)
     if(secondBall && botBall_low)
       thirdBall = true;
     else thirdBall = false;
-    
+
     pros::delay(10);
   }
 }
@@ -96,7 +96,6 @@ void countBalls(int numOfBalls)
   if(numOfBalls == 0) return;
   int timeOut = 500;
   int timer = 0;
-  bool noBalls = false;
   botConveyor.move_velocity(600);
   while(topBall_high)
     pros::delay(10);
@@ -104,7 +103,6 @@ void countBalls(int numOfBalls)
     pros::delay(10);
     timer += 10;
     if(timer >= timeOut) {
-      noBalls = true;
       return;
     }
   }
@@ -120,15 +118,13 @@ void countBalls(int numOfBalls)
         pros::delay(10);
         timer += 10;
         if(timer >= timeOut) {
-          noBalls = true;
-          break;
+          return;
         }
       }
     }
     else {
       pros::delay(200);
     }
-    if(noBalls) break;
   }
 }
 
@@ -166,6 +162,8 @@ void intake_subthread(void*p)
   intakeFinished = false;
   intakeState = inward;
   countIntakeBalls(iBalls);
+  intakeState = outward;
+  pros::delay(300);
   intakeState = stop;
   intakeFinished = true;
 }
@@ -306,6 +304,16 @@ void idleConveyor()
     botConveyor.move_velocity(400);
 }
 
+void thread_subsystems2(void* p)
+{
+  botConveyor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  topConveyor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  pros::Task topBall_task (thread_centerTopBall, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
+  topBall_task.suspend();
+  pros::Task intake_thread (thread_intake, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task intake_control (thread_intakecontrol, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+}
+
 void thread_subsystems(void* p)
 {
   botConveyor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -390,7 +398,7 @@ void thread_subsystems(void* p)
 
       case 4: //macro2
         intake_control.suspend();
-        super_macro(countHeldBalls(),1);
+        super_macro(3,1);
         intake_control.resume();
         break;
 
@@ -442,9 +450,9 @@ void thread_control(void* p)
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
       conveyorState = macro1_trigger;
     }
-    // else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
-    //   conveyorState = macro2_trigger;
-    // }
+    else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+       conveyorState = macro2_trigger;
+    }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
        conveyorState = macro3_trigger;
     }
