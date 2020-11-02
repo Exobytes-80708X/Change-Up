@@ -35,20 +35,24 @@ void thread_Odometry(void*param)
 
     double currentLeft = 0.0;
     double currentRight = 0.0;
+    double currentMiddle = 0.0;
     double currentImu = 0.0;
 
     double prevLeft = 0.0;
     double prevRight = 0.0;
+    double prevMiddle = 0.0;
     double prevImu = 0.0;
 
     double dLeftVal = 0.0;
     double dRightVal = 0.0;
+    double dMiddleVal = 0.0;
     double dImu = 0.0;
 
     double avgTheta;
 
     int leftReset = left.reset();
     int rightReset = right.reset();
+    int midReset = middle.reset();
 
     pros::delay(200);
 
@@ -56,6 +60,7 @@ void thread_Odometry(void*param)
     {
         currentLeft = left.get()/360.0*WHEEL_CIRCUMFERENCE; //read quadature encoders
         currentRight = right.get()/360.0*WHEEL_CIRCUMFERENCE;
+        currentMiddle = middle.get()/360.0*WHEEL_CIRCUMFERENCE;
         currentImu = imu.get_heading()*M_PI/180.0;  //imu heading in radians
 
         //currentLeft = leftDrive.getPosition()/900*WHEEL_CIRCUMFERENCE; //read integrated encoders
@@ -63,22 +68,24 @@ void thread_Odometry(void*param)
 
         dLeftVal = (currentLeft - prevLeft);
         dRightVal = (currentRight - prevRight);
+        dMiddleVal = (currentMiddle - prevMiddle);
         dImu = currentImu - prevImu;
 
         prevLeft = currentLeft; //update prev values
         prevRight = currentRight;
+        prevMiddle = currentMiddle;
         prevImu = currentImu;
 
         dTheta_encoders = (dLeftVal - dRightVal) / ENCODER_WIDTH; //calculate change in angle in radians
         dTheta_imu = dImu;
         if(fabs(dTheta_imu) > 180) {
-          dTheta_imu = -1*(2*M_PI*(dTheta_imu/fabs(dTheta_imu)) - dTheta_imu);
+          dTheta_imu = 2*M_PI*(dTheta_imu/fabs(dTheta_imu)) - dTheta_imu;
         }
         dTheta = dTheta_encoders*(1.0-IMU_WEIGHT) + dTheta_imu*IMU_WEIGHT;
 
         avgTheta = robotTheta + dTheta/2.0;
         avgTheta = fmod(avgTheta, 2*M_PI);
-
+        if(avgTheta < 0) avgTheta += 2*M_PI;
         /*robotTheta_encoders += dTheta_encoders;
         robotTheta_encoders = fmod(robotTheta, 2*M_PI);
 
@@ -92,8 +99,8 @@ void thread_Odometry(void*param)
         //dX = (dLeftVal + dRightVal)/2 * sin( (robotTheta) ); //calculate change in x
         //dY = (dLeftVal + dRightVal)/2 * cos( (robotTheta) ); //calculate change in y
 
-        dX = (dLeftVal + dRightVal)/2 * sin(avgTheta) + MIDDLE_ENCODER_LENGTH * cos(avgTheta);//calculate change in x
-        dY = (dLeftVal + dRightVal)/2 * cos(avgTheta) + MIDDLE_ENCODER_LENGTH * sin(avgTheta);; //calculate change in y
+        dX = (dLeftVal + dRightVal)/2 * sin(avgTheta) + dMiddleVal * cos(avgTheta);//calculate change in x
+        dY = (dLeftVal + dRightVal)/2 * cos(avgTheta) + dMiddleVal * sin(avgTheta);; //calculate change in y
 
         robotX += dX; //add to current x and ys
         robotY += dY;

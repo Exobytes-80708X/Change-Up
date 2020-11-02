@@ -17,6 +17,7 @@ extern pros::ADIAnalogIn botDetector;
 extern pros::ADIAnalogIn ejectDetector;
 extern okapi::ADIEncoder left;
 extern okapi::ADIEncoder right;
+extern okapi::ADIEncoder middle;
 extern pros::Imu imu;
 extern pros::Controller controller;
 extern pros::Optical optical;
