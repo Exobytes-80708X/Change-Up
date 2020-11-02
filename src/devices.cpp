@@ -12,10 +12,10 @@ pros::Motor rightIntake(11,pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER
 pros::Motor topConveyor(15,pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor botConveyor(14,pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
 
-pros::ADIAnalogIn topDetector2 ('E');
+//pros::ADIAnalogIn topDetector2 ('E'); //moded to B on ext ports
 pros::ADIAnalogIn topDetector ('H');
 pros::ADIAnalogIn botDetector ('G');
-pros::ADIAnalogIn ejectDetector ('F');
+//pros::ADIAnalogIn ejectDetector ('F'); //moved to C on ext ports
 pros::Optical optical(4);
 
 okapi::ADIEncoder left('C','D',false);

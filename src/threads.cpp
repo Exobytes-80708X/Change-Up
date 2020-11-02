@@ -35,7 +35,7 @@ void thread_sensors(void *p)
       topBall_low = true;
     else topBall_low = false;
 
-    if(topDetector2.get_value() < 2800)
+    if(pros::c::ext_adi_analog_read(5,'B') < 2800)
       topBall_high = true;
     else topBall_high = false;
 
@@ -51,7 +51,7 @@ void thread_sensors(void *p)
       optical_state = NO_BALL;
     }
 
-    if(ejectDetector.get_value() < 2700)
+    if(pros::c::ext_adi_analog_read(5,'C') < 2700)
       ballInEjector = true;
     else ballInEjector = false;
 
