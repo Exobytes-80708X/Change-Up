@@ -131,7 +131,7 @@ void eject(int numBalls){
 //------------------------------------------------------
 void autonomous()
 {
-  pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task task_odometry (thread_Odom2, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::delay(200);
   isRobotDisabled = false;
   driverControl = false;
@@ -141,8 +141,8 @@ void autonomous()
 
   switch(auton) {
     case 0: //no auton
-      super_macro(3,1);
-
+      //super_macro(3,1);
+      facePID(180,p,i,d);
     break;
 
     case 1: //red auton

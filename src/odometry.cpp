@@ -140,8 +140,15 @@ void thread_Odom2(void*param)
     double dMiddleVal = 0.0;
     double dImu = 0.0;
 
+    db totDL = 0.0;
+    db totDR = 0.0;
+    db offsetX;
+    db offsetY;
+    db TRACKING_TO_BACK = 8.4/2.0;
     double avgTheta;
 
+    db sumX;
+    db sumY;
     int leftReset = left.reset();
     int rightReset = right.reset();
     int midReset = middle.reset();
@@ -155,9 +162,6 @@ void thread_Odom2(void*param)
         currentMiddle = middle.get()/360.0*WHEEL_CIRCUMFERENCE;
         currentImu = imu.get_heading()*M_PI/180.0;  //imu heading in radians
 
-        //currentLeft = leftDrive.getPosition()/900*WHEEL_CIRCUMFERENCE; //read integrated encoders
-        //currentRight = rightDrive.getPosition()/900*WHEEL_CIRCUMFERENCE;
-
         dLeftVal = (currentLeft - prevLeft);
         dRightVal = (currentRight - prevRight);
         dMiddleVal = (currentMiddle - prevMiddle);
@@ -168,9 +172,37 @@ void thread_Odom2(void*param)
         prevMiddle = currentMiddle;
         prevImu = currentImu;
 
+
+        dTheta = (dLeftVal - dRightVal)/ ENCODER_WIDTH;
+
+        avgTheta = robotTheta + dTheta/2.0;
+        avgTheta = fmod(avgTheta, 2*M_PI);
+        if(avgTheta < 0) avgTheta += 2*M_PI;
+
+        robotTheta += dTheta;
+        robotTheta = fmod(robotTheta, 2*M_PI);
+        if(robotTheta < 0) robotTheta += 2*M_PI;
+
+        if(dTheta == 0.0){
+          offsetX = dMiddleVal;
+          offsetY = dLeftVal;
+        }
+        else{
+          offsetX = 2.0 * sin(dTheta/2.0) * (dMiddleVal/dTheta + TRACKING_TO_BACK);
+          offsetY = 2.0 * sin(dTheta/2.0) * (dLeftVal/dTheta + ENCODER_WIDTH/2.0);
+        }
+
+        sumX += offsetX;
+        sumY += offsetY;
+        dX = offsetY * cos(avgTheta) + offsetX * sin(avgTheta);
+        dY = offsetY * sin(avgTheta) - offsetX * cos(avgTheta);
+
+        robotX += dX;
+        robotY += dY;
+
         //if(DEBUGGING_ENABLED) {
-          updateValueLabel(xValue,robotX, "IN",3);
-          updateValueLabel(yValue,robotY, "IN",3);
+          updateValueLabel(xValue,sumX, "IN",3);
+          updateValueLabel(yValue,sumY, "IN",3);
           updateValueLabel(thetaValue,robotTheta*180/M_PI,"DEG",3);
         //}
         pros::delay(10); //reupdate every dT msec

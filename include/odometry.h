@@ -2,6 +2,7 @@ extern double robotTheta;
 extern double robotX;
 extern double robotY;
 extern void thread_Odometry(void*param);
+extern void thread_Odom2(void*param);
 extern double calcDistance(double x1, double y1, double x2, double y2);
 extern double calcDistance(double x2, double y2);
 extern double calcAngleError(double theta);
