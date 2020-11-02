@@ -144,7 +144,7 @@ void thread_Odom2(void*param)
     db totDR = 0.0;
     db offsetX;
     db offsetY;
-    db TRACKING_TO_BACK = 3.75;
+    db TRACKING_TO_BACK = 9;
     double avgTheta;
 
     db sumX;
@@ -194,8 +194,8 @@ void thread_Odom2(void*param)
 
         sumX += offsetX;
         sumY += offsetY;
-        dX = offsetY * cos(avgTheta) + offsetX * sin(avgTheta);
-        dY = offsetY * sin(avgTheta) - offsetX * cos(avgTheta);
+        dY = offsetY * cos(avgTheta) - offsetX * sin(avgTheta);
+        dX = offsetY * sin(avgTheta) + offsetX * cos(avgTheta);
 
         robotX += dX;
         robotY += dY;
