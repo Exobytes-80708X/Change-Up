@@ -100,10 +100,73 @@ void thread_Odometry(void*param)
         //dY = (dLeftVal + dRightVal)/2 * cos( (robotTheta) ); //calculate change in y
 
         dX = (dLeftVal + dRightVal)/2 * sin(avgTheta) + dMiddleVal * cos(avgTheta);//calculate change in x
-        dY = (dLeftVal + dRightVal)/2 * cos(avgTheta) + dMiddleVal * sin(avgTheta);; //calculate change in y
+        dY = (dLeftVal + dRightVal)/2 * cos(avgTheta) - dMiddleVal * sin(avgTheta);; //calculate change in y
 
         robotX += dX; //add to current x and ys
         robotY += dY;
+
+        //if(DEBUGGING_ENABLED) {
+          updateValueLabel(xValue,robotX, "IN",3);
+          updateValueLabel(yValue,robotY, "IN",3);
+          updateValueLabel(thetaValue,robotTheta*180/M_PI,"DEG",3);
+        //}
+        pros::delay(10); //reupdate every dT msec
+    }
+}
+void thread_Odom2(void*param)
+{
+    robotTheta = 0.0;
+    robotX = 0.0;
+    robotY = 0.0;
+
+    double dTheta_encoders = 0.0;
+    double dTheta_imu = 0.0;
+    double dTheta = 0.0;
+    double dX = 0.0;
+    double dY = 0.0;
+
+    double currentLeft = 0.0;
+    double currentRight = 0.0;
+    double currentMiddle = 0.0;
+    double currentImu = 0.0;
+
+    double prevLeft = 0.0;
+    double prevRight = 0.0;
+    double prevMiddle = 0.0;
+    double prevImu = 0.0;
+
+    double dLeftVal = 0.0;
+    double dRightVal = 0.0;
+    double dMiddleVal = 0.0;
+    double dImu = 0.0;
+
+    double avgTheta;
+
+    int leftReset = left.reset();
+    int rightReset = right.reset();
+    int midReset = middle.reset();
+
+    pros::delay(200);
+
+    while(true)
+    {
+        currentLeft = left.get()/360.0*WHEEL_CIRCUMFERENCE; //read quadature encoders
+        currentRight = right.get()/360.0*WHEEL_CIRCUMFERENCE;
+        currentMiddle = middle.get()/360.0*WHEEL_CIRCUMFERENCE;
+        currentImu = imu.get_heading()*M_PI/180.0;  //imu heading in radians
+
+        //currentLeft = leftDrive.getPosition()/900*WHEEL_CIRCUMFERENCE; //read integrated encoders
+        //currentRight = rightDrive.getPosition()/900*WHEEL_CIRCUMFERENCE;
+
+        dLeftVal = (currentLeft - prevLeft);
+        dRightVal = (currentRight - prevRight);
+        dMiddleVal = (currentMiddle - prevMiddle);
+        dImu = currentImu - prevImu;
+
+        prevLeft = currentLeft; //update prev values
+        prevRight = currentRight;
+        prevMiddle = currentMiddle;
+        prevImu = currentImu;
 
         //if(DEBUGGING_ENABLED) {
           updateValueLabel(xValue,robotX, "IN",3);

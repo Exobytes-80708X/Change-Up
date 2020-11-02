@@ -20,7 +20,7 @@ pros::Optical optical(4);
 
 okapi::ADIEncoder left('C','D',false);
 okapi::ADIEncoder right('A','B',false);
-okapi::ADIEncoder middle('E','F',false);
+okapi::ADIEncoder middle('E','F',true);
 
 pros::Imu imu (1);
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
