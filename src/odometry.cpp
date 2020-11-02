@@ -201,8 +201,8 @@ void thread_Odom2(void*param)
         robotY += dY;
 
         //if(DEBUGGING_ENABLED) {
-          updateValueLabel(xValue,sumX, "IN",3);
-          updateValueLabel(yValue,sumY, "IN",3);
+          updateValueLabel(xValue,robotX, "IN",3);
+          updateValueLabel(yValue,robotY, "IN",3);
           updateValueLabel(thetaValue,robotTheta*180/M_PI,"DEG",3);
         //}
         pros::delay(10); //reupdate every dT msec
