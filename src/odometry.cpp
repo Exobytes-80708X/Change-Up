@@ -3,6 +3,7 @@
 
 const double WHEEL_DIAMETER = 2.875;
 const double ENCODER_WIDTH = 7.0;
+const double MIDDLE_ENCODER_LENGTH = 10.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
 const double IMU_WEIGHT = 1.0;
 const bool DEBUGGING_ENABLED = true;
@@ -26,18 +27,25 @@ void thread_Odometry(void*param)
     robotX = 0.0;
     robotY = 0.0;
 
+    double dTheta_encoders = 0.0;
+    double dTheta_imu = 0.0;
     double dTheta = 0.0;
     double dX = 0.0;
     double dY = 0.0;
 
     double currentLeft = 0.0;
     double currentRight = 0.0;
+    double currentImu = 0.0;
 
     double prevLeft = 0.0;
     double prevRight = 0.0;
+    double prevImu = 0.0;
 
     double dLeftVal = 0.0;
     double dRightVal = 0.0;
+    double dImu = 0.0;
+
+    double avgTheta;
 
     int leftReset = left.reset();
     int rightReset = right.reset();
@@ -48,28 +56,44 @@ void thread_Odometry(void*param)
     {
         currentLeft = left.get()/360.0*WHEEL_CIRCUMFERENCE; //read quadature encoders
         currentRight = right.get()/360.0*WHEEL_CIRCUMFERENCE;
+        currentImu = imu.get_heading()*M_PI/180.0;  //imu heading in radians
 
         //currentLeft = leftDrive.getPosition()/900*WHEEL_CIRCUMFERENCE; //read integrated encoders
         //currentRight = rightDrive.getPosition()/900*WHEEL_CIRCUMFERENCE;
 
         dLeftVal = (currentLeft - prevLeft);
         dRightVal = (currentRight - prevRight);
+        dImu = currentImu - prevImu;
 
         prevLeft = currentLeft; //update prev values
         prevRight = currentRight;
+        prevImu = currentImu;
 
-        dTheta = (dLeftVal - dRightVal) / ENCODER_WIDTH; //calculate change in angle in radians
-        robotTheta_encoders += dTheta;
+        dTheta_encoders = (dLeftVal - dRightVal) / ENCODER_WIDTH; //calculate change in angle in radians
+        dTheta_imu = dImu;
+        if(fabs(dTheta_imu) > 180) {
+          dTheta_imu = -1*(2*M_PI*(dTheta_imu/fabs(dTheta_imu)) - dTheta_imu);
+        }
+        dTheta = dTheta_encoders*(1.0-IMU_WEIGHT) + dTheta_imu*IMU_WEIGHT;
+
+        avgTheta = robotTheta + dTheta/2.0;
+        avgTheta = fmod(avgTheta, 2*M_PI);
+
+        /*robotTheta_encoders += dTheta_encoders;
         robotTheta_encoders = fmod(robotTheta, 2*M_PI);
 
-        robotTheta_imu = imu.get_heading()*M_PI/180.0; //imu heading in radians
+        robotTheta_imu = currentImu;*/
 
-        robotTheta = robotTheta_imu*IMU_WEIGHT + robotTheta_encoders*(1.0-IMU_WEIGHT); //weighted average between imu heading and encoder heading for (hopefully) more consistent heading calculation
+        //robotTheta = robotTheta_imu*IMU_WEIGHT + robotTheta_encoders*(1.0-IMU_WEIGHT); //weighted average between imu heading and encoder heading for (hopefully) more consistent heading calculation
+        robotTheta += dTheta;
         robotTheta = fmod(robotTheta, 2*M_PI);
         if(robotTheta < 0) robotTheta += 2*M_PI;
 
-        dX = (dLeftVal + dRightVal)/2 * sin( (robotTheta) ); //calculate change in x
-        dY = (dLeftVal + dRightVal)/2 * cos( (robotTheta) ); //calculate change in y
+        //dX = (dLeftVal + dRightVal)/2 * sin( (robotTheta) ); //calculate change in x
+        //dY = (dLeftVal + dRightVal)/2 * cos( (robotTheta) ); //calculate change in y
+
+        dX = (dLeftVal + dRightVal)/2 * sin(avgTheta) + MIDDLE_ENCODER_LENGTH * cos(avgTheta);//calculate change in x
+        dY = (dLeftVal + dRightVal)/2 * cos(avgTheta) + MIDDLE_ENCODER_LENGTH * sin(avgTheta);; //calculate change in y
 
         robotX += dX; //add to current x and ys
         robotY += dY;
