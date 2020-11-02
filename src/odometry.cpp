@@ -144,7 +144,7 @@ void thread_Odom2(void*param)
     db totDR = 0.0;
     db offsetX;
     db offsetY;
-    db TRACKING_TO_BACK = 8.4/2.0;
+    db TRACKING_TO_BACK = 3.75;
     double avgTheta;
 
     db sumX;
@@ -185,11 +185,11 @@ void thread_Odom2(void*param)
 
         if(dTheta == 0.0){
           offsetX = dMiddleVal;
-          offsetY = dLeftVal;
+          offsetY = dRightVal;
         }
         else{
           offsetX = 2.0 * sin(dTheta/2.0) * (dMiddleVal/dTheta + TRACKING_TO_BACK);
-          offsetY = 2.0 * sin(dTheta/2.0) * (dLeftVal/dTheta + ENCODER_WIDTH/2.0);
+          offsetY = 2.0 * sin(dTheta/2.0) * (dRightVal/dTheta + ENCODER_WIDTH/2.0);
         }
 
         sumX += offsetX;
