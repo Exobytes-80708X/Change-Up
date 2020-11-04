@@ -172,8 +172,11 @@ void thread_Odom2(void*param)
         prevMiddle = currentMiddle;
         prevImu = currentImu;
 
+        if(fabs(dImu) > M_PI) {
+          dImu = 2*M_PI*(dImu/fabs(dImu)) - dImu;
+        }
 
-        dTheta = (dLeftVal - dRightVal)/ ENCODER_WIDTH;
+        dTheta = dImu;//(dLeftVal - dRightVal)/ENCODER_WIDTH;
 
         avgTheta = robotTheta + dTheta/2.0;
         avgTheta = fmod(avgTheta, 2*M_PI);
@@ -207,6 +210,93 @@ void thread_Odom2(void*param)
         //}
         pros::delay(10); //reupdate every dT msec
     }
+}
+
+void thread_Odom3(void*p)
+{
+  const double W = 6.5; //inches
+  const double L = 9.00; //inches
+
+  double dX;
+  double dY;
+
+  double pR = 0.0;
+  double pL = 0.0;
+  double pM = 0.0;
+  double pIMU = 0.0;
+
+  double dR = 0.0;
+  double dL = 0.0;
+  double dM = 0.0;
+  double dIMU = 0.0;
+
+  double cR = 0.0;
+  double cL = 0.0;
+  double cM = 0.0;
+  double cIMU = 0.0;
+
+  double h_LR;
+  double h_M;
+
+  double avgTheta = 0.0;
+  double dTheta = 0.0;
+
+  int leftReset = left.reset();
+  int rightReset = right.reset();
+  int midReset = middle.reset();
+  pros::delay(200);
+
+  while(true)
+  {
+    cR = right.get()/360.0*WHEEL_CIRCUMFERENCE; //convert to inches
+    cL = left.get()/360.0*WHEEL_CIRCUMFERENCE;
+    cM = middle.get()/360.0*WHEEL_CIRCUMFERENCE;
+    cIMU = imu.get_heading()*M_PI/180.0;  //imu heading in radians
+
+    dR = cR - pR;
+    dL = cL - pL;
+    dM = cM - pM;
+    dIMU = cIMU - pIMU;
+
+    pR = cR;
+    pL = cL;
+    pM = cM;
+    pIMU = cIMU;
+
+    //dTheta = (dL - dR)/W;
+
+    if(fabs(dIMU) > M_PI) {
+      dIMU = 2*M_PI*(dIMU/fabs(dIMU)) - dIMU;
+    }
+
+    dTheta = dIMU;
+
+    avgTheta = robotTheta + dTheta/2.0;
+    avgTheta = fmod(avgTheta, 2*M_PI);
+    if(avgTheta < 0) avgTheta += 2*M_PI;
+
+    if(dTheta == 0) {
+      h_LR = dR;
+      h_M = dM;
+    } else {
+      h_LR = 2.0*sin(dTheta/2.0)*(dR/dTheta + W/2.0);
+      h_M = 2.0*sin(dTheta/2.0)*(dM/dTheta + L);
+    }
+
+    dX = h_LR*sin(avgTheta) + h_M*cos(avgTheta);
+    dY = h_LR*cos(avgTheta) - h_M*sin(avgTheta);
+
+    robotX += dX;
+    robotY += dY;
+    robotTheta += dTheta;
+    robotTheta = fmod(robotTheta, 2*M_PI);
+    if(robotTheta < 0) robotTheta += 2*M_PI;
+
+    updateValueLabel(xValue,robotX, "IN",3);
+    updateValueLabel(yValue,robotY, "IN",3);
+    updateValueLabel(thetaValue,robotTheta*180/M_PI,"DEG",3);
+    pros::delay(10);
+  }
 }
 // =============================================== math ===============================================================
 
