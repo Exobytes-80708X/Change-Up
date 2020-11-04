@@ -326,6 +326,7 @@ void thread_subsystems(void* p)
   while(true) {
     switch(conveyorState) {
       case 0: //idle state
+      // COLOR SORTING [NOT WORKING]
         /*if(auton == 1 && driverControl) { //RED
           if(optical_state == BLUE_BALL) {
             if(firstBall){
