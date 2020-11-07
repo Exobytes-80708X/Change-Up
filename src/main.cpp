@@ -142,15 +142,20 @@ void autonomous()
   switch(auton) {
     case 0: //no auton
       //super_macro(3,1);
-      facePID(90,p,i,d);
+      intake(inward);
+      pointTurn(0,150,130,false,p*1.5,i,d);
+
+      delayDrive(400,8000);
     break;
 
     case 1: //red auton
-    intake(inward);
     //driveDistance(10,5);
+    robotTheta = M_PI/3;
+    intake(inward);
+    pointTurn(0,150,130,false,p*1.5,i,d);
     delayDrive(400,8000);
     //facePID(43,p,i,d);
-    delayFacePID(43,false,12,p,i,d,10000,400,8000);
+    //delayFacePID(43,false,12,p,i,d,10000,400,8000);
     while(!thirdBall)
       pros::delay(10);
     //intake(stop);
@@ -163,17 +168,15 @@ void autonomous()
     //driveDistance(-calcDistance(-10,-40),10);
     //facePID(90,p,i,d);
     //adaptiveDrive_reversed()
-    adaptiveDrive_reversed(-12,-45,9.5);
+    adaptiveDrive_reversed(-35,16,9.5);
     shooting_macro(1);
-    facePID(90,p,i,d);
+    facePID(180,p,i,d);
     intake(inward);
     delayDrive(800,9000);
     //super_macro(0, 2);
-    pros::delay(400);
     while(!firstBall)
       pros::delay(10);
     shooting_macro(1);
-    pros::delay(500);
     intake(outward);
     driveDistance(-35,12);
     eject(1);

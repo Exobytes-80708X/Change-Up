@@ -24,5 +24,5 @@ extern void facePID(double, bool, double, double, double, double, int, int);
 extern void facePID(double, double,double,double,double);
 extern void facePID(double,double,double,double);
 extern void accel(double, int);
-extern void pointTurn(int side, double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout);
-extern void pointTurn(int side, double theta, bool reversed, double kP, double kI, double kD);
+extern void pointTurn(int side, int oppRPM, double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout);
+extern void pointTurn(int side, int oppRPM, double theta, bool reversed, double kP, double kI, double kD);
