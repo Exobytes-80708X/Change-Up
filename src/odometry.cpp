@@ -783,6 +783,8 @@ void facePID(double theta, double kP, double kI, double kD)
 
 void pointTurn(int side, double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout)
 {
+  rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+  leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
   double error = calcAngleError(theta);
   //calculates shortest number of radians needed to turn to face (x,y)
   double p = 0;
@@ -825,8 +827,10 @@ void pointTurn(int side, double theta, bool reversed, double maxV, double kP, do
 
       if(side == 0) {
         leftDrive.moveVoltage(currentSpeed);
+        rightDrive.moveVelocity(0);
       }
       else {
+        leftDrive.moveVelocity(0);
         rightDrive.moveVoltage(-currentSpeed);
       }
       pros::delay(10);
