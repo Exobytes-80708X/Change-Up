@@ -853,7 +853,7 @@ void pointTurn(int side, double theta, bool reversed, double kP, double kI, doub
   pointTurn(side,theta,reversed,8,kP,kI,kD,200,5000);
 }
 
-/*void delayFacePID(double theta, bool reversed, double maxV, double kP, double kI, double kD, int timeout, int delay, int speed){
+void delayFacePID(double theta, bool reversed, double maxV, double kP, double kI, double kD, int timeout, int delay, int speed){
       /*
       Arguments:
       x         - x value of desired point
