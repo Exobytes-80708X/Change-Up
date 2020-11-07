@@ -919,7 +919,7 @@ void delayFacePID(double theta, bool reversed, double maxV, double kP, double kI
   		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
   		rightDrive.moveVelocity(0);
   	  leftDrive.moveVelocity(0);
-}*/
+}
 
 
 void face(double x, double y, bool reversed, double accelTime, double minV, double medV, double maxV, double kP, int settleTime, int timeout)
