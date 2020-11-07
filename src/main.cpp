@@ -151,11 +151,14 @@ void autonomous()
     case 1: //red auton
       robotTheta = M_PI/3;
       intake(inward);
-      pointTurn(0,170,130,false,p*1.5,i,d);
+      pointTurn(0,190,130,false,p*1.5,i,d);
       delayDrive(400,8000);
       while(!thirdBall)
         pros::delay(10);
-      shooting_macro(3); //shoot first goal
+      pros::delay(300);
+      //shooting_macro(3); //shoot first goal
+      super_macro(3, 1);
+      pros::delay(100);
       intake(outward);
       adaptiveDrive_reversed(-35,16,9.5);
       shooting_macro(1); //shoot second goal
@@ -165,13 +168,21 @@ void autonomous()
       while(!firstBall)
         pros::delay(10);
       shooting_macro(1);
+      pros::delay(200);
       intake(outward);
-      driveDistance(-20,10);
+      driveDistance(-17,10);
       eject(1);
       facePID(270,p,i,d);
       //facePID(12,-108,p,i,d);
-      adaptiveDrive(-90,-6,10);
       intake(inward);
+      adaptiveDrive(-84,-3, 8);
+      delayDrive(400,8000);
+      intake(outward);
+      while(!firstBall)
+        pros::delay(10);
+      shooting_macro(1);
+      pros::delay(200);
+      delayDrive(400,-8000);
     break;
 
     case 2: //blue auton
