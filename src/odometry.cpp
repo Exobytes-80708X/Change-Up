@@ -117,7 +117,7 @@ void thread_Odometry_old(void*param) //LINE-BASED 3 WHEELS
 void thread_Odometry(void*p) //ARC-BASED 3 WHEELS
 {
   const double W = 6.5; //inches
-  const double L = 9.00; //inches
+  const double L = 4.00; //inches
 
   double dX;
   double dY;
@@ -682,7 +682,7 @@ void facePID(double x, double y, bool reversed, double maxV, double kP, double k
             prevError = error;
 
             double currentSpeed = p * kP + i * kI + d * kD;
-            if (fabs(currentSpeed) > 8000) currentSpeed = 8000*currentSpeed/fabs(currentSpeed);
+            if (fabs(currentSpeed) > maxV) currentSpeed = maxV*currentSpeed/fabs(currentSpeed);
 
           leftDrive.moveVoltage(currentSpeed);
           rightDrive.moveVoltage(-currentSpeed);
@@ -703,7 +703,7 @@ void facePID(double x, double y, bool reversed, double maxV, double kP, double k
 
 void facePID(double x, double y, double kP,double kI, double kD)
 {
-  facePID(x, y, false, 12, kP, kI, kD, 200, 5000);
+  facePID(x, y, false, 8, kP, kI, kD, 200, 5000);
 }
 
 void facePID(double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout){
@@ -757,7 +757,7 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
           prevError = error;
 
           double currentSpeed = p * kP + i * kI + d * kD;
-          if (fabs(currentSpeed) > 8000) currentSpeed = 8000*currentSpeed/fabs(currentSpeed);
+          if (fabs(currentSpeed) > maxV) currentSpeed = maxV*currentSpeed/fabs(currentSpeed);
 
           leftDrive.moveVoltage(currentSpeed);
           rightDrive.moveVoltage(-currentSpeed);
@@ -778,10 +778,78 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
 
 void facePID(double theta, double kP, double kI, double kD)
 {
-  facePID(theta, false, 12, kP,kI,kD, 200, 10000);
+  facePID(theta, false, 8, kP,kI,kD, 200, 10000);
 }
 
-void delayFacePID(double theta, bool reversed, double maxV, double kP, double kI, double kD, int timeout, int delay, int speed){
+void pointTurn(int side, double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout)
+{
+  double error = calcAngleError(theta);
+  //calculates shortest number of radians needed to turn to face (x,y)
+  double p = 0;
+  double i = 0;
+  double d = 0;
+  double prevError = 0;
+  int settleTimer = 0;
+  int timeoutTimer = 0;
+  maxV *= 1000;
+  kP *= 1000;
+  kI *= 1000;
+  kD *= 1000;
+  //scales all arguments to be the correct units
+
+  while(settleTimer < settleTime && timeoutTimer < timeout)
+  {
+      if(reversed == true)
+        error = calcAngleErrorReversed(theta); //calculates angle error based off back of robot
+      else
+        error = calcAngleError(theta); //calculate angle error based off front of robot
+
+      if(fabs(error) < 0.02 || (fabs(error) < 0.04 && d < 0.01) )
+        settleTimer+=10;
+      else
+        settleTimer = 0;
+      //if robot is within 0.04 radians (2.5 degrees) of facing (x,y), increase settleTimer
+      //else reset settleTimer
+      timeoutTimer+=10;
+
+      p = error;
+      if(fabs(error) < 0.02 || fabs(error) > 0.1)
+        i = 0;
+      else
+        i = i + error;
+      d = error - prevError;
+      prevError = error;
+
+      double currentSpeed = p * kP + i * kI + d * kD;
+      if (fabs(currentSpeed) > maxV) currentSpeed = maxV*currentSpeed/fabs(currentSpeed);
+
+      if(side == 0) {
+        leftDrive.moveVoltage(currentSpeed);
+      }
+      else {
+        rightDrive.moveVoltage(-currentSpeed);
+      }
+      pros::delay(10);
+      if(DEBUGGING_ENABLED) {
+        updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
+        updateVarLabel(debugLabel2,"P SPEED",debugValue2,p*kP,"mV",0);
+        updateVarLabel(debugLabel3,"I SPEED",debugValue3,i*kI,"mV",0);
+        updateVarLabel(debugLabel4,"D SPEED",debugValue4,d*kD,"mV",0);
+      }
+  }
+  if(DEBUGGING_ENABLED) resetAutonDebug();
+  rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+  leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+  rightDrive.moveVelocity(0);
+  leftDrive.moveVelocity(0);
+}
+
+void pointTurn(int side, double theta, bool reversed, double kP, double kI, double kD)
+{
+  pointTurn(side,theta,reversed,8,kP,kI,kD,200,5000);
+}
+
+/*void delayFacePID(double theta, bool reversed, double maxV, double kP, double kI, double kD, int timeout, int delay, int speed){
       /*
       Arguments:
       x         - x value of desired point
@@ -847,7 +915,7 @@ void delayFacePID(double theta, bool reversed, double maxV, double kP, double kI
   		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
   		rightDrive.moveVelocity(0);
   	  leftDrive.moveVelocity(0);
-}
+}*/
 
 
 void face(double x, double y, bool reversed, double accelTime, double minV, double medV, double maxV, double kP, int settleTime, int timeout)
