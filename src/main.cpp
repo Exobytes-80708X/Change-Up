@@ -149,51 +149,29 @@ void autonomous()
     break;
 
     case 1: //red auton
-    //driveDistance(10,5);
-    robotTheta = M_PI/3;
-    intake(inward);
-    pointTurn(0,150,130,false,p*1.5,i,d);
-    delayDrive(400,8000);
-    //facePID(43,p,i,d);
-    //delayFacePID(43,false,12,p,i,d,10000,400,8000);
-    while(!thirdBall)
-      pros::delay(10);
-    //intake(stop);
-    shooting_macro(3);
-    //super_macro(3, 1);
-    intake(outward);
-    //delayDrive(200,-9000);
-    //driveDistance(-10,12);
-    //facePID(12,p,i,d);
-    //driveDistance(-calcDistance(-10,-40),10);
-    //facePID(90,p,i,d);
-    //adaptiveDrive_reversed()
-    adaptiveDrive_reversed(-35,16,9.5);
-    shooting_macro(1);
-    facePID(180,p,i,d);
-    intake(inward);
-    delayDrive(800,9000);
-    //super_macro(0, 2);
-    while(!firstBall)
-      pros::delay(10);
-    shooting_macro(1);
-    intake(outward);
-    driveDistance(-35,12);
-    eject(1);
-    //delayDrive(400,-9000);
-    //adaptiveDrive(7, -105, 8.5);
-    //shooting_macro(1);
-    //eject(1);
-    //facePID(3,-110,p,i,d);
-    facePID(12,-108,p,i,d);
-    intake(inward);
-    //delayDrive(600,10000);
-    //super_macro(0, 2);
-
-    //driveDistance(calcDistance(12,-108),10);
-    //shooting_macro(1);
-    //driveDistance(-10,12);
-    //delayDrive(400,-9000);
+      robotTheta = M_PI/3;
+      intake(inward);
+      pointTurn(0,170,130,false,p*1.5,i,d);
+      delayDrive(400,8000);
+      while(!thirdBall)
+        pros::delay(10);
+      shooting_macro(3); //shoot first goal
+      intake(outward);
+      adaptiveDrive_reversed(-35,16,9.5);
+      shooting_macro(1); //shoot second goal
+      facePID(180,p,i,d);
+      intake(inward);
+      delayDrive(800,9000);
+      while(!firstBall)
+        pros::delay(10);
+      shooting_macro(1);
+      intake(outward);
+      driveDistance(-20,10);
+      eject(1);
+      facePID(270,p,i,d);
+      //facePID(12,-108,p,i,d);
+      adaptiveDrive(-90,-6,10);
+      intake(inward);
     break;
 
     case 2: //blue auton

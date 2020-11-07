@@ -827,10 +827,10 @@ void pointTurn(int side, int oppRPM, double theta, bool reversed, double maxV, d
 
       if(side == 0) {
         leftDrive.moveVoltage(currentSpeed);
-        rightDrive.moveVelocity(oppRPM);
+        rightDrive.moveVelocity((currentSpeed/12000)*oppRPM);
       }
       else {
-        leftDrive.moveVelocity(oppRPM);
+        leftDrive.moveVelocity(oppRPM*kP);
         rightDrive.moveVoltage(-currentSpeed);
       }
       pros::delay(10);
