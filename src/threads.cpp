@@ -319,7 +319,7 @@ void thread_subsystems(void* p)
             }
             else {
               topConveyor.move_velocity(-600);
-              botConveyor.move_velocity(300);
+              botConveyor.move_velocity(200);
               waitForBallToEject();
             }
           }
@@ -334,7 +334,7 @@ void thread_subsystems(void* p)
             }
             else {
               topConveyor.move_velocity(-600);
-              botConveyor.move_velocity(300);
+              botConveyor.move_velocity(200);
               waitForBallToEject();
             }
           }
