@@ -82,6 +82,8 @@ void opcontrol(void);
 
 extern bool isRobotDisabled;
 extern bool driverControl;
+extern int red;
+extern int blue;
 #ifndef DEVICES
 #define DEVICES
 #include "devices.h"

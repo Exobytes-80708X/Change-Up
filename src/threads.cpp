@@ -25,7 +25,7 @@ const int NO_BALL = 0;
 const int RED_BALL = 1;
 const int BLUE_BALL = 2;
 
-int optical_state;
+int optical_state = NO_BALL;
 
 
 void thread_sensors(void *p)
@@ -41,7 +41,7 @@ void thread_sensors(void *p)
 
     if(botDetector.get_value() < 2800) {
       botBall = true;
-      if(optical.get_hue() < 100)
+      if(optical.get_hue() < 85)
         optical_state = RED_BALL;
       else
         optical_state = BLUE_BALL;
@@ -224,6 +224,19 @@ int countHeldBalls()
   else return 0;
 }
 
+void idleConveyor()
+{
+  if(firstBall)
+    centerTopBall();
+  else
+    topConveyor.move_velocity(200);
+
+  if(secondBall && firstBall)
+    botConveyor.move_velocity(0);
+  else
+    botConveyor.move_velocity(300);
+}
+
 void super_macro(int shootBalls, int intakeBalls)
 {
   intakeFinished = false;
@@ -233,16 +246,7 @@ void super_macro(int shootBalls, int intakeBalls)
   pros::Task subthread (intake_subthread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   shooting_macro(shootBalls);
   while(!intakeFinished) {
-    if(firstBall)
-      centerTopBall();
-    else
-      topConveyor.move_velocity(200);
-
-    if(secondBall && firstBall)
-      botConveyor.move_velocity(0);
-    else
-      botConveyor.move_velocity(400);
-    pros::delay(10);
+    idleConveyor();
   }
   if(!driverControl)
     conveyorState = 0;
@@ -291,29 +295,6 @@ void thread_intake(void* p)
   }
 }
 
-void idleConveyor()
-{
-  if(firstBall)
-    centerTopBall();
-  else
-    topConveyor.move_velocity(200);
-
-  if(secondBall && firstBall)
-    botConveyor.move_velocity(0);
-  else
-    botConveyor.move_velocity(400);
-}
-
-void thread_subsystems2(void* p)
-{
-  botConveyor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-  topConveyor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-  pros::Task topBall_task (thread_centerTopBall, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
-  topBall_task.suspend();
-  pros::Task intake_thread (thread_intake, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  pros::Task intake_control (thread_intakecontrol, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-}
-
 void thread_subsystems(void* p)
 {
   botConveyor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -326,8 +307,7 @@ void thread_subsystems(void* p)
   while(true) {
     switch(conveyorState) {
       case 0: //idle state
-      // COLOR SORTING [NOT WORKING]
-        /*if(auton == 1 && driverControl) { //RED
+        if(auton == red && driverControl) { //RED
           if(optical_state == BLUE_BALL) {
             if(firstBall){
               botConveyor.move_velocity(600);
@@ -337,12 +317,12 @@ void thread_subsystems(void* p)
             }
             else {
               topConveyor.move_velocity(-600);
-              botConveyor.move_velocity(600);
+              botConveyor.move_velocity(300);
               waitForBallToEject();
             }
           }
         }
-        else if (auton == 2 && driverControl) { //BLUE
+        else if (auton == blue && driverControl) { //BLUE
           if(optical_state == RED_BALL) {
             if(firstBall){
               botConveyor.move_velocity(600);
@@ -352,11 +332,11 @@ void thread_subsystems(void* p)
             }
             else {
               topConveyor.move_velocity(-600);
-              botConveyor.move_velocity(600);
+              botConveyor.move_velocity(300);
               waitForBallToEject();
             }
           }
-        }*/
+        }
         idleConveyor();
 
         break;
@@ -364,8 +344,6 @@ void thread_subsystems(void* p)
       case 1: //shooting manually
         if(firstBall)
           botConveyor.move_velocity(0);
-        else
-          topConveyor.move_velocity(600);
         topConveyor.move_voltage(12000);
         pros::delay(200);
           botConveyor.move_velocity(600);
