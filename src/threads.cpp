@@ -39,9 +39,10 @@ void thread_sensors(void *p)
       topBall_high = true;
     else topBall_high = false;
 
+    pros::c::optical_set_led_pwm(4, 50);
     if(botDetector.get_value() < 2800) {
       botBall = true;
-      if(optical.get_hue() < 85)
+      if(pros::c::optical_get_rgb(4).red/pros::c::optical_get_rgb(4).blue >= 2)
         optical_state = RED_BALL;
       else
         optical_state = BLUE_BALL;
@@ -70,6 +71,7 @@ void thread_sensors(void *p)
     if(secondBall && botBall_low)
       thirdBall = true;
     else thirdBall = false;
+
 
     pros::delay(10);
   }

@@ -783,7 +783,7 @@ void thread_sensorDebug(void*p)
     updateValueLabel(sensorValue1,imu.get_heading(),"DEG",3);
     updateValueLabel(sensorValue2,left.get(),"",0);
     updateValueLabel(sensorValue3,right.get(),"",0);
-    updateValueLabel(sensorValue9,optical.get_hue(),"",0);
+    updateValueLabel(sensorValue9,pros::c::optical_get_rgb(4).red/pros::c::optical_get_rgb(4).blue,"",0);
     pros::delay(100);
   }
 }
