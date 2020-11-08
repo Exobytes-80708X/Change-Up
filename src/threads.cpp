@@ -95,7 +95,10 @@ void waitForTopBalltoLower()
 
 void countBalls(int numOfBalls)
 {
-  if(numOfBalls == 0) return;
+  if(numOfBalls == 0){
+    pros::delay(200);
+    return;
+  }
   int timeOut = 500;
   int timer = 0;
   botConveyor.move_velocity(600);
@@ -111,11 +114,11 @@ void countBalls(int numOfBalls)
   for(int n = 0; n < numOfBalls; n++) {
     timer = 0;
     if(n == numOfBalls-1)
-      botConveyor.move_velocity(0);
+      botConveyor.move_velocity(200);
 
     while(topBall_high) pros::delay(10);
 
-    if(n <= numOfBalls-2) {
+    if(n == numOfBalls-2 && numOfBalls == 2) {
       while(!topBall_high) {
         pros::delay(10);
         timer += 10;
@@ -129,6 +132,7 @@ void countBalls(int numOfBalls)
     }
   }
 }
+
 
 void countIntakeBalls(int numOfBalls)
 {
@@ -184,7 +188,8 @@ void shooting_macro(int numOfBalls)
   botConveyor.move_velocity(0);
   pros::delay(200);
   countBalls(numOfBalls-1);
-
+  topConveyor.move_velocity(0);
+  pros::delay(100);
   if(!driverControl)
     conveyorState = 0;
 }
