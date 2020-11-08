@@ -309,36 +309,36 @@ void thread_subsystems(void* p)
   while(true) {
     switch(conveyorState) {
       case 0: //idle state
-        if(auton == red && driverControl) { //RED
-          if(optical_state == BLUE_BALL) {
-            if(firstBall){
-              botConveyor.move_velocity(600);
-              topBall_task.resume();
-              waitForBallToEject();
-              topBall_task.suspend();
-            }
-            else {
-              topConveyor.move_velocity(-600);
-              botConveyor.move_velocity(200);
-              waitForBallToEject();
-            }
-          }
-        }
-        else if (auton == blue && driverControl) { //BLUE
-          if(optical_state == RED_BALL) {
-            if(firstBall){
-              botConveyor.move_velocity(600);
-              topBall_task.resume();
-              waitForBallToEject();
-              topBall_task.suspend();
-            }
-            else {
-              topConveyor.move_velocity(-600);
-              botConveyor.move_velocity(200);
-              waitForBallToEject();
-            }
-          }
-        }
+        // if(auton == red && driverControl) { //RED
+        //   if(optical_state == BLUE_BALL) {
+        //     if(firstBall){
+        //       botConveyor.move_velocity(600);
+        //       topBall_task.resume();
+        //       waitForBallToEject();
+        //       topBall_task.suspend();
+        //     }
+        //     else {
+        //       topConveyor.move_velocity(-600);
+        //       botConveyor.move_velocity(200);
+        //       waitForBallToEject();
+        //     }
+        //   }
+        // }
+        // else if (auton == blue && driverControl) { //BLUE
+        //   if(optical_state == RED_BALL) {
+        //     if(firstBall){
+        //       botConveyor.move_velocity(600);
+        //       topBall_task.resume();
+        //       waitForBallToEject();
+        //       topBall_task.suspend();
+        //     }
+        //     else {
+        //       topConveyor.move_velocity(-600);
+        //       botConveyor.move_velocity(200);
+        //       waitForBallToEject();
+        //     }
+        //   }
+        // }
         idleConveyor();
 
         break;
