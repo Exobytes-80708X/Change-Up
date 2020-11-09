@@ -114,11 +114,11 @@ void countBalls(int numOfBalls)
   for(int n = 0; n < numOfBalls; n++) {
     timer = 0;
     if(n == numOfBalls-1)
-      botConveyor.move_velocity(200);
+      botConveyor.move_velocity(0);
 
     while(topBall_high) pros::delay(10);
 
-    if(n == numOfBalls-2 && numOfBalls == 2) {
+    if(n == 0 && numOfBalls == 2) {
       while(!topBall_high) {
         pros::delay(10);
         timer += 10;

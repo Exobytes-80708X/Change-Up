@@ -959,6 +959,7 @@ void animate_autonPrev(void*p)
 static lv_res_t autonNext_action(lv_obj_t * btn)
 {
   auton++;
+  auton = auton%NUM_OF_AUTONS;
   pros::Task anim (animate_autonNext, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   return LV_RES_OK;
 }
