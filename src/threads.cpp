@@ -142,7 +142,7 @@ void thread_sensors_filter(void*p) //rolling average
     else topBall_high = false;
 
     //pros::c::optical_set_led_pwm(4, 50);
-    if(bot_high_avg < 2750) {
+    if(bot_high_avg < 2800) {
       botBall = true;
       // if(pros::c::optical_get_rgb(4).red/pros::c::optical_get_rgb(4).blue >= 2)
       //   optical_state = RED_BALL;
@@ -154,11 +154,11 @@ void thread_sensors_filter(void*p) //rolling average
       //optical_state = NO_BALL;
     }
 
-    if(ejector_avg < 2650)
+    if(ejector_avg < 2725)
       ballInEjector = true;
     else ballInEjector = false;
 
-    if(bot_low_avg < 2750)
+    if(bot_low_avg < 2800)
       botBall_low = true;
     else botBall_low = false;
 
@@ -481,21 +481,33 @@ void thread_subsystems(void* p)
       case 2: //ejecting manually
         if(thirdBall) {
           topBall_task.resume();
-          //pros::delay(1000);
           botConveyor.move_velocity(300);
           waitForBallToEject();
           topBall_task.suspend();
-          // while(ballInEjector) {
-          //   botConveyor.move_velocity(-300);
-          //   pros::delay(10);
-          // }
+          if(conveyorState == 2) {
+            topBall_task.resume();
+            botConveyor.move_velocity(600);
+            waitForBallToEject();
+            topBall_task.suspend();
+            if(conveyorState == 2) {
+              waitForTopBalltoLower();
+              topConveyor.move_velocity(-600);
+              botConveyor.move_velocity(600);
+              waitForBallToEject();
+            }
+          }
         }
         else if(secondBall) {
           topBall_task.resume();
-          pros::delay(1000);
           botConveyor.move_velocity(600);
           waitForBallToEject();
           topBall_task.suspend();
+          if(conveyorState == 2) {
+            waitForTopBalltoLower();
+            topConveyor.move_velocity(-600);
+            botConveyor.move_velocity(600);
+            waitForBallToEject();
+          }
         }
         else if(firstBall) {
           waitForTopBalltoLower();

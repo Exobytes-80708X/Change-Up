@@ -417,11 +417,14 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
   double initY = robotY;
 	double initTheta = robotTheta;
   //keeps track of robots intial position before the movement
-	double distError;
+	double distError = calcDistance_signed(simX,simY);
 	double angleError;
+  double prevError = distError;
 	double distSpeed;
 	double angleSpeed;
 	double currentSpeed = 0.0;
+
+  double d;
 
 	accel *= 12000;
 	minV *= 1000;
@@ -437,6 +440,8 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
 	while(settleTimer < settleTime && timeoutTimer < timeout)
 	{
 		distError = calcDistance_signed(simX,simY);
+    d = distError - prevError;
+    prevError = distError;
 		if(distance < 0)
 			angleError = calcAngleErrorReversed(simX,simY);
       //angle error based on the back of the robot
@@ -461,7 +466,7 @@ void driveDistance(double distance, double accel, double minV, double maxV, doub
 			currentSpeed = -minV;
     //makes sure currentSpeed is greater than minV
 
-		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0)
+		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0 || d < 0.1)
 			settleTimer+=10;
     else
       settleTimer = 0;
@@ -1256,14 +1261,6 @@ void adaptiveDrive(double x, double y, double maxV)
 void delayDrive(int ms,double vel){
   rightDrive.moveVoltage(vel);
   leftDrive.moveVoltage(vel);
-  pros::delay(ms);
-  rightDrive.moveVoltage(0);
-  leftDrive.moveVoltage(0);
-
-}
-void delayTurn(int ms,double velL, double velR){
-  rightDrive.moveVoltage(velR);
-  leftDrive.moveVoltage(velL);
   pros::delay(ms);
   rightDrive.moveVoltage(0);
   leftDrive.moveVoltage(0);
