@@ -15,10 +15,14 @@ double robotTheta = 0.0;
 double robotX = 0.0;
 double robotY = 0.0;
 
-void resetOdometry()
+void resetOdometry(bool x, bool y)
 {
-  robotX = 0;
-  robotY = 0;
+  int leftReset = left.reset();
+  int rightReset = right.reset();
+  int midReset = middle.reset();
+  if(x) robotX = 0.0;
+  if(y) robotY = 0.0;
+  pros::delay(250);
 }
 
 void thread_Odometry_old(void*param) //LINE-BASED 3 WHEELS
