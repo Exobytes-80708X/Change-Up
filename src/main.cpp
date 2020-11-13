@@ -11,7 +11,8 @@ void initialize()
   pros::c::ext_adi_pin_mode(5, 'B', INPUT_ANALOG);
   pros::c::ext_adi_pin_mode(5, 'C', INPUT_ANALOG);
   pros::Task task_GUI (initGUI, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  pros::Task task_1 (thread_sensors, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  //pros::Task task_1 (thread_sensors, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task task_1 (thread_sensors_filter, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::delay(250);
   pros::Task task_2 (thread_subsystems, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
 }
@@ -138,12 +139,19 @@ void waitForFirstBall()
 {
 
 }
+
+void asynchShoot(void*p)
+{
+  shooting_macro(1);
+}
 //----------------------------------------------
 
 //------------------------------------------------------
 void autonomous()
 {
   pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task f (asynchShoot, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  f.suspend();
   pros::delay(200);
   isRobotDisabled = false;
   driverControl = false;
@@ -159,14 +167,15 @@ void autonomous()
     case 1: //red auton
       robotTheta = M_PI/3;
       intake(inward);
-      pointTurn(0,190,130,false,p*1.5,i,d);
+      pointTurn(0,190,130,false,45,i,d);
       delayDrive(400,8000);
       waitForThirdBall();
       super_macro(countHeldBalls(), 1); //score first goal
-      pros::delay(100);
+      //pros::delay(100);
       intake(outward);
-      adaptiveDrive_reversed(-35,16,9.5);
-      shooting_macro(1); //shoot oppposite ball
+      adaptiveDrive_reversed(-32,16,9.5);
+      //shooting_macro(1); //shoot oppposite ball
+      f.resume();
       facePID(180,p,i,d);
       intake(inward);
       delayDrive(800,9000);
@@ -183,10 +192,11 @@ void autonomous()
       adaptiveDrive(-84,-3, 8);
       delayDrive(400,8000);
       intake(outward);
+      conveyorState = 99;
       while(!firstBall)
         pros::delay(10);
       shooting_macro(1); //score third goal
-      pros::delay(200);
+      //pros::delay(200);
       delayDrive(400,-8000);
     break;
 

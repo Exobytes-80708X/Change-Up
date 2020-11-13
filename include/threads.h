@@ -11,6 +11,7 @@ extern void thread_intake(void*p);
 extern void thread_control(void*p);
 extern void thread_drive(void*p);
 extern void thread_sensors(void*p);
+extern void thread_sensors_filter(void*p);
 extern void shooting_macro(int);
 extern void waitForBallToEject();
 extern void countIntakeBalls(int);
@@ -20,3 +21,9 @@ extern int countHeldBalls();
 extern bool thirdBall;
 extern bool secondBall;
 extern bool firstBall;
+
+extern int top_high_avg;
+extern int top_low_avg;
+extern int bot_high_avg;
+extern int bot_low_avg;
+extern int ejector_avg;

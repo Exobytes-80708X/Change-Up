@@ -775,11 +775,11 @@ void thread_sensorDebug(void*p)
     //if(store  > (int)pros::c::ext_adi_analog_read(5,'A') && (int)pros::c::ext_adi_analog_read(5,'A') > 100)
     //  store = (int)pros::c::ext_adi_analog_read(5,'A');
 
-    updateValueLabel(sensorValue4,topDetector.get_value(),"",0);
-    updateValueLabel(sensorValue5,pros::c::ext_adi_analog_read(5,'C'),"",0);
-    updateValueLabel(sensorValue6,botDetector.get_value(),"",0);
-    updateValueLabel(sensorValue7,pros::c::ext_adi_analog_read(5,'B'),"",0);
-    updateValueLabel(sensorValue8,pros::c::ext_adi_analog_read(5,'A'),"",0);
+    updateValueLabel(sensorValue4,top_low_avg/*topDetector.get_value()*/,"",0);
+    updateValueLabel(sensorValue5,ejector_avg/*pros::c::ext_adi_analog_read(5,'C')*/,"",0);
+    updateValueLabel(sensorValue6,bot_high_avg/*botDetector.get_value()*/,"",0);
+    updateValueLabel(sensorValue7,top_high_avg/*pros::c::ext_adi_analog_read(5,'B')*/,"",0);
+    updateValueLabel(sensorValue8,bot_low_avg/*pros::c::ext_adi_analog_read(5,'A')*/,"",0);
     updateValueLabel(sensorValue1,imu.get_heading(),"DEG",3);
     updateValueLabel(sensorValue2,left.get(),"",0);
     updateValueLabel(sensorValue3,right.get(),"",0);
