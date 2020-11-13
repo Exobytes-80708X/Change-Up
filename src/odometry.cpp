@@ -1261,6 +1261,14 @@ void delayDrive(int ms,double vel){
   leftDrive.moveVoltage(0);
 
 }
+void delayTurn(int ms,double velL, double velR){
+  rightDrive.moveVoltage(velR);
+  leftDrive.moveVoltage(velL);
+  pros::delay(ms);
+  rightDrive.moveVoltage(0);
+  leftDrive.moveVoltage(0);
+
+}
 
 double quadX(double x,double y,double t){
   return 45*t + x;

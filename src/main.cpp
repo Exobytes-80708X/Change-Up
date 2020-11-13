@@ -290,6 +290,7 @@ void autonomous()
       driveDistance(-7,10);
       facePID(-120,62,p,i,d);
       delayDrive(900,8000);
+
       intake(stop);
       delayDrive(300,8000);
       shooting_macro(1);
@@ -299,28 +300,43 @@ void autonomous()
       intake(inward);
       driveDistance(calcDistance(-58,17),9);
       driveDistance(-6,9);
-      facePID(-97,-14,p,i,d);
+      facePID(-100,-12,p,i,d);
       intake(stop);
 
       delayDrive(1000,8000);
       shooting_macro(1);
       pros::delay(100);
+      ///???
+      driveDistance(-30,9);
+      facePID(-18,33,p,i,d);
+      intake(inward);
+      driveDistance(calcDistance(-18, 3),9);
+      facePID(-18,-10,p,i,d);
+      intake(stop);
+      delayDrive(1500, 8000);
+      shooting_macro(2);
+      delayDrive(400,-8000);
       //driveDistance(-20,9);
-      //facePID(90,p,i,d);
-      adaptiveDrive_reversed(-24,22,8);
-      facePID(-24,-1,p,i,d);
-      delayDrive(1200,5000);
-      shooting_macro(1);
-      pros::delay(100);
-      driveDistance(-10,9);
-      intake(inward);
-      facePID(-22,33,p,i,d);
-      driveDistance(calcDistance(-24,33)+2,5);
-      intake(inward);
-      delayDrive(900,9000);
-      shooting_macro(1);
-      pros::delay(800);
-      driveDistance(-20,8);
+      // //facePID(90,p,i,d);
+      // adaptiveDrive_reversed(-22,16,8);
+      // facePID(-22,-1,p,i,d);
+      // delayDrive(1200,5000);
+      // shooting_macro(1);
+      // pros::delay(100);
+      // driveDistance(-10,9);
+      // intake(inward);
+      // facePID(-16,33,p,i,d);
+      // driveDistance(calcDistance(-16,33),8);
+      // intake(inward);
+      // delayDrive(900,9000);
+      // delayTurn(600,8000,-2000);
+      // delayDrive(450,9000);
+      // shooting_macro(1);
+      // pros::delay(800);
+      // intake(outward);
+      // delayDrive(750,-9000);
+      updateVarLabel(debugLabel1, "TEMP X",debugValue1,robotX,"IN",3);
+      updateVarLabel(debugLabel2, "TEMP Y",debugValue2,robotY,"IN",3);
     break;
   }
 }

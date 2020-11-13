@@ -16,6 +16,7 @@ extern void face(double x, double y);
 extern void face(double theta);
 extern void driveDistance(double distance, double maxV);
 extern void delayDrive(int ms, double vel);
+extern void delayTurn(int ms, double velL, double velR);
 extern void delayFacePID(double, bool, double, double, double, double, int, int, int);
 extern void followQuad(int);
 extern void followQuadDrive(int,double);
