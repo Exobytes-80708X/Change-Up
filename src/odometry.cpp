@@ -518,11 +518,16 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 
 	int settleTimer = 0;
 	int timeoutTimer = 0;
-  //initialize timers
+  //initialize timer
+
+  double prevError;
+  double d;
 
 	while(settleTimer < settleTime && timeoutTimer < timeout)
 	{
 		distError = calcDistance_signed(simX,simY);
+    d = distError - prevError;
+    prevError = distError;
 		if(distance < 0)
 			angleError = calcAngleErrorReversed(simX,simY);
       //angle error based on the back of the robot
@@ -547,7 +552,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 			currentSpeed = -minV;*/
     //makes sure currentSpeed is greater than minV
 
-		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0)
+		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0 || (d < 0.001 && fabs(distError) < 2.5))
 			settleTimer+=10;
     else
       settleTimer = 0;

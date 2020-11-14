@@ -201,37 +201,39 @@ void autonomous()
     break;
 
     case 2: //blue auton
-      robotTheta = M_PI/3;
-      intake(inward);
-      pointTurn(0,190,130,false,p*1.5,i,d);
-      delayDrive(400,8000);
-      waitForThirdBall();
-      super_macro(countHeldBalls(), 1); //score first goal
-      pros::delay(100);
-      intake(outward);
-      adaptiveDrive_reversed(-35,16,9.5);
-      shooting_macro(1); //shoot oppposite ball
-      facePID(180,p,i,d);
-      intake(inward);
-      delayDrive(800,9000);
-      while(!firstBall)
-        pros::delay(10);
-      shooting_macro(1); //score second goal
-      pros::delay(200);
-      intake(outward);
-      driveDistance(-17,10);
-      eject(1);
-      facePID(270,p,i,d);
-      //facePID(12,-108,p,i,d);
-      intake(inward);
-      adaptiveDrive(-84,-3, 8);
-      delayDrive(400,8000);
-      intake(outward);
-      while(!firstBall)
-        pros::delay(10);
-      shooting_macro(1); //score third goal
-      pros::delay(200);
-      delayDrive(400,-8000);
+    robotTheta = M_PI/3;
+    intake(inward);
+    pointTurn(0,190,130,false,45,i,d);
+    delayDrive(400,8000);
+    waitForThirdBall();
+    super_macro(countHeldBalls(), 1); //score first goal
+    //pros::delay(100);
+    intake(outward);
+    adaptiveDrive_reversed(-32,16,9.5);
+    //shooting_macro(1); //shoot oppposite ball
+    f.resume();
+    facePID(180,p,i,d);
+    intake(inward);
+    delayDrive(800,9000);
+    while(!firstBall)
+      pros::delay(10);
+    shooting_macro(1); //score second goal
+    pros::delay(200);
+    intake(outward);
+    driveDistance(-17,10);
+    eject(1);
+    facePID(270,p,i,d);
+    //facePID(12,-108,p,i,d);
+    intake(inward);
+    adaptiveDrive(-84,-3, 8);
+    delayDrive(400,8000);
+    intake(outward);
+    conveyorState = 99;
+    while(!firstBall)
+      pros::delay(10);
+    shooting_macro(1); //score third goal
+    //pros::delay(200);
+    delayDrive(400,-8000);
     break;
 
     case 3: // skills auton
