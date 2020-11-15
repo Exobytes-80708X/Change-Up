@@ -293,7 +293,7 @@ void shooting_macro(int numOfBalls)
 void centerTopBall()
 {
   if(topBall_high && !topBall_low)
-    topConveyor.move_velocity(-25);
+    topConveyor.move_velocity(-50);
   else if(!topBall_high && topBall_low)
     topConveyor.move_velocity(25);
   else
