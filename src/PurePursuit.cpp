@@ -24,6 +24,8 @@ db circLineIntersect(db xl, db yl, db a, db b, db r, db xc, db yc){
   if(ret2 >= 0.0 && ret2 <= 1.0)
       ret.push_back(ret2);
 
+  if(ret.size() == 0)
+    return -1;
   if(ret.size() == 1)
     return ret[1];
   return fmax(ret[1],ret[2]);
@@ -39,9 +41,7 @@ pdb findFurthestPoint(vi xPts, vi yPts, db r)
   db sub_t;
   db t;
   db max_t = 0;
-  db x;
-  db y;
-  pdb point = std::pair(x,y);
+  pdb point = std::pair(80708,80708);
   for(int i = 0; i < xPts.size()-1; i++) {
     x0 = xPts[i];
     y0 = yPts[i];
@@ -58,6 +58,7 @@ pdb findFurthestPoint(vi xPts, vi yPts, db r)
       }
     }
   }
+  
   return point;
 }
 
