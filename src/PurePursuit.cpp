@@ -3,12 +3,12 @@
 #include <bits/stl_pair.h>
 
 typedef double db;
-typedef std::vector<int> vi;
+typedef std::vector<db> vd;
 typedef std::pair<db,db> pdb;
 typedef std::pair<db,pdb> dpdb;
 
 db circLineIntersect(db xl, db yl, db a, db b, db r, db xc, db yc){
-  vi ret(2);
+  vd ret(2);
   db x0 = xl-xc;
   db y0 = yl-yc;
   db radical = pow((a*x0 + b*y0),2.0) - (a*a + b*b)*(x0*x0 + y0*y0 - r*r);
@@ -32,7 +32,7 @@ db circLineIntersect(db xl, db yl, db a, db b, db r, db xc, db yc){
   return fmax(ret[1],ret[2]);
 }
 
-dpdb findFurthestPoint(vi xPts, vi yPts, db r)
+dpdb findFurthestPoint(vd xPts, vd yPts, db r)
 {
   int max_index;
   db a;
@@ -59,26 +59,34 @@ dpdb findFurthestPoint(vi xPts, vi yPts, db r)
       }
     }
   }
-  return std::pair(t,point);
+  return std::pair(max_t,point);
 }
 
-void purePursuit(db minRadius, vi xPts, vi yPts, int timeout)
+void purePursuit(db minRadius, vd xPts, vd yPts, db timekP, db anglekP, int timeout)
 {
   db END_TIME = xPts.size()-1;
   db currentTime;
   db timeError;
   db angleError;
 
-  db timekP;
-  db anglekP;
-
   int settleTimer = 0;
   int timeOutTimer = 0;
 
   pdb followPoint;
+  dpdb data;
+
+  db followX;
+  db followY;
 
   while(settleTimer < 200) {
-    followPoint = findFurthestPoint(xPts,yPts,minRadius);
+    data = findFurthestPoint(xPts,yPts,minRadius);
+    followPoint = data.second;
+    currentTime = data.first;
 
+    followX = followPoint.first;
+    followY = followPoint.second;
+
+    timeError = END_TIME - currentTime;
+    
   }
 }
