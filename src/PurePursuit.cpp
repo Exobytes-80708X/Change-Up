@@ -5,6 +5,7 @@
 typedef double db;
 typedef std::vector<int> vi;
 typedef std::pair<db,db> pdb;
+typedef std::pair<db,pdb> dpdb;
 
 db circLineIntersect(db xl, db yl, db a, db b, db r, db xc, db yc){
   vi ret(2);
@@ -31,7 +32,7 @@ db circLineIntersect(db xl, db yl, db a, db b, db r, db xc, db yc){
   return fmax(ret[1],ret[2]);
 }
 
-pdb findFurthestPoint(vi xPts, vi yPts, db r)
+dpdb findFurthestPoint(vi xPts, vi yPts, db r)
 {
   int max_index;
   db a;
@@ -58,7 +59,7 @@ pdb findFurthestPoint(vi xPts, vi yPts, db r)
       }
     }
   }
-  return point;
+  return std::pair(t,point);
 }
 
 void purePursuit(db minRadius, vi xPts, vi yPts, int timeout)
