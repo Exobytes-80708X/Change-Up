@@ -58,10 +58,26 @@ pdb findFurthestPoint(vi xPts, vi yPts, db r)
       }
     }
   }
-  
   return point;
 }
 
-void purePursuit(db minRadius, vi xPts, vi yPts){
+void purePursuit(db minRadius, vi xPts, vi yPts, int timeout)
+{
+  db END_TIME = xPts.size()-1;
+  db currentTime;
+  db timeError;
+  db angleError;
 
+  db timekP;
+  db anglekP;
+
+  int settleTimer = 0;
+  int timeOutTimer = 0;
+
+  pdb followPoint;
+
+  while(settleTimer < 200) {
+    followPoint = findFurthestPoint(xPts,yPts,minRadius);
+
+  }
 }
