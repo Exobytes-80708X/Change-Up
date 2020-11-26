@@ -7,6 +7,8 @@ typedef std::vector<db> vd;
 typedef std::pair<db,db> pdb;
 typedef std::pair<db,pdb> dpdb;
 
+const int UND = 80708;
+
 db circLineIntersect(db xl, db yl, db a, db b, db r, db xc, db yc){
   vd ret(2);
   db x0 = xl-xc;
@@ -41,8 +43,8 @@ dpdb findFurthestPoint(vd xPts, vd yPts, db r)
   db y0;
   db sub_t;
   db t;
-  db max_t = 0;
-  pdb point = std::pair(80708,80708);
+  db max_t = UND;
+  pdb point = std::pair(UND,UND);
   for(int i = 0; i < xPts.size()-1; i++) {
     x0 = xPts[i];
     y0 = yPts[i];
@@ -64,7 +66,8 @@ dpdb findFurthestPoint(vd xPts, vd yPts, db r)
 
 void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, db anglekP, int timeout)
 {
-  db END_TIME = xPts.size()-1;
+  int SIZE = xPts.size();
+  db END_TIME = SIZE-1;
   db currentTime = 0;
   db timeError = END_TIME;
   db angleError;
@@ -72,7 +75,7 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
 
   db derivative;
 
-  db currentSpeed;
+  db fwdSpeed;
   db angleSpeed;
 
   int settleTimer = 0;
@@ -84,27 +87,59 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
   db followX;
   db followY;
 
+  db prevX = robotX;
+  db prevY = robotY;
+
+  db distanceTraveled = 0.0;
+  db distToEnd;
+
+  db adaptRadius = minRadius;
+
   maxV *= 1000;
   timekP *= 1000;
   anglekP *= 1000;
 
   while(settleTimer < 200) {
-    data = findFurthestPoint(xPts,yPts,minRadius);
-    followPoint = data.second;
+    distanceTraveled += calcDistance(prevX,prevY);
+    distToEnd = calcDistance(xPts[SIZE-1],yPts[SIZE-1]);
+    prevX = robotX;
+    prevY = robotY;
+
+    data = findFurthestPoint(xPts,yPts,adaptRadius);
     currentTime = data.first;
 
+    if(currentTime == UND) { //if robot radius has no intersection
+      while(currentTime == UND) {
+        adaptRadius += 0.1; //increase adaptRadius by 0.1 inch until it finds an intersection
+        data = findFurthestPoint(xPts,yPts,adaptRadius);
+        currentTime = data.first;
+        pros::delay(10);
+      }
+    }
+
+    followPoint = data.second;
     followX = followPoint.first;
     followY = followPoint.second;
 
+    if(distToEnd < adaptRadius) { //end point is within radius of robot
+        adaptRadius = distToEnd; //shrink radius with distance to endPoint
+    }
+    else {
+      adaptRadius = calcDistance(followX,followY); //shrink adaptRadius based on  distance to closest intersection until it is less than minRadius
+      if(adaptRadius < minRadius)
+        adaptRadius = minRadius;
+    }
+
     timeError = END_TIME - currentTime;
     angleError = calcAngleError(followX,followY);
-    currentSpeed = timeError*timekP;
+
+    fwdSpeed = timeError*timekP*fabs(cos(angleError)); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down
     angleSpeed = angleError*anglekP;
 
     derivative = timeError - prevTimeError;
     prevTimeError = timeError;
 
-    driveVector(currentSpeed,angleSpeed,maxV);
+    driveVector(fwdSpeed,angleSpeed,maxV);
     pros::delay(10);
   }
 }

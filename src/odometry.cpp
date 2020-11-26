@@ -224,7 +224,9 @@ double calcDistance_signed(double x2, double y2) //distance formula in inches, u
   return distance;
 }
 
-double calcAngleError(double theta) //calculate shortest angle error in radians from current robot theta
+//all angle methods return RADIANS
+
+double calcAngleError(double theta) //calculate shortest angle error in radians from current robot theta; input is in DEGREES
 {
   theta = theta*M_PI/180.0; //comvert deg to rad
   double radius = 100;
