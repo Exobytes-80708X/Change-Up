@@ -62,12 +62,18 @@ dpdb findFurthestPoint(vd xPts, vd yPts, db r)
   return std::pair(max_t,point);
 }
 
-void purePursuit(db minRadius, vd xPts, vd yPts, db timekP, db anglekP, int timeout)
+void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, db anglekP, int timeout)
 {
   db END_TIME = xPts.size()-1;
-  db currentTime;
-  db timeError;
+  db currentTime = 0;
+  db timeError = END_TIME;
   db angleError;
+  db prevTimeError = timeError;
+
+  db derivative;
+
+  db currentSpeed;
+  db angleSpeed;
 
   int settleTimer = 0;
   int timeOutTimer = 0;
@@ -78,6 +84,10 @@ void purePursuit(db minRadius, vd xPts, vd yPts, db timekP, db anglekP, int time
   db followX;
   db followY;
 
+  maxV *= 1000;
+  timekP *= 1000;
+  anglekP *= 1000;
+
   while(settleTimer < 200) {
     data = findFurthestPoint(xPts,yPts,minRadius);
     followPoint = data.second;
@@ -87,6 +97,14 @@ void purePursuit(db minRadius, vd xPts, vd yPts, db timekP, db anglekP, int time
     followY = followPoint.second;
 
     timeError = END_TIME - currentTime;
-    
+    angleError = calcAngleError(followX,followY);
+    currentSpeed = timeError*timekP;
+    angleSpeed = angleError*anglekP;
+
+    derivative = timeError - prevTimeError;
+    prevTimeError = timeError;
+
+    driveVector(currentSpeed,angleSpeed,maxV);
+    pros::delay(10);
   }
 }
