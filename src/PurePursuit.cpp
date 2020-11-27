@@ -64,14 +64,35 @@ dpdb findFurthestPoint(vd xPts, vd yPts, db r)
   return std::pair(max_t,point);
 }
 
+db findDistError(vd xPts, vd yPts, db currentTime,db r)
+{
+  int SIZE = xPts.size();
+  int lineNum = currentTime;
+  db sub_t = fmod(currentTime,1);
+
+  db x0 = xPts[lineNum];
+  db y0 = yPts[lineNum];
+  db a = xPts[lineNum+1] - x0;
+  db b = yPts[lineNum+1] - y0;
+
+  db currentX = a*sub_t + x0;
+  db currentY = b*sub_t + y0;
+
+  db initDistance = calcDistance(currentX,currentY,xPts[lineNum+1],yPts[lineNum+1]);
+  for(int i = lineNum+1; i < SIZE-1; i++) {
+    initDistance += calcDistance(xPts[i],yPts[i],xPts[i+1],yPts[i+1]);
+  }
+  return initDistance + r;
+}
+
 void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, db anglekP, int timeout)
 {
   int SIZE = xPts.size();
   db END_TIME = SIZE-1;
   db currentTime = 0;
-  db timeError = END_TIME;
+  db distError;
   db angleError;
-  db prevTimeError = timeError;
+  db prevDistError = distError;
 
   db derivative;
 
@@ -130,14 +151,14 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
         adaptRadius = minRadius;
     }
 
-    timeError = END_TIME - currentTime;
+    distError = findDistError(xPts,yPts,currentTime,adaptRadius);
     angleError = calcAngleError(followX,followY);
 
-    fwdSpeed = timeError*timekP*fabs(cos(angleError)); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down
+    fwdSpeed = distError*timekP*cos(angleError); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down
     angleSpeed = angleError*anglekP;
 
-    derivative = timeError - prevTimeError;
-    prevTimeError = timeError;
+    derivative = distError - prevDistError;
+    prevDistError = distError;
 
     driveVector(fwdSpeed,angleSpeed,maxV);
     pros::delay(10);
