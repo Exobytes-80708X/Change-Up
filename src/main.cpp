@@ -161,13 +161,19 @@ void autonomous()
   std::vector<double> xPts;
   std::vector<double> yPts;
 
+  xPts.push_back(robotX);
+  yPts.push_back(robotY);
+
   xPts.push_back(0.0);
+  yPts.push_back(24.0);
+
+  xPts.push_back(24.0);
   yPts.push_back(24.0);
 
 
   switch(auton) {
     case 0: //no auton
-        purePursuit(6,0,xPts,yPts,10,0.9,5.0,5000);
+        purePursuit(12,0,xPts,yPts,7,0.9,5.0,5000);
     break;
 
     case 1: //red auton
