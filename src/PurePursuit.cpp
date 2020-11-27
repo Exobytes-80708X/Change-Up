@@ -85,6 +85,21 @@ db findDistError(vd xPts, vd yPts, db currentTime,db r)
   return initDistance + r;
 }
 
+dpdb shortestRforIntersect(db robX, db robY, db lineX, db lineY, db lineA, db lineB){
+  db x0 = robX - lineX;
+  db y0 = robY - lineY;
+  db numerator = -(lineA*x0 + lineB*y0);
+  db denom = (lineA * lineA + lineB * lineB);
+  db t = numerator/denom;
+  if(t > 1)
+    t=1;
+  if(t < 0)
+    t=0;
+  db pointX = lineA*t + lineX;
+  db pointY = lineB*t + lineY;
+  return std::pair(t,std::pair(pointX,pointY));
+}
+
 void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, db anglekP, int timeout)
 {
   int SIZE = xPts.size();
