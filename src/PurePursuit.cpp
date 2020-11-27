@@ -66,8 +66,8 @@ dpdb findFurthestPoint(vd xPts, vd yPts, db r)
 db findDistError(vd xPts, vd yPts, db currentTime,db r)
 {
   int SIZE = xPts.size();
-  int lineNum = currentTime;
-  db sub_t = fmod(currentTime,1);
+  int lineNum = (int)currentTime;
+  db sub_t = fmod(currentTime,1.0);
 
   db x0 = xPts[lineNum];
   db y0 = yPts[lineNum];
