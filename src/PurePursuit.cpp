@@ -13,6 +13,11 @@ db circLineIntersect(db xl, db yl, db a, db b, db r, db xc, db yc){
   db x0 = xl-xc;
   db y0 = yl-yc;
   db radical = pow((a*x0 + b*y0),2.0) - (a*a + b*b)*(x0*x0 + y0*y0 - r*r);
+  updateVarLabel(debugLabel1,"A",debugValue1,a,"",3);
+  updateVarLabel(debugLabel2,"B",debugValue2,b,"IN",3);
+  updateVarLabel(debugLabel3,"X_l",debugValue3,x0,"IN",3);
+  updateVarLabel(debugLabel4,"Y_l",debugValue4,y0,"IN",3);
+  updateVarLabel(debugLabel5,"RADICAL",debugValue5,radical,"IN",3);
   if(radical < 0)
     return -1;
 
@@ -25,7 +30,6 @@ db circLineIntersect(db xl, db yl, db a, db b, db r, db xc, db yc){
       ret.push_back(ret1);
   if(ret2 >= 0.0 && ret2 <= 1.0)
       ret.push_back(ret2);
-
   if(ret.size() == 0)
     return -1;
   if(ret.size() == 1)
@@ -42,7 +46,7 @@ dpdb findFurthestPoint(vd xPts, vd yPts, db r)
   db y0;
   db sub_t;
   db t;
-  db max_t = UND;
+  db max_t = -1;
   pdb point = std::pair(UND,UND);
   for(int i = 0; i < xPts.size()-1; i++) {
     x0 = xPts[i];
@@ -66,7 +70,7 @@ dpdb findFurthestPoint(vd xPts, vd yPts, db r)
 db findDistError(vd xPts, vd yPts, db currentTime,db r)
 {
   int SIZE = xPts.size();
-  int lineNum = (int)currentTime;
+  int lineNum = int(currentTime);
   db sub_t = fmod(currentTime,1.0);
 
   db x0 = xPts[lineNum];
@@ -84,7 +88,7 @@ db findDistError(vd xPts, vd yPts, db currentTime,db r)
   return initDistance + r;
 }
 
-dpdb shortestRforIntersect(db robX, db robY, db lineX, db lineY, db lineA, db lineB){
+dpdb shortestRforIntersect(db robX, db robY, db lineX, db lineY, db lineA, db lineB) {
   db x0 = robX - lineX;
   db y0 = robY - lineY;
   db numerator = -(lineA*x0 + lineB*y0);
@@ -149,8 +153,13 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     prevX = robotX;
     prevY = robotY;
 
+    //updateVarLabel(debugLabel3,"RADIUS",debugValue3,adaptRadius,"IN",3);
     data = findFurthestPoint(xPts,yPts,adaptRadius);
     currentTime = data.first;
+    //updateVarLabel(debugLabel1,"TIME",debugValue1,currentTime,"",3);
+    //updateVarLabel(debugLabel2,"B",debugValue2,b,"IN",3);
+    //updateVarLabel(debugLabel3,"X_l",debugValue3,x0,"IN",3);
+    //updateVarLabel(debugLabel4,"Y_l",debugValue4,y0,"IN",3);
 
     if(currentTime == UND) { //if robot radius has no intersection
       db minDistance = 1000000000;
@@ -176,6 +185,9 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     followPoint = data.second;
     followX = followPoint.first;
     followY = followPoint.second;
+    //updateVarLabel(debugLabel5,"FOLLOW X",debugValue5,followX,"IN",3);
+    //updateVarLabel(debugLabel6,"FOLLOW Y",debugValue6,followY,"IN",3);
+    //updateVarLabel(debugLabel6,"TIME",debugValue6,currentTime,"",0);
 
     if(distToEnd < adaptRadius) { //end point is within radius of robot
         adaptRadius = distToEnd; //shrink radius with distance to endPoint
@@ -197,8 +209,8 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     derivative = distError - prevDistError;
     prevDistError = distError;
 
-    updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
-    updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
+    //updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
+    //updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
 
     driveVector(fwdSpeed,angleSpeed,maxV);
     pros::delay(10);
