@@ -77,6 +77,7 @@ db findDistError(vd xPts, vd yPts, db currentTime,db r)
   db currentY = b*sub_t + y0;
 
   db initDistance = calcDistance(currentX,currentY,xPts[lineNum+1],yPts[lineNum+1]);
+
   for(int i = lineNum+1; i < SIZE-1; i++) {
     initDistance += calcDistance(xPts[i],yPts[i],xPts[i+1],yPts[i+1]);
   }
@@ -188,15 +189,24 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
         adaptRadius = distToEnd; //shrink radius with distance to endPoint
         followX = xPts[SIZE-1];
         followY = yPts[SIZE-1];
+
+        distError = adaptRadius;
+        angleError = calcAngleError(followX,followY);
     }
     else {
       adaptRadius = calcDistance(followX,followY); //shrink adaptRadius based on  distance to closest intersection until it is less than minRadius
       if(adaptRadius < minRadius)
         adaptRadius = minRadius;
+
+        distError = findDistError(xPts,yPts,currentTime,adaptRadius);
+        angleError = calcAngleError(followX,followY);
     }
 
-    distError = findDistError(xPts,yPts,currentTime,adaptRadius);
-    angleError = calcAngleError(followX,followY);
+    if(distError < 10.0)
+      angleError = 0;
+
+    if(distError < 6.0 || fabs(angleError) > 85.0*M_PI/180.0) settleTimer += 10;
+    else settleTimer = 0;
 
     fwdSpeed = distError*timekP*cos(angleError); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down
     angleSpeed = angleError*anglekP;
@@ -204,10 +214,16 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     derivative = distError - prevDistError;
     prevDistError = distError;
 
-    //updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
-    //updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
+    updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
+    updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
+    updateVarLabel(debugLabel3,"FWD_SPEED",debugValue3,fwdSpeed,"mV",3);
+    updateVarLabel(debugLabel4,"SETTLE TIMER",debugValue4,settleTimer,"",3);
 
     driveVector(fwdSpeed,angleSpeed,maxV);
     pros::delay(10);
   }
+  rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	rightDrive.moveVelocity(0);
+  leftDrive.moveVelocity(0);
 }
