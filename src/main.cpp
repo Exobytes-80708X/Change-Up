@@ -158,10 +158,16 @@ void autonomous()
   double p = 25;
   double i = 0;
   double d = 50;
+  std::vector<double> xPts;
+  std::vector<double> yPts;
+
+  xPts.push_back(0.0);
+  yPts.push_back(24.0);
+
 
   switch(auton) {
     case 0: //no auton
-      shooting_macro(2);
+        purePursuit(6,0,xPts,yPts,10,0.9,5.0,5000);
     break;
 
     case 1: //red auton

@@ -6,7 +6,7 @@ const double ENCODER_WIDTH = 7.0;
 const double MIDDLE_ENCODER_LENGTH = 10.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
 const double IMU_WEIGHT = 1.0;
-const bool DEBUGGING_ENABLED = true;
+const bool DEBUGGING_ENABLED = false;
 int test = 0;
 
 double robotTheta_imu = 0.0;
@@ -1471,7 +1471,7 @@ void followQuadDrive(int numPoints, double accel, double maxV, double distkP, do
 		driveVector(currentSpeed-derivAdjust,angleSpeed,maxV); //send speeds to motors
 		pros::delay(10);
 
-    if(true) {
+    if(DEBUGGING_ENABLED) {
       updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,real_distError,"IN",3);
       updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
       updateVarLabel(debugLabel3,"CURRENT POINT",debugValue3,pointCounter,"",0);

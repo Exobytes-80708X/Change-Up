@@ -3,10 +3,9 @@
 #include <bits/stl_pair.h>
 
 typedef double db;
-typedef std::vector<db> vd;
+typedef std::vector<double> vd;
 typedef std::pair<db,db> pdb;
 typedef std::pair<db,pdb> dpdb;
-
 const int UND = 80708;
 
 db circLineIntersect(db xl, db yl, db a, db b, db r, db xc, db yc){
@@ -131,11 +130,20 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
 
   db adaptRadius = minRadius;
 
+  db x0;
+  db y0;
+  db a;
+  db b;
+  dpdb r_data;
+  db d;
+  pdb point;
+
   maxV *= 1000;
   timekP *= 1000;
   anglekP *= 1000;
 
   while(settleTimer < 200) {
+    adaptRadius = minRadius;
     distanceTraveled += calcDistance(prevX,prevY);
     distToEnd = calcDistance(xPts[SIZE-1],yPts[SIZE-1]);
     prevX = robotX;
@@ -145,12 +153,24 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     currentTime = data.first;
 
     if(currentTime == UND) { //if robot radius has no intersection
-      while(currentTime == UND) {
-        adaptRadius += 0.1; //increase adaptRadius by 0.1 inch until it finds an intersection
-        data = findFurthestPoint(xPts,yPts,adaptRadius);
-        currentTime = data.first;
-        pros::delay(10);
+      db minDistance = 1000000000;
+      db minTime = SIZE+1;
+      for(int i = 0; i < SIZE-1; i++) {
+        x0 = xPts[i];
+        y0 = yPts[i];
+        a = xPts[i+1] - x0;
+        b = yPts[i+1] - y0;
+        r_data = shortestRforIntersect(robotX,robotY,x0,y0,a,b);
+        point = r_data.second;
+        d = calcDistance(robotX,robotY,point.first,point.second);
+        if (d < minDistance) {
+          minDistance = d;
+          minTime = r_data.first + i;
+        }
       }
+      adaptRadius = minDistance;
+      currentTime = minTime;
+      data = r_data;
     }
 
     followPoint = data.second;
@@ -159,6 +179,8 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
 
     if(distToEnd < adaptRadius) { //end point is within radius of robot
         adaptRadius = distToEnd; //shrink radius with distance to endPoint
+        followX = xPts[SIZE-1];
+        followY = yPts[SIZE-1];
     }
     else {
       adaptRadius = calcDistance(followX,followY); //shrink adaptRadius based on  distance to closest intersection until it is less than minRadius
@@ -174,6 +196,9 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
 
     derivative = distError - prevDistError;
     prevDistError = distError;
+
+    updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
+    updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
 
     driveVector(fwdSpeed,angleSpeed,maxV);
     pros::delay(10);

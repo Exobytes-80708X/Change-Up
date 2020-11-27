@@ -11,10 +11,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
+
+
+
 #include "display/lvgl.h"
 #ifndef _PROS_MAIN_H_
 #define _PROS_MAIN_H_
-typedef double db;
+
 /**
  * If defined, some commonly used enums will have preprocessor macros which give
  * a shorter, more convenient naming pattern. If this isn't desired, simply
@@ -108,6 +111,11 @@ extern int blue;
 #ifndef GUI
 #define GUI
 #include "gui.h"
+#endif
+
+#ifndef PP
+#define PP
+#include "PurePursuit.h"
 #endif
 
 #include <iostream>

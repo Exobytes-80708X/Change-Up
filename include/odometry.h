@@ -27,4 +27,4 @@ extern void facePID(double,double,double,double);
 extern void accel(double, int);
 extern void pointTurn(int side, int oppRPM, double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout);
 extern void pointTurn(int side, int oppRPM, double theta, bool reversed, double kP, double kI, double kD);
-extern void driveVector(double currentSpeed, double angleSpeed, double maxV)
+extern void driveVector(double currentSpeed, double angleSpeed, double maxV);
