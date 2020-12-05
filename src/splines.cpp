@@ -8,6 +8,7 @@ using namespace std;
 typedef double db;
 typedef vector<pair<db,db>> subwayPoints;
 typedef vector<db> vdb;
+typedef vector<vector<db>> vv;
 
 db bezX(db x1,db x2,db x3,db x4,db t){  // THIS IS THE EQUATION OF A BEZIER's X COORD AT A TIME t GIVEN COEFFICIENTS (DWB COEFFICIENTS)
   return x1*(1-t)*(1-t)*(1-t) + 3*t*x2*(1-t)*(1-t) + 3*t*t*x3*(1-t) + t*t*t*x4;
@@ -17,7 +18,7 @@ db bezY(db y1,db y2,db y3,db y4,db t){
   return y1*(1-t)*(1-t)*(1-t) + 3*t*y2*(1-t)*(1-t) + 3*t*t*y3*(1-t) + t*t*t*y4;
 }
 
-void thomas(vdb a, vdb b, vdb c, vdb d, int n) {  // THIS IS A COPY PASTE OF WIKIPEDIA BUT IT WORKS! ALSO DWBI ITS LINEAR STUFF IDEK HOW IT WORKS TBH
+vv thomas(vdb a, vdb b, vdb c, vdb d, int n) {  // THIS IS A COPY PASTE OF WIKIPEDIA BUT IT WORKS! ALSO DWBI ITS LINEAR STUFF IDEK HOW IT WORKS TBH
     /*
     // n is the number of unknowns
 
@@ -66,9 +67,13 @@ void thomas(vdb a, vdb b, vdb c, vdb d, int n) {  // THIS IS A COPY PASTE OF WIK
     for (int i = n; i-- > 0;) {
         d[i] = d[i] - c[i]*d[i+1];
     }
+    vv ret;
+    ret.push_back(a);ret.push_back(b);ret.push_back(c);ret.push_back(d);
+    return ret;
 }
 
-void resetMatrix(vdb bot, vdb mid, vdb top, int n){
+
+vv resetMatrix(vdb bot, vdb mid, vdb top, int n){
     // ASSIGNMENT OF A TRIDIAGONAL MATRIC (BASICALLY 3 DIAGONALS IN A MATRIX FORMAT WITH EVERYTHING NOT ON THE DIAGONAL AS 0) (DWBI)
     bot[0] = 0;
     bot[n-1] = 2;
@@ -86,6 +91,9 @@ void resetMatrix(vdb bot, vdb mid, vdb top, int n){
     for(int i = 0; i < n-1; i++){
         top[i] = 1;
     }
+    vv ret;
+    ret.push_back(bot);ret.push_back(mid);ret.push_back(top);
+    return ret;
 
 }
 vector<subwayPoints> multiBez(vdb x, vdb y){
@@ -108,10 +116,16 @@ vector<subwayPoints> multiBez(vdb x, vdb y){
 
     vdb p3x;
     vdb p3y;
+    vv n0;
+    vv n1;
+    vv r;
     for(int i = 0;i < n; i++){
       bot.push_back(0);mid.push_back(0);top.push_back(0);rX.push_back(0);rY.push_back(0);p0x.push_back(0);p0y.push_back(0);p1x.push_back(0);p1y.push_back(0);p2x.push_back(0);p2y.push_back(0);p3x.push_back(0);p3y.push_back(0);
     }
-    resetMatrix(bot,mid,top,n);
+    r = resetMatrix(bot,mid,top,n);
+    bot = r[0];
+    mid = r[1];
+    top = r[2];
 
     rX[0] = x[0] + 2*x[1];
     rY[0] = y[0] + 2*y[1];
@@ -129,11 +143,22 @@ vector<subwayPoints> multiBez(vdb x, vdb y){
     }
 
 
-    thomas(bot,mid,top,rX,n);
+    n0 = thomas(bot,mid,top,rX,n);
+    bot = n0[0];
+    mid = n0[1];
+    top = n0[2];
+    rX = n0[3];
 
-    resetMatrix(bot,mid,top,n);
+    r = resetMatrix(bot,mid,top,n);
+    bot = r[0];
+    mid = r[1];
+    top = r[2];
 
-    thomas(bot,mid,top,rY,n);
+    n1 = thomas(bot,mid,top,rY,n);
+    bot = n1[0];
+    mid = n1[1];
+    top = n1[2];
+    rY = n1[3];
 
     for(int i = 0; i < n; i++){
         p1x[i] = rX[i];

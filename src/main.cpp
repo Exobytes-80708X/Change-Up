@@ -218,7 +218,7 @@ void autonomous()
   }
   switch(auton) {
     case 0: //no auton
-        purePursuit(24,0,ptsX,ptsY,8,0.5,10.0,5000);
+    purePursuit(24,0,ptsX,ptsY,8,0.5,10.0,5000);
     break;
 
     case 1: //red auton
