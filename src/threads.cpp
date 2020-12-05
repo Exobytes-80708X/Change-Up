@@ -586,6 +586,7 @@ void thread_subsystems(void* p)
         if(auton == red && driverControl) { //RED
           if(optical_state == BLUE_BALL) {
             if(firstBall){
+              pros::delay(200);
               botConveyor.move_velocity(600);
               topBall_task.resume();
               waitForBallToEject();
@@ -597,6 +598,7 @@ void thread_subsystems(void* p)
               waitForBallToEject();
             }
           }
+          else botConveyor.move_velocity(300);
         }
         else if (auton == blue && driverControl) { //BLUE
           if(optical_state == RED_BALL) {
@@ -612,6 +614,7 @@ void thread_subsystems(void* p)
               waitForBallToEject();
             }
           }
+          else botConveyor.move_velocity(300);
         }
         break;
     }
