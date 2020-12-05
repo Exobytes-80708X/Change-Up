@@ -170,14 +170,14 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
         d = calcDistance(robotX,robotY,point.first,point.second);
         if (d < minDistance) {
           minDistance = d;
-          minTime = r_data.first + i;
+          minTime = i;
         }
       }
       adaptRadius = minDistance;
-      currentTime = minTime;
-      data = r_data;
+      //currentTime = minTime;
     }
-
+    data = findFurthestPoint(xPts,yPts,adaptRadius);
+    currentTime = data.first;
     followPoint = data.second;
     followX = followPoint.first;
     followY = followPoint.second;
@@ -216,7 +216,7 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     derivative = distError - prevDistError;
     prevDistError = distError;
 
-    updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
+    updateVarLabel(debugLabel1,"RADIUS",debugValue1,adaptRadius,"IN",3);
     updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
     updateVarLabel(debugLabel3,"FWD_SPEED",debugValue3,fwdSpeed,"mV",3);
     updateVarLabel(debugLabel4,"C_TIME",debugValue4,currentTime,"",3);
