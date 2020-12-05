@@ -202,10 +202,10 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
         angleError = calcAngleError(followX,followY);
     }
 
-    if(distError < 10.0)
+    if(distError < 6.0)
       angleError = 0;
 
-    if(distError < 6.0 || fabs(angleError) > 85.0*M_PI/180.0) settleTimer += 10;
+    if(distError < 2.0 || fabs(angleError) > 85.0*M_PI/180.0) settleTimer += 10;
     else settleTimer = 0;
 
     fwdSpeed = distError*timekP*cos(angleError); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down

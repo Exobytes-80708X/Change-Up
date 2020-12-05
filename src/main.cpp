@@ -168,7 +168,10 @@ void autonomous()
   yPts.push_back(0.0);
 
   xPts.push_back(48.0);
-  yPts.push_back(24.0);
+  yPts.push_back(72.0);
+
+  xPts.push_back(0.0);
+  yPts.push_back(72.0);
 
 
   switch(auton) {
