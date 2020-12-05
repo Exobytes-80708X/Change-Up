@@ -53,18 +53,18 @@ void thomas(vdb a, vdb b, vdb c, vdb d, int n) {  // THIS IS A COPY PASTE OF WIK
     Written by Keivan Moradi, 2014
     */
     n--; // since we start from x0 (not x1)
-    c[0] /= b[0];
-    d[0] /= b[0];
+    c[0] = c[0] / b[0];
+    d[0] = d[0] / b[0];
 
     for (int i = 1; i < n; i++) {
-        c[i] /= b[i] - a[i]*c[i-1];
+        c[i] = c[i] / ( b[i] - a[i]*c[i-1] );
         d[i] = (d[i] - a[i]*d[i-1]) / (b[i] - a[i]*c[i-1]);
     }
 
     d[n] = (d[n] - a[n]*d[n-1]) / (b[n] - a[n]*c[n-1]);
 
     for (int i = n; i-- > 0;) {
-        d[i] -= c[i]*d[i+1];
+        d[i] = d[i] - c[i]*d[i+1];
     }
 }
 
@@ -108,7 +108,9 @@ vector<subwayPoints> multiBez(vdb x, vdb y){
 
     vdb p3x;
     vdb p3y;
-
+    for(int i = 0;i < n; i++){
+      bot.push_back(0);mid.push_back(0);top.push_back(0);rX.push_back(0);rY.push_back(0);p0x.push_back(0);p0y.push_back(0);p1x.push_back(0);p1y.push_back(0);p2x.push_back(0);p2y.push_back(0);p3x.push_back(0);p3y.push_back(0);
+    }
     resetMatrix(bot,mid,top,n);
 
     rX[0] = x[0] + 2*x[1];

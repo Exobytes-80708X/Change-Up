@@ -152,7 +152,7 @@ void asynchShoot(void*p)
 //----------------------------------------------
 
 vpdb bezToLines(vdb xPts, vdb yPts, int numLines){
-  std::vector<std::vector<std::pair<double,double>>> bez;
+  std::vector<vpdb> bez;
   bez = multiBez(xPts,yPts);
   vpdb p0,p1,p2,p3;
   p0 = bez[0];
@@ -190,18 +190,29 @@ void autonomous()
   // xPts.push_back(robotX);
   // yPts.push_back(robotY);
 
-  xPts.push_back(48.0);
+  xPts.push_back(0.0);
   yPts.push_back(0.0);
 
-  xPts.push_back(48.0);
-  yPts.push_back(72.0);
-
   xPts.push_back(0.0);
+  yPts.push_back(24.0);
+
+  xPts.push_back(24.0);
+  yPts.push_back(48.0);
+
+  xPts.push_back(24.0);
   yPts.push_back(72.0);
 
+
+  vdb ptsX;
+  vdb ptsY;
+  vpdb temp = bezToLines(xPts,yPts,10);
+  for(int i = 0; i < size(temp); i++){
+    ptsX.push_back(temp[i].first);
+    ptsY.push_back(temp[i].second);
+  }
   switch(auton) {
     case 0: //no auton
-        purePursuit(24,0,xPts,yPts,8,0.5,10.0,5000);
+        purePursuit(24,0,ptsX,ptsY,8,0.5,10.0,5000);
     break;
 
     case 1: //red auton
