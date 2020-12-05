@@ -23,6 +23,7 @@ extern lv_obj_t * createTextLabel(lv_obj_t * parent, const char* text, lv_coord_
 extern void resetAutonDebug();
 extern void updateVarLabel(lv_obj_t * parent, std::string varName, double var, std::string varUnits);
 extern void updateVarLabel(lv_obj_t *nameLabel, std::string varName, lv_obj_t* valueLabel, double var, std::string varUnits, int numOfSpaces);
+extern void updateVarLabel(lv_obj_t *nameLabel, std::string varName, lv_obj_t* valueLabel, std::pair<double,double> var, std::string varUnits, int numOfSpaces);
 extern void updateValueLabel(lv_obj_t *parent, double var, std::string varUnits, int numOfSpaces);
 extern void initAutonDebug();
 extern void initGUI(void*p);

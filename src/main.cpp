@@ -168,6 +168,12 @@ vpdb bezToLines(vdb xPts, vdb yPts, int numLines){
       db curY = bezY(p0[i].second,p1[i].second,p2[i].second,p3[i].second,t);
       ret.push_back(std::pair(curX,curY));
     }
+    updateVarLabel(debugLabel1,"P0",debugValue1,p0[i],"",2);
+    updateVarLabel(debugLabel2,"P1",debugValue2,p1[i],"",2);
+    updateVarLabel(debugLabel3,"P2",debugValue3,p2[i],"",2);
+    updateVarLabel(debugLabel4,"P3",debugValue4,p3[i],"",2);
+    updateVarLabel(debugLabel5,"ITERATION",debugValue5,i,"",2);
+    pros::delay(5000);
   }
   return ret;
 }

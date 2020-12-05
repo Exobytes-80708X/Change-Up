@@ -227,6 +227,31 @@ void updateVarLabel(lv_obj_t *nameLabel, std::string varName, lv_obj_t* valueLab
   lv_label_set_text(valueLabel, text_array2);
 }
 
+void updateVarLabel(lv_obj_t *nameLabel, std::string varName, lv_obj_t* valueLabel, std::pair<double,double> var, std::string varUnits, int ppd)
+{
+  char text_array[varName.length()+1];
+  strcpy(text_array,varName.c_str());
+  lv_label_set_text(nameLabel, text_array);
+
+  std::string varString = std::to_string(var.first);
+  int decimal_place = varString.find(".");
+  if(ppd > 0)
+    varString = varString.substr(0,decimal_place+ppd+1);
+  else
+    varString = varString.substr(0,decimal_place);
+
+  std::string varString2 = std::to_string(var.second);
+  int decimal_place2 = varString2.find(".");
+  if(ppd > 0)
+    varString2 = varString2.substr(0,decimal_place2+ppd+1);
+  else
+    varString2 = varString2.substr(0,decimal_place2);
+  std::string text = "(" + varString + ", " + varString2 + ") " + varUnits;
+  char text_array2[text.length()+1];
+  strcpy(text_array2,text.c_str());
+  lv_label_set_text(valueLabel, text_array2);
+}
+
 void animate_x_ease_out(lv_obj_t *obj,int x1,int x2,int duration)
 {
 
