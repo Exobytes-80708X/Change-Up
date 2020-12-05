@@ -6,6 +6,8 @@
 
 using namespace std;
 typedef double db;
+typedef vector<pair<db,db>> subwayPoints;
+typedef vector<db> vdb;
 
 db bezX(db x1,db x2,db x3,db x4,db t){  // THIS IS THE EQUATION OF A BEZIER's X COORD AT A TIME t GIVEN COEFFICIENTS (DWB COEFFICIENTS)
   return x1*(1-t)*(1-t)*(1-t) + 3*t*x2*(1-t)*(1-t) + 3*t*t*x3*(1-t) + t*t*t*x4;
@@ -15,7 +17,7 @@ db bezY(db y1,db y2,db y3,db y4,db t){
   return y1*(1-t)*(1-t)*(1-t) + 3*t*y2*(1-t)*(1-t) + 3*t*t*y3*(1-t) + t*t*t*y4;
 }
 
-void thomas(double* a, double* b, double* c, double* d, int n) {  // THIS IS A COPY PASTE OF WIKIPEDIA BUT IT WORKS! ALSO DWBI ITS LINEAR STUFF IDEK HOW IT WORKS TBH
+void thomas(vdb a, vdb b, vdb c, vdb d, int n) {  // THIS IS A COPY PASTE OF WIKIPEDIA BUT IT WORKS! ALSO DWBI ITS LINEAR STUFF IDEK HOW IT WORKS TBH
     /*
     // n is the number of unknowns
 
@@ -66,7 +68,7 @@ void thomas(double* a, double* b, double* c, double* d, int n) {  // THIS IS A C
     }
 }
 
-void resetMatrix(db* bot, db* mid, db* top, int n){
+void resetMatrix(vdb bot, vdb mid, vdb top, int n){
     // ASSIGNMENT OF A TRIDIAGONAL MATRIC (BASICALLY 3 DIAGONALS IN A MATRIX FORMAT WITH EVERYTHING NOT ON THE DIAGONAL AS 0) (DWBI)
     bot[0] = 0;
     bot[n-1] = 2;
@@ -86,26 +88,26 @@ void resetMatrix(db* bot, db* mid, db* top, int n){
     }
 
 }
-void multiBez(db* x, db* y, int n){
+vector<subwayPoints> multiBez(vdb x, vdb y){
+    int n = size(x)-1;
+    vdb bot;
+    vdb mid;
+    vdb top;
 
-    db bot[n];
-    db mid[n];
-    db top[n];
+    vdb rX;
+    vdb rY;
 
-    db rX[n];
-    db rY[n];
+    vdb p0x;
+    vdb p0y;
 
-    db p0x[n];
-    db p0y[n];
+    vdb p1x;
+    vdb p1y;
 
-    db p1x[n];
-    db p1y[n];
+    vdb p2x;
+    vdb p2y;
 
-    db p2x[n];
-    db p2y[n];
-
-    db p3x[n];
-    db p3y[n];
+    vdb p3x;
+    vdb p3y;
 
     resetMatrix(bot,mid,top,n);
 
@@ -147,20 +149,31 @@ void multiBez(db* x, db* y, int n){
         p3x[i-1] = x[i];
         p3y[i-1] = y[i];
     }
-    //THE p0x STUFF IS THE POINTS FOR THE BEZIER, p1 and p2 ARE FOCII, BUT INSERTING THEM INTO THE BEZIER WILL GIVE U A SMOOTH CURVE
+    subwayPoints p0;
+    subwayPoints p1;
+    subwayPoints p2;
+    subwayPoints p3;
     for(int i = 0; i < n; i++){
-        cout << "(( " << p0x[i] << "," << p0y[i] << " )" << ",";
-        cout << "( " << p1x[i] << "," << p1y[i] << " )" << ",";
-        cout << "( " << p2x[i] << "," << p2y[i] << " )" << ",";
-        cout << "( " << p3x[i] << "," << p3y[i] << " ))" << ",";
-        cout << endl;
+      p0.push_back(pair(p0x[i],p0y[i]));
+      p1.push_back(pair(p1x[i],p1y[i]));
+      p2.push_back(pair(p2x[i],p2y[i]));
+      p3.push_back(pair(p3x[i],p3y[i]));
     }
-}
 
-int main() {
-	db Kx[5] = {175,188,144, 91,53};
-    db Ky[5] = {689,598,548,593,673};
+    vector<subwayPoints> ret;
+    ret.push_back(p0);
+    ret.push_back(p1);
+    ret.push_back(p2);
+    ret.push_back(p3);
+    return ret;
+    //THE p0x STUFF IS THE POINTS FOR THE BEZIER, p1 and p2 ARE FOCII, BUT INSERTING THEM INTO THE BEZIER WILL GIVE U A SMOOTH CURVE
 
-    multiBez(Kx,Ky, 4);
-	return 0;
 }
+//
+// int main() {
+// 	db Kx[5] = {175,188,144, 91,53};
+//     db Ky[5] = {689,598,548,593,673};
+//
+//     multiBez(Kx,Ky, 4);
+// 	return 0;
+// }
