@@ -5,6 +5,7 @@ extern int inward;
 extern int outward;
 extern int stop;
 extern int conveyorState;
+extern int OPTICAL_STATE;
 extern bool firstBall;
 extern void thread_subsystems(void*p);
 extern void thread_intake(void*p);
