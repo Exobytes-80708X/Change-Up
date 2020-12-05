@@ -161,7 +161,7 @@ vpdb bezToLines(vdb xPts, vdb yPts, int numLines){
   p3 = bez[3];
   db dt = 1.0/(double)numLines;
   vpdb ret;
-  for(int i = 0; i < size(p0); i++){
+  for(int i = 0; i < p0.size(); i++){
     for(int j = 0; j < numLines; j++){
       db t = dt * j;
       db curX = bezX(p0[i].first,p1[i].first,p2[i].first,p3[i].first,t);
@@ -212,7 +212,7 @@ void autonomous()
   vdb ptsX;
   vdb ptsY;
   vpdb temp = bezToLines(xPts,yPts,10);
-  for(int i = 0; i < size(temp); i++){
+  for(int i = 0; i < temp.size(); i++){
     ptsX.push_back(temp[i].first);
     ptsY.push_back(temp[i].second);
   }
