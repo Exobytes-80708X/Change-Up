@@ -87,7 +87,7 @@ db findDistError(vd xPts, vd yPts, db currentTime,db r)
 dpdb shortestRforIntersect(db robX, db robY, db lineX, db lineY, db lineA, db lineB) {
   db x0 = robX - lineX;
   db y0 = robY - lineY;
-  db numerator = -(lineA*x0 + lineB*y0);
+  db numerator = (lineA*x0 + lineB*y0);
   db denom = (lineA * lineA + lineB * lineB);
   db t = numerator/denom;
   if(t > 1)
