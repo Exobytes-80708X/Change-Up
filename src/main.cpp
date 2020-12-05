@@ -1,4 +1,9 @@
 #include "main.h"
+
+typedef double db;
+typedef std::vector<db> vdb;
+typedef std::vector<std::pair<db,db>> vpdb;
+
 bool isRobotDisabled = true;
 bool driverControl = false;
 int red = 1;
@@ -146,6 +151,27 @@ void asynchShoot(void*p)
 }
 //----------------------------------------------
 
+vpdb bezToLines(vdb xPts, vdb yPts, int numLines){
+  std::vector<std::vector<std::pair<double,double>>> bez;
+  bez = multiBez(xPts,yPts);
+  vpdb p0,p1,p2,p3;
+  p0 = bez[0];
+  p1 = bez[1];
+  p2 = bez[2];
+  p3 = bez[3];
+  db dt = 1.0/(double)numLines;
+  vpdb ret;
+  for(int i = 0; i < size(p0); i++){
+    for(int j = 0; j < numLines; j++){
+      db t = dt * j;
+      db curX = bezX(p0[i].first,p1[i].first,p2[i].first,p3[i].first,t);
+      db curY = bezY(p0[i].second,p1[i].second,p2[i].second,p3[i].second,t);
+      ret.push_back(std::pair(curX,curY));
+    }
+  }
+  return ret;
+}
+
 //------------------------------------------------------
 void autonomous()
 {
@@ -172,7 +198,6 @@ void autonomous()
 
   xPts.push_back(0.0);
   yPts.push_back(72.0);
-
 
   switch(auton) {
     case 0: //no auton
