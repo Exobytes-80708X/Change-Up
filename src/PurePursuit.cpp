@@ -157,7 +157,7 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     //updateVarLabel(debugLabel3,"X_l",debugValue3,x0,"IN",3);
     //updateVarLabel(debugLabel4,"Y_l",debugValue4,y0,"IN",3);
 
-    if(currentTime == UND) { //if robot radius has no intersection
+    if(currentTime == -1) { //if robot radius has no intersection
       db minDistance = 1000000000;
       db minTime = SIZE+1;
       for(int i = 0; i < SIZE-1; i++) {
@@ -211,13 +211,17 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     fwdSpeed = distError*timekP*cos(angleError); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down
     angleSpeed = angleError*anglekP;
 
+    if(fabs(fwdSpeed) > maxV) fwdSpeed = maxV*fwdSpeed/fabs(fwdSpeed);
+
     derivative = distError - prevDistError;
     prevDistError = distError;
 
     updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
     updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
     updateVarLabel(debugLabel3,"FWD_SPEED",debugValue3,fwdSpeed,"mV",3);
-    updateVarLabel(debugLabel4,"SETTLE TIMER",debugValue4,settleTimer,"",3);
+    updateVarLabel(debugLabel4,"C_TIME",debugValue4,currentTime,"",3);
+    updateVarLabel(debugLabel5,"FOLLOW X",debugValue5,followX,"IN",3);
+    updateVarLabel(debugLabel6,"FOLLOW Y",debugValue6,followY,"IN",3);
 
     driveVector(fwdSpeed,angleSpeed,maxV);
     pros::delay(10);

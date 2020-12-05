@@ -161,14 +161,14 @@ void autonomous()
   std::vector<double> xPts;
   std::vector<double> yPts;
 
-  xPts.push_back(robotX);
-  yPts.push_back(robotY);
+  // xPts.push_back(robotX);
+  // yPts.push_back(robotY);
 
-  xPts.push_back(0.0);
-  yPts.push_back(72.0);
+  xPts.push_back(48.0);
+  yPts.push_back(0.0);
 
-  xPts.push_back(72.0);
-  yPts.push_back(72.0);
+  xPts.push_back(48.0);
+  yPts.push_back(24.0);
 
 
   switch(auton) {
