@@ -184,9 +184,22 @@ void thread_sensors_filter(void*p) //rolling average
 
 void waitForBallToEject()
 {
-  while(ballInEjector) pros::delay(10);
-  while(!ballInEjector) pros::delay(10);
-  while(ballInEjector) pros::delay(10);
+  int timer = 0;
+  while(ballInEjector){
+    pros::delay(10);
+    timer += 10;
+    if(timer > 1000) return;
+  }
+  while(!ballInEjector) {
+     pros::delay(10);
+     timer += 10;
+     if(timer > 1000) return;
+   }
+  while(ballInEjector) {
+     pros::delay(10);
+     timer += 10;
+     if(timer > 1000) return;
+   }
 }
 
 void waitForTopBalltoLower()
@@ -585,20 +598,13 @@ void thread_subsystems(void* p)
         topConveyor.move_voltage(12000);
         if(auton == red && driverControl) { //RED
           if(optical_state == BLUE_BALL) {
-            if(firstBall){
-              pros::delay(200);
-              botConveyor.move_velocity(600);
-              topBall_task.resume();
-              waitForBallToEject();
-              topBall_task.suspend();
-            }
-            else {
-              topConveyor.move_velocity(-600);
-              botConveyor.move_velocity(200);
-              waitForBallToEject();
-            }
+            if(firstBall) pros::delay(200);
+            topConveyor.move_velocity(-600);
+            botConveyor.move_velocity(150);
+            waitForBallToEject();
           }
-          else botConveyor.move_velocity(300);
+          topConveyor.move_voltage(12000);
+          botConveyor.move_velocity(600);
         }
         else if (auton == blue && driverControl) { //BLUE
           if(optical_state == RED_BALL) {
