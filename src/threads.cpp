@@ -580,6 +580,11 @@ void thread_subsystems(void* p)
           topConveyor.move_velocity(200);
           pros::delay(100);
         }
+        if(firstBall) {
+          topConveyor.move_velocity(-600);
+          botConveyor.move_velocity(600);
+          waitForBallToEject();
+        }
         break;
 
       case 6: //maro3
@@ -595,9 +600,10 @@ void thread_subsystems(void* p)
         break;
 
       case 8: //sorting sort_trigger
+        if(!auton) break;
         topConveyor.move_voltage(12000);
-        if(auton == red && driverControl) { //RED
-          if(optical_state == BLUE_BALL) {
+        if( (auton == red || auton == blue) && driverControl) {
+          if( (auton == red && optical_state == BLUE_BALL) || (auton == blue && optical_state == RED_BALL) ) {
             if(firstBall) pros::delay(200);
             topConveyor.move_velocity(-600);
             botConveyor.move_velocity(150);
@@ -605,22 +611,6 @@ void thread_subsystems(void* p)
           }
           topConveyor.move_voltage(12000);
           botConveyor.move_velocity(600);
-        }
-        else if (auton == blue && driverControl) { //BLUE
-          if(optical_state == RED_BALL) {
-            if(firstBall){
-              botConveyor.move_velocity(600);
-              topBall_task.resume();
-              waitForBallToEject();
-              topBall_task.suspend();
-            }
-            else {
-              topConveyor.move_velocity(-600);
-              botConveyor.move_velocity(200);
-              waitForBallToEject();
-            }
-          }
-          else botConveyor.move_velocity(300);
         }
         break;
     }
