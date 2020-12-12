@@ -196,6 +196,18 @@ vector<subwayPoints> multiBez(vdb x, vdb y){
     //THE p0x STUFF IS THE POINTS FOR THE BEZIER, p1 and p2 ARE FOCII, BUT INSERTING THEM INTO THE BEZIER WILL GIVE U A SMOOTH CURVE
 
 }
+vector<subwayPoints> multiBez(vdb x, vdb y, db theta){
+  x.push_back(x[x.size()-1] + 100 * cosf(theta));
+  y.push_back(y[y.size()-1] + 100 * sinf(theta));
+
+  vector<subwayPoints> ret = multiBez(x,y);
+  ret[0].pop_back();
+  ret[1].pop_back();
+  ret[2].pop_back();
+  ret[3].pop_back();
+  return ret;
+}
+
 //
 // int main() {
 // 	db Kx[5] = {175,188,144, 91,53};
