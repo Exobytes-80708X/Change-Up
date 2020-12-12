@@ -22,6 +22,8 @@ extern int countHeldBalls();
 extern bool thirdBall;
 extern bool secondBall;
 extern bool firstBall;
+extern bool botBall_low;
+extern bool botBall;
 
 extern int top_high_avg;
 extern int top_low_avg;
