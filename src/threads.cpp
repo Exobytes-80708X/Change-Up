@@ -448,38 +448,7 @@ void thread_subsystems(void* p)
   while(true) {
     switch(conveyorState) {
       case 0: //idle state
-        // if(auton == red && driverControl) { //RED
-        //   if(optical_state == BLUE_BALL) {
-        //     if(firstBall){
-        //       botConveyor.move_velocity(600);
-        //       topBall_task.resume();
-        //       waitForBallToEject();
-        //       topBall_task.suspend();
-        //     }
-        //     else {
-        //       topConveyor.move_velocity(-600);
-        //       botConveyor.move_velocity(200);
-        //       waitForBallToEject();
-        //     }
-        //   }
-        // }
-        // else if (auton == blue && driverControl) { //BLUE
-        //   if(optical_state == RED_BALL) {
-        //     if(firstBall){
-        //       botConveyor.move_velocity(600);
-        //       topBall_task.resume();
-        //       waitForBallToEject();
-        //       topBall_task.suspend();
-        //     }
-        //     else {
-        //       topConveyor.move_velocity(-600);
-        //       botConveyor.move_velocity(200);
-        //       waitForBallToEject();
-        //     }
-        //   }
-        // }
         idleConveyor();
-
         break;
       case 99:
         idleConveyor(600);
@@ -494,7 +463,6 @@ void thread_subsystems(void* p)
           pros::delay(10);
 
         break;
-
       case 2: //ejecting manually
         if(thirdBall) {
           topBall_task.resume();
@@ -587,10 +555,7 @@ void thread_subsystems(void* p)
         }
         break;
 
-      case 6: //maro3
-        //intake_control.suspend();
-        //super_macro(countHeldBalls(),2);
-        //intake_control.resume();
+      case 6: //macro3
         shooting_macro(2);
         break;
 
@@ -600,17 +565,23 @@ void thread_subsystems(void* p)
         break;
 
       case 8: //sorting sort_trigger
-        if(!auton) break;
+        if(auton != red && auton != blue) break;
         topConveyor.move_voltage(12000);
+        pros::delay(200);
         if( (auton == red || auton == blue) && driverControl) {
-          if( (auton == red && optical_state == BLUE_BALL) || (auton == blue && optical_state == RED_BALL) ) {
-            if(firstBall) pros::delay(200);
-            topConveyor.move_velocity(-600);
-            botConveyor.move_velocity(150);
-            waitForBallToEject();
+          while(conveyorState == 8) {
+            if( (auton == red && optical_state == BLUE_BALL) || (auton == blue && optical_state == RED_BALL) ) {
+              if(firstBall) {
+                botConveyor.move_velocity(0);
+                pros::delay(200);
+              }
+              topConveyor.move_velocity(-600);
+              botConveyor.move_velocity(150);
+              waitForBallToEject();
+            }
+            topConveyor.move_voltage(12000);
+            botConveyor.move_velocity(600);
           }
-          topConveyor.move_voltage(12000);
-          botConveyor.move_velocity(600);
         }
         break;
     }
