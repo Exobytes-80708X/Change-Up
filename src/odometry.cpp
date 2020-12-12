@@ -822,7 +822,7 @@ void pointTurn(int side, int oppRPM, double theta, bool reversed, double maxV, d
       else
         error = calcAngleError(theta); //calculate angle error based off front of robot
 
-      if(fabs(error) < 0.02 || (fabs(error) < 0.04 && d < 0.01) )
+      if( fabs(error) < 0.02 || d < 0.005 )
         settleTimer+=10;
       else
         settleTimer = 0;
@@ -866,7 +866,7 @@ void pointTurn(int side, int oppRPM, double theta, bool reversed, double maxV, d
 
 void pointTurn(int side, int oppRPM, double theta, bool reversed, double kP, double kI, double kD)
 {
-  pointTurn(side,oppRPM,theta,reversed,8,kP,kI,kD,200,5000);
+  pointTurn(side,oppRPM,theta,reversed,8,kP,kI,kD,200,2000);
 }
 
 void delayFacePID(double theta, bool reversed, double maxV, double kP, double kI, double kD, int timeout, int delay, int speed){
