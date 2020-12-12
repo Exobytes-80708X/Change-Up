@@ -197,8 +197,8 @@ vector<subwayPoints> multiBez(vdb x, vdb y){
 
 }
 vector<subwayPoints> multiBez(vdb x, vdb y, db theta){
-  x.push_back(x[x.size()-1] + 100 * cosf(theta));
-  y.push_back(y[y.size()-1] + 100 * sinf(theta));
+  x.push_back(x[x.size()-1] + 100 * sinf(theta));
+  y.push_back(y[y.size()-1] + 100 * cosf(theta));
 
   vector<subwayPoints> ret = multiBez(x,y);
   ret[0].pop_back();

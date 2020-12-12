@@ -173,9 +173,35 @@ vpdb bezToLines(vdb xPts, vdb yPts, int numLines){
     updateVarLabel(debugLabel3,"P2",debugValue3,p2[i],"",2);
     updateVarLabel(debugLabel4,"P3",debugValue4,p3[i],"",2);
     updateVarLabel(debugLabel5,"ITERATION",debugValue5,i,"",2);
-    pros::delay(5000);
+    //pros::delay(5000);
   }
   return ret;
+}
+vpdb bezToLines(vdb xPts, vdb yPts, db theta, int numLines){
+    std::vector<vpdb> bez;
+    bez = multiBez(xPts,yPts,theta);
+    vpdb p0,p1,p2,p3;
+    p0 = bez[0];
+    p1 = bez[1];
+    p2 = bez[2];
+    p3 = bez[3];
+    db dt = 1.0/(double)numLines;
+    vpdb ret;
+    for(int i = 0; i < p0.size(); i++){
+      for(int j = 0; j < numLines; j++){
+        db t = dt * j;
+        db curX = bezX(p0[i].first,p1[i].first,p2[i].first,p3[i].first,t);
+        db curY = bezY(p0[i].second,p1[i].second,p2[i].second,p3[i].second,t);
+        ret.push_back(std::pair(curX,curY));
+      }
+      updateVarLabel(debugLabel1,"P0",debugValue1,p0[i],"",2);
+      updateVarLabel(debugLabel2,"P1",debugValue2,p1[i],"",2);
+      updateVarLabel(debugLabel3,"P2",debugValue3,p2[i],"",2);
+      updateVarLabel(debugLabel4,"P3",debugValue4,p3[i],"",2);
+      updateVarLabel(debugLabel5,"ITERATION",debugValue5,i,"",2);
+      //pros::delay(5000);
+    }
+    return ret;
 }
 
 //------------------------------------------------------
@@ -218,7 +244,7 @@ void autonomous()
   }
   switch(auton) {
     case 0: //no auton
-      purePursuit(24,0,ptsX,ptsY,8,0.5,10.0,5000);
+      purePursuit(12,0,ptsX,ptsX,6,0.5,10,5000);
       break;
 
     case 1: //red auton
