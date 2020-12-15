@@ -457,8 +457,8 @@ void thread_subsystems(void* p)
         if(auton == red || auton == blue) {
           topConveyor.move_voltage(12000);
           pros::delay(200);
-          if( (auton == red || auton == blue) && driverControl) {
-            while(conveyorState == 8) {
+          if(driverControl) {
+            while(conveyorState == 1) {
               if( (auton == red && optical_state == BLUE_BALL) || (auton == blue && optical_state == RED_BALL) ) {
                 if(firstBall) {
                   botConveyor.move_velocity(0);
@@ -625,7 +625,7 @@ void thread_control(void* p)
       conveyorState = macro1_trigger;
     }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-       conveyorState = sort_trigger;
+       conveyorState = macro2_trigger;
     }
     else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
        conveyorState = macro3_trigger;

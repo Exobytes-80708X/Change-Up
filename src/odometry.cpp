@@ -603,6 +603,26 @@ void accel(double accel, int ms)
   }
 }
 
+void driveUntilStopped(double v)
+{
+  db prevX = robotX;
+  db prevY = robotY;
+  db d = calcDistance(prevX,prevY);
+  int timer = 0;
+  while(timer < 200) {
+    d = calcDistance(prevX,prevY);
+    prevX = robotX;
+    prevY = robotY;
+    if(d < 0.001)
+      timer += 10;
+    rightDrive.moveVoltage(v);
+    leftDrive.moveVoltage(v);
+    pros::delay(10);
+  }
+  rightDrive.moveVoltage(0);
+  leftDrive.moveVoltage(0);
+}
+
 double pseudoI = 0.0;
 
 void face_alg(double error, double accelTime, double minV, double medV, double maxV, double kP) //deprecated

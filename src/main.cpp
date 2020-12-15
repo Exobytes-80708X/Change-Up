@@ -220,6 +220,7 @@ void autonomous()
   switch(auton) {
     case 0: //no auton
       //purePursuit(24,0,ptsX,ptsY,8,0.5,10.0,5000);
+      driveUntilStopped(2000);
       break;
 
     case 1: //red auton
@@ -302,15 +303,16 @@ void autonomous()
       intake(stop);
       //driveDistance(calcDistance(46,0)-7,6);
       delayDrive(950,5500);
-      shooting_macro(1);
+      shooting_macro(1); //score first goal corner
       pros::delay(100);
       driveDistance(-20,6);
       intake(inward);
       facePID(8,62,p,i,d);
       adaptiveDrive(8,60.22,8);
       facePID(-10,robotY+2,p,i,d);
-      delayDrive(1600,8200);
-      super_macro(2,1);
+      //delayDrive(2500,5000);
+      driveUntilStopped(5000);
+      super_macro(2,2); //score second goal middle
       intake(outward);
       delayDrive(500,-6000);
       facePID(robotX-10,120,p,i,d);
@@ -321,13 +323,13 @@ void autonomous()
       pros::delay(100);
       facePID(90.5,p,i,d);
       intake(inward);
-      adaptiveDrive(32,robotY,8);
+      adaptiveDrive(32,robotY,8); //face third goal side
       //driveDistance(calcDistance(34,64),8);
       facePID(46,robotY,p,i,d);
       //driveDistance(calcDistance(46,58)-7,6);
       intake(stop);
       delayDrive(400,8000);
-      shooting_macro(1);
+      shooting_macro(1); //score third goal side
       driveDistance(-10,8);
       intake(inward);
       facePID(19,110,p,i,d);
