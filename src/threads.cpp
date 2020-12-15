@@ -454,13 +454,34 @@ void thread_subsystems(void* p)
         idleConveyor(600);
       break;
       case 1: //shooting manually
-        if(firstBall)
-          botConveyor.move_velocity(0);
+        if(auton == red || auton == blue) {
           topConveyor.move_voltage(12000);
           pros::delay(200);
-          botConveyor.move_velocity(600);
-        while(conveyorState == shooting)
-          pros::delay(10);
+          if( (auton == red || auton == blue) && driverControl) {
+            while(conveyorState == 8) {
+              if( (auton == red && optical_state == BLUE_BALL) || (auton == blue && optical_state == RED_BALL) ) {
+                if(firstBall) {
+                  botConveyor.move_velocity(0);
+                  pros::delay(200);
+                }
+                topConveyor.move_velocity(-600);
+                botConveyor.move_velocity(150);
+                waitForBallToEject();
+              }
+              topConveyor.move_voltage(12000);
+              botConveyor.move_velocity(600);
+            }
+          }
+        }
+        else {
+          if(firstBall)
+            botConveyor.move_velocity(0);
+            topConveyor.move_voltage(12000);
+            pros::delay(200);
+            botConveyor.move_velocity(600);
+          while(conveyorState == shooting)
+            pros::delay(10);
+        }
 
         break;
       case 2: //ejecting manually
