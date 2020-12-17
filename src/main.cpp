@@ -219,9 +219,10 @@ void autonomous()
   // }
   switch(auton) {
     case 0: //no auton
+      super_macro(2,2);
       //purePursuit(24,0,ptsX,ptsY,8,0.5,10.0,5000);
-      driveUntilStopped(8000);
-      shoot(1);
+      //driveUntilStopped(8000);
+      //shoot(1);
       break;
 
     case 1: //red auton
@@ -316,12 +317,12 @@ void autonomous()
       facePID(-10,robotY+2,p,i,d);
       //delayDrive(2500,5000);
       driveUntilStopped(5000);
-      super_macro(2,2); //score second goal middle
+      super_macro(2,1); //score second goal middle
       intake(outward);
-      delayDrive(500,-6000);
+      delayDrive(500,-8000);
+      pros::delay(100);
       facePID(robotX-10,120,p,i,d);
-      eject(3);
-      waitForBallToEject();
+      eject(2);
       waitForBallToEject();
       waitForBallToEject();
       pros::delay(100);
@@ -336,9 +337,10 @@ void autonomous()
       shooting_macro(1); //score third goal side
       driveDistance(-10,8);
       intake(inward);
-      facePID(19,110,p,i,d);
+      facePID(22,110,p,i,d);
+      eject(0);
       driveDistance(calcDistance(22,110)+6,8);
-      driveDistance(-12,8);
+      driveDistance(-8,8);
       intake(stop);
       facePID(44,130,p,i,d);
       delayDrive(900,9000);
@@ -348,38 +350,39 @@ void autonomous()
       intake(inward);
       facePID(-22,93,p,i,d);
       adaptiveDrive(-22,93, 8);
+      driveDistance(-6,7000);
       //driveDistance(calcDistance(-12,84),8);
       facePID(-22,125,p,i,d);
       intake(stop);
       delayDrive(1150,8000);
       shooting_macro(2);
       pros::delay(100);
-      driveDistance(-14,8);
+      driveDistance(-25,8);
       intake(inward);
-      facePID(-62,118,p,i,d);
-      driveDistance(calcDistance(-62,118),8);
-      facePID(-72,125,p,i,d);
+      //facePID(-62,118,p,i,d);
+      //driveDistance(calcDistance(-62,118),8);
+      adaptiveDrive(-62,118,0.2,7,0.6,8.0,1.0,250,10000);
+      facePID(-80,125,p,i,d);
       intake(stop);
       delayDrive(800,8000);
       shooting_macro(1);
       pros::delay(100);
       driveDistance(-10,8);
-      facePID(-46,58,p,i,d);
+      facePID(-46,62,p,i,d);
       intake(inward);
-      driveDistance(calcDistance(-46,58),8);
-      driveDistance(-7,10);
+      driveDistance(calcDistance(-46,62)+7,8);
+      driveDistance(-11,10);
       facePID(-120,62,p,i,d);
-      delayDrive(900,8000);
-
+      delayDrive(750,8000);
       intake(stop);
       delayDrive(300,8000);
       shooting_macro(1);
       pros::delay(100);
       driveDistance(-20,8);
-      facePID(-60,17,p,i,d);
+      facePID(-58,20,p,i,d);
       intake(inward);
-      driveDistance(calcDistance(-60,17),9);
-      driveDistance(-6,9);
+      driveDistance(calcDistance(-60,20),9);
+      driveDistance(-4.5,9);
       facePID(-100,-12,p,i,d);
       intake(stop);
 
@@ -388,9 +391,9 @@ void autonomous()
       pros::delay(100);
       ///???
       driveDistance(-30,9);
-      facePID(-18,33,p,i,d);
+      facePID(-18,35,p,i,d);
       intake(inward);
-      driveDistance(calcDistance(-18, 3),9);
+      driveDistance(calcDistance(-18, 33),9);
       facePID(-18,-10,p,i,d);
       intake(stop);
       delayDrive(1500, 8000);
