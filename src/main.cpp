@@ -220,7 +220,8 @@ void autonomous()
   switch(auton) {
     case 0: //no auton
       //purePursuit(24,0,ptsX,ptsY,8,0.5,10.0,5000);
-      driveUntilStopped(2000);
+      driveUntilStopped(8000);
+      shoot(1);
       break;
 
     case 1: //red auton
@@ -231,7 +232,8 @@ void autonomous()
       pointTurn(0,225,135,false,40,i,d);
       while(!secondBall)
         pros::delay(10);
-      delayDrive(400,8000);
+      //delayDrive(400,8000);
+      driveUntilStopped(8000);
       //waitForThirdBall();
       //intake(stop);
       while(!thirdBall)
@@ -246,17 +248,18 @@ void autonomous()
       f.resume();
       facePID(180,p,i,d);
       intake(inward);
-      delayDrive(800,9000);
-      // while(!firstBall)
-      //   pros::delay(10);
+      //delayDrive(800,9000);
+      driveUntilStopped(8000);
+      while(!firstBall)
+        pros::delay(10);
       // while(!thirdBall)
       //   pros::delay(10);
       //pros::delay(200);
-      while(!secondBall) {
-        timer += 10;
-        pros::delay(10);
-        if(timer > 500) break;
-      }
+      // while(!secondBall) {
+      //   timer += 10;
+      //   pros::delay(10);
+      //   if(timer > 500) break;
+      // }
       shooting_macro(1); //score second goal
       intake(stop);
       pros::delay(200);
@@ -278,9 +281,10 @@ void autonomous()
       xPts.push_back(-85);
       yPts.push_back(-4);
 
-      purePursuit(18,0,xPts,yPts,8,0.5,12.0,5000);
+      purePursuit(24,0,xPts,yPts,8,0.5,12.0,5000);
 
-      delayDrive(500,8000);
+      //delayDrive(500,8000);
+      driveUntilStopped(8000);
 
       //intake(outward);
       conveyorState = 99;

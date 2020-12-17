@@ -609,7 +609,7 @@ void driveUntilStopped(double v)
   db prevY = robotY;
   db d = calcDistance(prevX,prevY);
   int timer = 0;
-  while(timer < 200) {
+  while(timer < 100) {
     d = calcDistance(prevX,prevY);
     prevX = robotX;
     prevY = robotY;
