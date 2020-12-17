@@ -554,7 +554,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 			currentSpeed = -minV;*/
     //makes sure currentSpeed is greater than minV
 
-		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0 || (d < 0.001 && fabs(distError) < 2.5))
+		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0 || (d < 0.0015 && fabs(distError) < 5.0))
 			settleTimer+=10;
     else
       settleTimer = 0;
