@@ -1291,7 +1291,47 @@ void delayDrive(int ms,double vel){
   pros::delay(ms);
   rightDrive.moveVoltage(0);
   leftDrive.moveVoltage(0);
+}
 
+bool fwd = true;
+bool rev = false;
+void delayDriveSmooth(int duration, double maxV, double accel, bool dir) {
+  int t1 = pros::c::millis();
+  int t2 = t1 + duration/2;
+  int t3 = t1 + duration;
+  maxV *= 1000;
+  accel *= 1000;
+  double currentSpeed = 0.0;
+  while(pros::c::millis() < t2) {
+    currentSpeed += accel;
+    if(currentSpeed > maxV)
+      currentSpeed = maxV;
+    if(dir == rev) currentSpeed *= -1;
+
+    rightDrive.moveVoltage(currentSpeed);
+    leftDrive.moveVoltage(currentSpeed);
+    pros::delay(10);
+  }
+  double dT = currentSpeed/accel * 10;
+  while(pros::c::millis() < t3 - dT) {
+    pros::delay(10);
+  }
+  while(pros::c::millis() < t3) {
+    currentSpeed -= accel;
+    if(currentSpeed < 0)
+      currentSpeed = 0;
+    if(dir == rev) currentSpeed *= -1;
+
+    rightDrive.moveVoltage(currentSpeed);
+    leftDrive.moveVoltage(currentSpeed);
+    pros::delay(10);
+  }
+  rightDrive.moveVoltage(0);
+  leftDrive.moveVoltage(0);
+}
+
+void delayDriveSmooth(int duration, double maxV, bool dir) {
+  delayDriveSmooth(duration,maxV,0.1,dir);
 }
 
 double quadX(double x,double y,double t){

@@ -30,3 +30,7 @@ extern void pointTurn(int side, int oppRPM, double theta, bool reversed, double 
 extern void pointTurn(int side, int oppRPM, double theta, bool reversed, double kP, double kI, double kD);
 extern void driveVector(double currentSpeed, double angleSpeed, double maxV);
 extern void driveUntilStopped(double);
+extern void delayDriveSmooth(int,double,double,bool);
+extern void delayDriveSmooth(int,double,bool);
+extern bool rev;
+extern bool fwd;
