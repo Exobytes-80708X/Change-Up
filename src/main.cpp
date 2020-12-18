@@ -233,8 +233,8 @@ void autonomous()
       pointTurn(0,225,135,false,40,i,d);
       while(!secondBall)
         pros::delay(10);
-      //delayDrive(400,8000);
-      driveUntilStopped(8000);
+      delayDrive(400,8000);
+      //driveUntilStopped(8000);
       //waitForThirdBall();
       //intake(stop);
       while(!thirdBall)
@@ -249,8 +249,8 @@ void autonomous()
       f.resume();
       facePID(180,p,i,d);
       intake(inward);
-      //delayDrive(800,9000);
-      driveUntilStopped(8000);
+      delayDrive(800,9000);
+      //driveUntilStopped(8000);
       while(!firstBall)
         pros::delay(10);
       // while(!thirdBall)
@@ -284,8 +284,8 @@ void autonomous()
 
       purePursuit(24,0,xPts,yPts,8,0.5,12.0,5000);
 
-      //delayDrive(500,8000);
-      driveUntilStopped(8000);
+      delayDrive(500,8000);
+      //driveUntilStopped(8000);
 
       //intake(outward);
       conveyorState = 99;
