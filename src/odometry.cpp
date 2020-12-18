@@ -609,7 +609,11 @@ void driveUntilStopped(double v)
   db prevY = robotY;
   db d = calcDistance(prevX,prevY);
   int timer = 0;
-  while(timer < 50) {
+
+  rightDrive.moveVoltage(v);
+  leftDrive.moveVoltage(v);
+  pros::delay(100);
+  while(timer < 30) {
     d = calcDistance(prevX,prevY);
     prevX = robotX;
     prevY = robotY;
