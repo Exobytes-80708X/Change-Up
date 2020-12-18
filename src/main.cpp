@@ -192,6 +192,8 @@ void autonomous()
   double d = 50;
   std::vector<double> xPts;
   std::vector<double> yPts;
+  std::vector<double> xPts1;
+  std::vector<double> yPts1;
   int timer = 0;
 
   // xPts.push_back(robotX);
@@ -223,37 +225,63 @@ void autonomous()
       //purePursuit(24,0,ptsX,ptsY,8,0.5,10.0,5000);
       //driveUntilStopped(8000);
       //shoot(1);
-      delayDriveSmooth(2000,8,0.2,fwd);
+      delayDriveSmooth(2000,8,0.3,fwd);
       break;
 
     case 1: //red auton
 
     case 2: //blue auton
-      robotTheta = M_PI/3;
+      robotTheta = M_PI/2;
+      //robotX = 12.0;
+      //robotY = 6.0;
       intake(inward);
-      pointTurn(0,225,135,false,40,i,d);
-      while(!secondBall)
+      pointTurn(0,300,135,false,40,i,d);
+      // xPts1.push_back(robotX);
+      // yPts1.push_back(robotY);
+      // xPts1.push_back(24*sin(robotTheta));
+      // yPts1.push_back(24*cos(robotTheta));
+      // xPts1.push_back(22);
+      // yPts1.push_back(robotY);
+      //
+      // purePursuit(3,0,xPts1,yPts1,6,0.6,15.0,3000);
+
+      timer = 0;
+      while(!secondBall) {
         pros::delay(10);
+        timer += 10;
+        if(timer > 1000)
+          break;
+      }
       delayDrive(400,8000);
       //driveUntilStopped(8000);
       //waitForThirdBall();
       //intake(stop);
-      while(!thirdBall)
+      timer = 0;
+      while(!thirdBall) {
         pros::delay(10);
+        timer += 10;
+        if(timer > 1000)
+          break;
+      }
       // pros::delay(200);
       super_macro(countHeldBalls(), 1); //score first goal
       //shooting_macro(2);
       //pros::delay(200);
       intake(outward);
-      adaptiveDrive_reversed(-32,16,9.5);
+      adaptiveDrive_reversed(-36,16,9.5);
       //shooting_macro(1); //shoot oppposite ball
       f.resume();
       facePID(180,p,i,d);
       intake(inward);
       delayDrive(800,9000);
       //driveUntilStopped(8000);
-      while(!firstBall)
+      timer = 0;
+      while(!firstBall) {
         pros::delay(10);
+        timer += 10;
+        if(timer > 1000)
+          break;
+      }
       // while(!thirdBall)
       //   pros::delay(10);
       //pros::delay(200);
@@ -277,11 +305,11 @@ void autonomous()
       xPts.push_back(robotX);
       yPts.push_back(robotY);
 
-      xPts.push_back(-65);
+      xPts.push_back(-80);
       yPts.push_back(robotY);
 
-      xPts.push_back(-85);
-      yPts.push_back(-4);
+      xPts.push_back(-100);
+      yPts.push_back(-6);
 
       purePursuit(24,0,xPts,yPts,8,0.5,12.0,5000);
 
@@ -290,12 +318,18 @@ void autonomous()
 
       //intake(outward);
       conveyorState = 99;
-      while(!botBall_low && !firstBall && !botBall)
+      // while(!botBall_low && !firstBall && !botBall)
+      //   pros::delay(10);
+      //intake(outward);
+      timer = 0;
+      while(!thirdBall) {
         pros::delay(10);
+        timer += 10;
+        if(timer > 1000)
+          break;
+      }
+      shooting_macro(2); //score third goal
       intake(outward);
-      while(!firstBall)
-        pros::delay(10);
-      shooting_macro(1); //score third goal
       //pros::delay(200);
       delayDrive(400,-8000);
     break;
