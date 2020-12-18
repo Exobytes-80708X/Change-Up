@@ -1296,13 +1296,13 @@ void delayDrive(int ms,double vel){
 bool fwd = true;
 bool rev = false;
 void delayDriveSmooth(int duration, double maxV, double accel, bool dir) {
-  int t1 = pros::c::millis();
+  int t1 = pros::millis();
   int t2 = t1 + duration/2;
   int t3 = t1 + duration;
   maxV *= 1000;
   accel *= 1000;
   double currentSpeed = 0.0;
-  while(pros::c::millis() < t2) {
+  while(pros::millis() < t2) {
     currentSpeed += accel;
     if(currentSpeed > maxV)
       currentSpeed = maxV;
@@ -1313,10 +1313,10 @@ void delayDriveSmooth(int duration, double maxV, double accel, bool dir) {
     pros::delay(10);
   }
   double dT = currentSpeed/accel * 10;
-  while(pros::c::millis() < t3 - dT) {
+  while(pros::millis() < t3 - dT) {
     pros::delay(10);
   }
-  while(pros::c::millis() < t3) {
+  while(pros::millis() < t3) {
     currentSpeed -= accel;
     if(currentSpeed < 0)
       currentSpeed = 0;

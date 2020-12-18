@@ -219,10 +219,11 @@ void autonomous()
   // }
   switch(auton) {
     case 0: //no auton
-      super_macro(2,2);
+      //super_macro(2,2);
       //purePursuit(24,0,ptsX,ptsY,8,0.5,10.0,5000);
       //driveUntilStopped(8000);
       //shoot(1);
+      delayDriveSmooth(2000,8,0.2,fwd);
       break;
 
     case 1: //red auton
