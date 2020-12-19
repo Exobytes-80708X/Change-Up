@@ -395,7 +395,8 @@ void autonomous()
       driveDistance(-10,9);
       intake(inward);
       //facePID(-22,91,p,i,d);
-      adaptiveDrive(-22,90, 8);
+      adaptiveDrive(-22,90,0.2,8,0.7,10.0,1.0,250,10000);
+      //adaptiveDrive(-22,90, 8);
       driveDistance(-6,8000);
       //driveDistance(calcDistance(-12,84),8);
       facePID(-19,125,p,i,d);

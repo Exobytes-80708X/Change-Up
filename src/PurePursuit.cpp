@@ -202,7 +202,7 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
         angleError = calcAngleError(followX,followY);
     }
 
-    if(distError < 6.0 && adaptRadius > 6.0)
+    if(distError < 6.0 && minRadius > 6.0)
       angleError = 0;
 
     if(distError < 2.0 || fabs(angleError) > 85.0*M_PI/180.0) settleTimer += 10;
