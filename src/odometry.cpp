@@ -705,7 +705,7 @@ void facePID(double x, double y, bool reversed, double maxV, double kP, double k
   				else
   					error = calcAngleError(x,y); //calculate angle error based off front of robot
 
-            if(fabs(error) < 0.02 || (fabs(error) < 0.04 && d < 0.01) )
+            if(fabs(error) < 0.02 || (fabs(error) < 0.1 && d < 0.01) )
     					settleTimer+=10;
             else
               settleTimer = 0;

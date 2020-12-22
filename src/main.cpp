@@ -339,7 +339,7 @@ void autonomous()
       intake(inward);
       //adaptiveDrive(25, 20, 8);
       driveDistance(calcDistance(25,20),6);
-      facePID(46,0,p,i,d);
+      facePID(48,0,p,i,d);
       intake(stop);
       //driveDistance(calcDistance(46,0)-7,6);
       delayDrive(950,6000);
@@ -388,8 +388,8 @@ void autonomous()
       //driveDistance(calcDistance(17,110)+6,8);
       driveDistance(-11,8);
       intake(stop);
-      facePID(47,130,p,i,d);
-      delayDriveSmooth(1200,9,0.3,fwd);
+      facePID(45,130,p,i,d);
+      delayDriveSmooth(1300,9,0.3,fwd);
       shooting_macro(1); //score fourth goal corner
       pros::delay(100);
       driveDistance(-10,9);
@@ -399,20 +399,20 @@ void autonomous()
       //adaptiveDrive(-22,90, 8);
       driveDistance(-6,8000);
       //driveDistance(calcDistance(-12,84),8);
-      facePID(-19,125,p,i,d);
+      facePID(-21,125,p,i,d);
       intake(stop);
-      delayDriveSmooth(1100,9,0.3,fwd);
-      shooting_macro(2);
+      delayDriveSmooth(1200,9,0.3,fwd);
+      shooting_macro(2); //score fifth goal side
       pros::delay(100);
       driveDistance(-25,8);
       intake(inward);
       //facePID(-62,118,p,i,d);
       //driveDistance(calcDistance(-62,118),8);
-      adaptiveDrive(-62,118,0.2,7,0.6,8.0,1.0,250,10000);
+      adaptiveDrive(-62,116,0.2,7,0.6,8.0,1.0,250,10000);
       facePID(-85,134,p,i,d);
       intake(stop);
       delayDriveSmooth(1100,9,0.3,fwd);
-      shooting_macro(1);
+      shooting_macro(1); //score 6th goal corner
       pros::delay(50);
       driveDistance(-10,8);
       facePID(-43,62,p,i,d);
@@ -423,19 +423,19 @@ void autonomous()
       delayDrive(750,8000);
       intake(stop);
       delayDrive(300,8000);
-      shooting_macro(1);
+      shooting_macro(1); //7th goal side
       pros::delay(100);
       driveDistance(-25,8);
       intake(inward);
       //facePID(-58,20,p,i,d);
-      adaptiveDrive(-58,20,0.2,7,0.6,8.0,1.0,250,10000);
+      adaptiveDrive(-55,20,0.2,7,0.6,8.0,1.0,250,10000);
       //driveDistance(calcDistance(-60,20),9);
       //driveDistance(-4.5,9);
       facePID(-98,-12,p,i,d);
       intake(stop);
 
       delayDrive(1000,9000);
-      shooting_macro(1);
+      shooting_macro(1); //8th goal
       pros::delay(50);
       ///???
       driveDistance(-15,9);
@@ -444,7 +444,7 @@ void autonomous()
       facePID(-18,-10,p,i,d);
       intake(stop);
       delayDrive(1100, 8000);
-      shooting_macro(2);
+      shooting_macro(2); //last goal
       //delayDrive(400,-8000);
       //driveDistance(-20,9);
       // //facePID(90,p,i,d);
