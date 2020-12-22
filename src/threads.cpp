@@ -448,7 +448,23 @@ void thread_subsystems(void* p)
   while(true) {
     switch(conveyorState) {
       case 0: //idle state
-        idleConveyor();
+        if( driverControl  && (auton == red || auton == blue) ){
+          if( (auton == red && optical_state == BLUE_BALL) || (auton == blue && optical_state == RED_BALL) ) {
+            if (firstBall) {
+              topBall_task.resume();
+              botConveyor.move_velocity(300);
+              waitForBallToEject();
+              topBall_task.suspend();
+            }
+            else {
+              topConveyor.move_velocity(-600);
+              botConveyor.move_velocity(150);
+              waitForBallToEject();
+            }
+          }
+          else idleConveyor();
+        }
+        else idleConveyor();
         break;
       case 99:
         idleConveyor(600);
@@ -570,6 +586,7 @@ void thread_subsystems(void* p)
           pros::delay(100);
         }
         if(firstBall) {
+          waitForTopBalltoLower();
           topConveyor.move_velocity(-600);
           botConveyor.move_velocity(600);
           waitForBallToEject();
