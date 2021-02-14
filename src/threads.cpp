@@ -264,11 +264,13 @@ void countIntakeBalls(int numOfBalls)
       }
     }
     timer = 0;
-    while(botBall_low) {
-      timer+=10;
-      pros::delay(10);
-      if(timer > 5000) {
-        return;
+    if(n != numOfBalls -1) {
+      while(botBall_low) {
+        timer+=10;
+        pros::delay(10);
+        if(timer > 5000) {
+          return;
+        }
       }
     }
   }
