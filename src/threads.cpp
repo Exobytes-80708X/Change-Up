@@ -437,6 +437,21 @@ void super_macro(int shootBalls, int intakeBalls)
     conveyorState = 0;
 }
 
+void super_macro2(int shootBalls, int intakeBalls)
+{
+  intakeFinished = false;
+  if(!driverControl)
+    conveyorState = 7;
+  iBalls = intakeBalls;
+  pros::Task subthread (intake_subthread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  shooting_macro2(shootBalls);
+  while(!intakeFinished) {
+    idleConveyor();
+  }
+  if(!driverControl)
+    conveyorState = 0;
+}
+
 void thread_intakecontrol(void*p)
 {
   while(true) {
