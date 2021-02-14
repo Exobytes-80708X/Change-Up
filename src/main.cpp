@@ -173,7 +173,7 @@ vpdb bezToLines(vdb xPts, vdb yPts, int numLines){
     updateVarLabel(debugLabel3,"P2",debugValue3,p2[i],"",2);
     updateVarLabel(debugLabel4,"P3",debugValue4,p3[i],"",2);
     updateVarLabel(debugLabel5,"ITERATION",debugValue5,i,"",2);
-    //
+    //pros::delay(5000);
   }
   return ret;
 }
@@ -225,7 +225,8 @@ void autonomous()
       //purePursuit(24,0,ptsX,ptsY,8,0.5,10.0,5000);
       //driveUntilStopped(8000);
       //shoot(1);
-      delayDriveSmooth(2000,8,0.3,fwd);
+      //delayDriveSmooth(2000,8,0.3,fwd);
+      shooting_macro2(2);
       break;
 
     case 1: //red auton
@@ -343,14 +344,13 @@ void autonomous()
       intake(stop);
       //driveDistance(calcDistance(46,0)-7,6);
       delayDrive(950,6000);
-
-      shooting_macro(1); //score first goal corner
+      shooting_macro2(1); //score first goal corner
       pros::delay(100);
       driveDistance(-20,6);
       intake(inward);
       facePID(8,62,p,i,d);
       adaptiveDrive(9,60.22,8);
-      facePID(-10,robotY+4,p,i,d);
+      facePID(-10,robotY+2,p,i,d);
       //delayDrive(2500,5000);
       driveUntilStopped(5000);
       timer = 0;
@@ -360,7 +360,6 @@ void autonomous()
         if(timer > 500)
           break;
       }
-
       super_macro(2,1); //score second goal middle
       intake(outward);
       delayDrive(500,-7000);
@@ -381,8 +380,7 @@ void autonomous()
       //driveDistance(calcDistance(46,58)-7,6);
       intake(stop);
       delayDriveSmooth(700,8,0.3,fwd);
-
-      shooting_macro(1); //score third goal side
+      shooting_macro2(1); //score third goal side
       driveDistance(-10,9);
       intake(inward);
       adaptiveDrive(21,110,0.2,7,0.6,10.0,1.0,250,10000);
@@ -393,8 +391,7 @@ void autonomous()
       intake(stop);
       facePID(45,130,p,i,d);
       delayDriveSmooth(1300,9,0.3,fwd);
-
-      shooting_macro(1); //score fourth goal corner
+      shooting_macro2(1); //score fourth goal corner
       pros::delay(100);
       driveDistance(-10,9);
       intake(inward);
@@ -406,19 +403,17 @@ void autonomous()
       facePID(-21,125,p,i,d);
       intake(stop);
       delayDriveSmooth(1200,9,0.3,fwd);
-
-      shooting_macro(2); //score fifth goal side
+      shooting_macro2(2); //score fifth goal side
       pros::delay(100);
       driveDistance(-25,8);
       intake(inward);
       //facePID(-62,118,p,i,d);
       //driveDistance(calcDistance(-62,118),8);
       adaptiveDrive(-62,116,0.2,7,0.6,8.0,1.0,250,10000);
-      facePID(-83,128,p,i,d);
+      facePID(-85,134,p,i,d);
       intake(stop);
       delayDriveSmooth(1100,9,0.3,fwd);
-
-      shooting_macro(1); //score 6th goal corner
+      shooting_macro2(1); //score 6th goal corner
       pros::delay(50);
       driveDistance(-10,8);
       facePID(-43,62,p,i,d);
@@ -429,8 +424,7 @@ void autonomous()
       delayDrive(750,8000);
       intake(stop);
       delayDrive(300,8000);
-
-      shooting_macro(1); //7th goal side
+      shooting_macro2(1); //7th goal side
       pros::delay(100);
       driveDistance(-25,8);
       intake(inward);
@@ -438,21 +432,20 @@ void autonomous()
       adaptiveDrive(-55,20,0.2,7,0.6,8.0,1.0,250,10000);
       //driveDistance(calcDistance(-60,20),9);
       //driveDistance(-4.5,9);
-      facePID(-100,-14,p,i,d);
+      facePID(-98,-12,p,i,d);
       intake(stop);
 
       delayDrive(1000,9000);
-
-      shooting_macro(1); //8th goal
+      shooting_macro2(1); //8th goal
       pros::delay(50);
       ///???
       driveDistance(-15,9);
       intake(inward);
-      adaptiveDrive(-16,37,0.2,7,0.6,8.0,1.0,250,10000);
-      facePID(-16,-10,p,i,d);
+      adaptiveDrive(-18,34,0.2,7,0.6,8.0,1.0,250,10000);
+      facePID(-18,-10,p,i,d);
       intake(stop);
       delayDrive(1100, 8000);
-      shooting_macro(2); //last goal
+      shooting_macro2(2); //last goal
       //delayDrive(400,-8000);
       //driveDistance(-20,9);
       // //facePID(90,p,i,d);

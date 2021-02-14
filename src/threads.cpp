@@ -307,6 +307,50 @@ void shooting_macro(int numOfBalls)
     conveyorState = 0;
 }
 
+int numOfBalls2;
+bool finished;
+void shooting_macro_2_thread(void*p)
+{
+  finished = false;
+  if(!driverControl)
+    conveyorState = 7;
+  if(!firstBall) {
+    if(!driverControl)
+      conveyorState = 0;
+    return;
+  }
+
+  topConveyor.move_velocity(600);
+  botConveyor.move_velocity(0);
+  pros::delay(200);
+
+  if(numOfBalls2 == 1) {
+    finished = true;
+    pros::delay(200);
+    topConveyor.move_velocity(0);
+    if(!driverControl)
+      conveyorState = 0;
+    return;
+  }
+  pros::delay(200);
+  countBalls(numOfBalls2-1);
+  pros::delay(200);
+  topConveyor.move_velocity(0);
+  //pros::delay(100);
+  if(!driverControl)
+    conveyorState = 0;
+  finished = true;
+}
+
+void shooting_macro2(int nb)
+{
+  numOfBalls2 = nb;
+  pros::Task subthread (shooting_macro_2_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::delay(10);
+  while(!finished)
+    pros::delay(10);
+}
+
 void centerTopBall()
 {
   if(topBall_high && !topBall_low)
