@@ -282,8 +282,9 @@ void intake_subthread(void*p)
   intakeFinished = false;
   intakeState = inward;
   countIntakeBalls(iBalls);
+  pros::delay(100);
   intakeState = outward;
-  pros::delay(300);
+  pros::delay(200);
   intakeState = stop;
   intakeFinished = true;
 }
