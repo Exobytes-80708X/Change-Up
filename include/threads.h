@@ -17,7 +17,7 @@ extern void shooting_macro(int);
 extern void waitForBallToEject();
 extern void countIntakeBalls(int);
 extern void super_macro(int,int);
-extern void super_maro(int,int);
+extern void super_macro2(int,int);
 extern void countIntakeBalls(int);
 extern int countHeldBalls();
 extern void shooting_macro2(int);
