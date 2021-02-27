@@ -226,7 +226,8 @@ void autonomous()
       //driveUntilStopped(8000);
       //shoot(1);
       //delayDriveSmooth(2000,8,0.3,fwd);
-      super_macro2(1,2);
+      super_macro2(1,1);
+      delayDrive(500,-9000);
       break;
 
     case 1: //red auton

@@ -264,7 +264,7 @@ void countIntakeBalls(int numOfBalls)
       }
     }
     timer = 0;
-    if(n != numOfBalls -1) {
+    if(n != numOfBalls-1) {
       while(botBall_low) {
         timer+=10;
         pros::delay(10);
@@ -282,9 +282,9 @@ void intake_subthread(void*p)
   intakeFinished = false;
   intakeState = inward;
   countIntakeBalls(iBalls);
-  pros::delay(100);
+  //pros::delay(100);
   intakeState = outward;
-  pros::delay(200);
+  pros::delay(100);
   intakeState = stop;
   intakeFinished = true;
 }
