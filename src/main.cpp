@@ -362,7 +362,7 @@ void autonomous()
         if(timer > 500)
           break;
       }
-      super_macro2(1,3); //score second goal middle
+      super_macro2(1,1); //score second goal middle
       intake(outward);
       delayDrive(500,-7000);
       pros::delay(100);
