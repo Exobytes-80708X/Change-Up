@@ -320,6 +320,7 @@ void shooting_macro_2_thread(void*p)
   if(!firstBall) {
     if(!driverControl)
       conveyorState = 0;
+    finished = true;
     return;
   }
 
