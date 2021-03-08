@@ -582,9 +582,9 @@ void autonomous()
       pros::delay(200);
       intake(outward);
       driveDistance(-17,10);
-      facePID(280,p,i,d);
+      facePID(140,p,i,d);
       f.resume();
-      facePID(120,p,i,d);
+      facePID(220,p,i,d);
       eject(1);
       waitForBallToEject();
       //facePID(12,-108,p,i,d);
