@@ -215,7 +215,7 @@ bool fi = false;
 void untilsecondball_thread(void*p)
 {
   while(!botBall && !fi) {
-    botConveyor.move_velocity(300);
+    botConveyor.move_velocity(200);
     pros::delay(10); }
   while(!fi) {
     botConveyor.move_velocity(0);
