@@ -214,10 +214,12 @@ void waitForTopBalltoLower()
 bool fi = false;
 void untilsecondball_thread(void*p)
 {
-  while(!botBall)
+  while(!botBall && !fi) {
     botConveyor.move_velocity(300);
-  while(!fi)
+    pros::delay(10); }
+  while(!fi) {
     botConveyor.move_velocity(0);
+      pros::delay(10); }
 }
 
 void countBalls(int numOfBalls)
@@ -297,9 +299,9 @@ void intake_subthread(void*p)
   intakeFinished = false;
   intakeState = inward;
   bool wait = false;
-  if(secondBall) wait = true;
   countIntakeBalls(iBalls);
-  //pros::delay(100);
+  if(botBall)
+    pros::delay(100);
   intakeState = outward;
   pros::delay(100);
   intakeState = stop;
