@@ -57,7 +57,7 @@ void thread_sensors(void *p)
       ballInEjector = true;
     else ballInEjector = false;
 
-    if(pros::c::ext_adi_analog_read(5,'A') < 2000)
+    if(pros::c::ext_adi_analog_read(5,'A') < 1500) //bot detector low
       botBall_low = true;
     else botBall_low = false;
 
@@ -211,9 +211,21 @@ void waitForTopBalltoLower()
   }
 }
 
+bool fi = false;
+void untilsecondball_thread(void*p)
+{
+  while(!botBall)
+    botConveyor.move_velocity(300);
+  while(!fi)
+    botConveyor.move_velocity(0);
+}
+
 void countBalls(int numOfBalls)
 {
+  fi = false;
+
   if(numOfBalls == 0){
+    fi = true;
     return;
   }
   int timeOut = 500;
@@ -225,13 +237,14 @@ void countBalls(int numOfBalls)
     pros::delay(10);
     timer += 10;
     if(timer >= timeOut) {
+      fi = true;
       return;
     }
   }
   for(int n = 0; n < numOfBalls; n++) {
     timer = 0;
     if(n == numOfBalls-1)
-      botConveyor.move_velocity(0);
+      pros::Task subthread (untilsecondball_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
 
     while(topBall_high) pros::delay(10);
 
@@ -240,11 +253,13 @@ void countBalls(int numOfBalls)
         pros::delay(10);
         timer += 10;
         if(timer >= timeOut) {
+          fi = true;
           return;
         }
       }
     }
   }
+  fi = true;
 }
 
 
@@ -284,8 +299,6 @@ void intake_subthread(void*p)
   bool wait = false;
   if(secondBall) wait = true;
   countIntakeBalls(iBalls);
-  if(wait)
-    pros::delay(100);
   //pros::delay(100);
   intakeState = outward;
   pros::delay(100);
@@ -618,7 +631,7 @@ void thread_subsystems(void* p)
 
       case 4: //macro2
         intake_control.suspend();
-        super_macro(3,1);
+        super_macro(2,1);
         intake_control.resume();
         break;
 
