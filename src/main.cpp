@@ -7,10 +7,10 @@ typedef std::vector<std::pair<db,db>> vpdb;
 bool isRobotDisabled = true;
 bool driverControl = false;
 int red[] = { 1,4 };
-size_t redSize = sizeof(redSize) / sizeof(int);
+size_t redSize = sizeof(red) / sizeof(int);
 int *redEnd = red + redSize;
 int blue[] = { 2,5 };
-size_t blueSize = sizeof(blueSize) / sizeof(int);
+size_t blueSize = sizeof(blue) / sizeof(int);
 int *blueEnd = blue + blueSize;
 
 void initialize()
