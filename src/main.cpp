@@ -552,7 +552,6 @@ void autonomous()
       // pros::delay(200);
       super_macro(2, 1); //score first goal
       //shooting_macro(2);
-      pros::delay(200);
       intake(stop);
       driveDistance(-10,8);
       intake(inward);
@@ -578,7 +577,6 @@ void autonomous()
       //   if(timer > 500) break;
       // }
       super_macro(1,2); //score second goal
-      pros::delay(300);
       intake(stop);
       pros::delay(200);
       intake(outward);
