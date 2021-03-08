@@ -342,6 +342,9 @@ void autonomous()
         if(timer > 1000)
           break;
       }
+      while(!firstBall){
+        pros::delay(10);
+      }
       shooting_macro(2); //score third goal
       intake(outward);
       //pros::delay(200);
@@ -558,7 +561,8 @@ void autonomous()
       adaptiveDrive_reversed(-36,16,9.5);
       //shooting_macro(1); //shoot oppposite ball
       facePID(-40,-40,p,i,d);
-      intake(inward);
+      intake(stop);
+      //intake(inward);
       delayDriveSmooth(1200,8,0.2,fwd);
       //driveUntilStopped(8000);
       timer = 0;
