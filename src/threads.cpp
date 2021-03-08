@@ -509,8 +509,8 @@ void thread_subsystems(void* p)
   pros::Task intake_control (thread_intakecontrol, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
 
   while(true) {
-    int* r_r = std::find(red,redEnd,auton);
-    int* r_b = std::find(blue,blueEnd,auton);
+    int* r_r = std::find(red,redEnd,auton%NUM_OF_AUTONS);
+    int* r_b = std::find(blue,blueEnd,auton%NUM_OF_AUTONS);
     switch(conveyorState) {
       case 0: //idle state
         if( driverControl  && (r_r != redEnd || r_b != blueEnd) ){

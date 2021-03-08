@@ -20,6 +20,7 @@ extern lv_obj_t * debugValue5;
 extern lv_obj_t * debugValue6;
 extern lv_obj_t * createBtn(lv_obj_t * parent, lv_coord_t x, lv_coord_t y, lv_coord_t width, lv_coord_t height, int id, const char* title);
 extern lv_obj_t * createTextLabel(lv_obj_t * parent, const char* text, lv_coord_t x, lv_coord_t y);
+extern const int NUM_OF_AUTONS;
 extern void resetAutonDebug();
 extern void updateVarLabel(lv_obj_t * parent, std::string varName, double var, std::string varUnits);
 extern void updateVarLabel(lv_obj_t *nameLabel, std::string varName, lv_obj_t* valueLabel, double var, std::string varUnits, int numOfSpaces);
