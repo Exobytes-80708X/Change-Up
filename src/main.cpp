@@ -550,13 +550,12 @@ void autonomous()
           break;
       }
       // pros::delay(200);
-      super_macro(countHeldBalls(), 1); //score first goal
+      super_macro(2, 1); //score first goal
       //shooting_macro(2);
       //pros::delay(200);
       intake(outward);
       adaptiveDrive_reversed(-36,16,9.5);
       //shooting_macro(1); //shoot oppposite ball
-      f.resume();
       facePID(180,p,i,d);
       intake(inward);
       delayDrive(800,9000);
@@ -576,48 +575,55 @@ void autonomous()
       //   pros::delay(10);
       //   if(timer > 500) break;
       // }
+      while(!thirdBall)
+        pros::delay(10);
       shooting_macro(1); //score second goal
       intake(stop);
       pros::delay(200);
       intake(outward);
       driveDistance(-17,10);
-      if(countHeldBalls() == 1)
-        eject(1);
-      facePID(270,p,i,d);
+      facePID(280,p,i,d);
+      f.resume();
+      facePID(120,p,i,d);
+      eject(1);
+      waitForBallToEject();
       //facePID(12,-108,p,i,d);
       intake(inward);
-      //adaptiveDrive(-84,-3, 8);
+      facePID(80,p,i,d);
+      adaptiveDrive(-48,25,8);
+      // //adaptiveDrive(-84,-3, 8);
 
-      xPts.push_back(robotX);
-      yPts.push_back(robotY);
-
-      xPts.push_back(-80);
-      yPts.push_back(robotY);
-
-      xPts.push_back(-100);
-      yPts.push_back(-6);
-
-      purePursuit(24,0,xPts,yPts,8,0.5,12.0,5000);
-
-      delayDrive(500,8000);
-      //driveUntilStopped(8000);
-
-      //intake(outward);
-      conveyorState = 99;
-      // while(!botBall_low && !firstBall && !botBall)
+      //
+      // xPts.push_back(robotX);
+      // yPts.push_back(robotY);
+      //
+      // xPts.push_back(-80);
+      // yPts.push_back(robotY);
+      //
+      // xPts.push_back(-100);
+      // yPts.push_back(-6);
+      //
+      // purePursuit(24,0,xPts,yPts,8,0.5,12.0,5000);
+      //
+      // delayDrive(500,8000);
+      // //driveUntilStopped(8000);
+      //
+      // //intake(outward);
+      // conveyorState = 99;
+      // // while(!botBall_low && !firstBall && !botBall)
+      // //   pros::delay(10);
+      // //intake(outward);
+      // timer = 0;
+      // while(!thirdBall) {
       //   pros::delay(10);
-      //intake(outward);
-      timer = 0;
-      while(!thirdBall) {
-        pros::delay(10);
-        timer += 10;
-        if(timer > 1000)
-          break;
-      }
-      shooting_macro(2); //score third goal
-      intake(outward);
-      //pros::delay(200);
-      delayDrive(400,-8000);
+      //   timer += 10;
+      //   if(timer > 1000)
+      //     break;
+      // }
+      // shooting_macro(2); //score third goal
+      // intake(outward);
+      // //pros::delay(200);
+      // delayDrive(400,-8000);
     break;
   }
 }
