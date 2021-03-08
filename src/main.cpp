@@ -554,6 +554,8 @@ void autonomous()
       //shooting_macro(2);
       pros::delay(200);
       intake(stop);
+      driveDistance(-10,8);
+      intake(inward);
       adaptiveDrive_reversed(-36,16,9.5);
       //shooting_macro(1); //shoot oppposite ball
       facePID(-40,-40,p,i,d);
