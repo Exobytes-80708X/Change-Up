@@ -575,22 +575,24 @@ void autonomous()
       //   pros::delay(10);
       //   if(timer > 500) break;
       // }
-      while(!thirdBall)
-        pros::delay(10);
-      shooting_macro(1); //score second goal
+      super_macro(1,2); //score second goal
       intake(stop);
       pros::delay(200);
       intake(outward);
       driveDistance(-17,10);
-      facePID(140,p,i,d);
-      f.resume();
-      facePID(220,p,i,d);
+      facePID(170,p,i,d);
+      shooting_macro(1);
+      facePID(300,p,i,d);
       eject(1);
       waitForBallToEject();
       //facePID(12,-108,p,i,d);
       intake(inward);
       facePID(80,p,i,d);
-      adaptiveDrive(-48,25,8);
+      adaptiveDrive(-42,40,6);
+      facePID(0,p,i,d);
+      delayDrive(700,7000);
+      shooting_macro(1);
+      driveDistance(-12,8);
       // //adaptiveDrive(-84,-3, 8);
 
       //
