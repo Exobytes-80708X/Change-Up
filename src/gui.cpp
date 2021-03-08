@@ -1,8 +1,8 @@
 #include "main.h"
 #include "display/lvgl.h"
 
-int auton = 3;
-const int NUM_OF_AUTONS = 4;
+int auton = 0;
+const int NUM_OF_AUTONS = 6;
 const std::string AUTON_HEADING = "AUTON SELECTED: ";
 
 LV_FONT_DECLARE(armadura_solid);
@@ -947,13 +947,19 @@ void updateAutonLabel(lv_obj_t * label, int autonNumber)
         label_str = "#00FF00 NONE#";
         break;
       case 1:
-        label_str = "#FF3333 RED#";
+        label_str = "#FF3333 RED ROW#";
         break;
       case 2:
-        label_str = "#3333FF BLUE#";
+        label_str = "#3333FF BLUE ROW#";
         break;
       case 3:
         label_str = "#FFFF33 SKILLS#";
+        break;
+      case 4:
+        label_str = "#FFC0CB RED MID#";
+        break;
+      case 5:
+        label_str = "#FF33FF BLUE MID#";
         break;
   }
   char label_array[label_str.length()+1];

@@ -85,8 +85,10 @@ void opcontrol(void);
 
 extern bool isRobotDisabled;
 extern bool driverControl;
-extern int red;
-extern int blue;
+extern int red[];
+extern int* redEnd;
+extern int* blueEnd;
+extern int blue[];
 #ifndef DEVICES
 #define DEVICES
 #include "devices.h"
@@ -121,3 +123,4 @@ extern int blue;
 #include <iostream>
 #include <utility>
 #include <ctime>
+#include <algorithm>

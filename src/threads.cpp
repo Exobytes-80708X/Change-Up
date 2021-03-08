@@ -507,12 +507,13 @@ void thread_subsystems(void* p)
   topBall_task.suspend();
   pros::Task intake_thread (thread_intake, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task intake_control (thread_intakecontrol, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-
+  int* r_r = std::find(red,redEnd,auton);
+  int* r_b = std::find(blue,blueEnd,auton);
   while(true) {
     switch(conveyorState) {
       case 0: //idle state
-        if( driverControl  && (auton == red || auton == blue) ){
-          if( (auton == red && optical_state == BLUE_BALL) || (auton == blue && optical_state == RED_BALL) ) {
+        if( driverControl  && (r_r != redEnd || r_b != blueEnd) ){
+          if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
             if (firstBall) {
               topBall_task.resume();
               botConveyor.move_velocity(300);
@@ -533,12 +534,12 @@ void thread_subsystems(void* p)
         idleConveyor(600);
       break;
       case 1: //shooting manually
-        if(auton == red || auton == blue) {
+        if(r_r != redEnd || r_b != blueEnd) {
           topConveyor.move_voltage(12000);
           pros::delay(200);
           if(driverControl) {
             while(conveyorState == 1) {
-              if( (auton == red && optical_state == BLUE_BALL) || (auton == blue && optical_state == RED_BALL) ) {
+              if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
                 if(firstBall) {
                   botConveyor.move_velocity(0);
                   pros::delay(200);
@@ -666,12 +667,12 @@ void thread_subsystems(void* p)
         break;
 
       case 8: //sorting sort_trigger
-        if(auton != red && auton != blue) break;
+        if(r_r == redEnd && r_b == blueEnd) break;
         topConveyor.move_voltage(12000);
         pros::delay(200);
-        if( (auton == red || auton == blue) && driverControl) {
+        if( (r_r != redEnd || r_b != blueEnd) && driverControl) {
           while(conveyorState == 8) {
-            if( (auton == red && optical_state == BLUE_BALL) || (auton == blue && optical_state == RED_BALL) ) {
+            if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
               if(firstBall) {
                 botConveyor.move_velocity(0);
                 pros::delay(200);

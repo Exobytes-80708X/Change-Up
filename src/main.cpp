@@ -6,8 +6,12 @@ typedef std::vector<std::pair<db,db>> vpdb;
 
 bool isRobotDisabled = true;
 bool driverControl = false;
-int red = 1;
-int blue = 2;
+int red[] = { 1,4 };
+size_t redSize = sizeof(redSize) / sizeof(int);
+int*  redEnd = red + redSize;
+int blue[] = { 2,5 };
+size_t blueSize = sizeof(blueSize) / sizeof(int);
+int* blueEnd = blue + blueSize;
 
 void initialize()
 {
@@ -509,6 +513,111 @@ void autonomous()
       // delayDrive(750,-9000);
       updateVarLabel(debugLabel1, "TEMP X",debugValue1,robotX,"IN",3);
       updateVarLabel(debugLabel2, "TEMP Y",debugValue2,robotY,"IN",3);
+    break;
+    case 4: //red mid auton
+
+    case 5: //blue mid auton
+      robotTheta = M_PI/2;
+      //robotX = 12.0;
+      //robotY = 6.0;
+      intake(inward);
+      pointTurn(0,300,135,false,40,i,d);
+      // xPts1.push_back(robotX);
+      // yPts1.push_back(robotY);
+      // xPts1.push_back(24*sin(robotTheta));
+      // yPts1.push_back(24*cos(robotTheta));
+      // xPts1.push_back(22);
+      // yPts1.push_back(robotY);
+      //
+      // purePursuit(3,0,xPts1,yPts1,6,0.6,15.0,3000);
+
+      timer = 0;
+      while(!secondBall) {
+        pros::delay(10);
+        timer += 10;
+        if(timer > 1000)
+          break;
+      }
+      //delayDrive(400,8000);
+      //driveUntilStopped(8000);
+      //waitForThirdBall();
+      //intake(stop);
+      timer = 0;
+      while(!thirdBall) {
+        pros::delay(10);
+        timer += 10;
+        if(timer > 1000)
+          break;
+      }
+      // pros::delay(200);
+      super_macro(countHeldBalls(), 1); //score first goal
+      //shooting_macro(2);
+      //pros::delay(200);
+      intake(outward);
+      adaptiveDrive_reversed(-36,16,9.5);
+      //shooting_macro(1); //shoot oppposite ball
+      f.resume();
+      facePID(180,p,i,d);
+      intake(inward);
+      delayDrive(800,9000);
+      //driveUntilStopped(8000);
+      timer = 0;
+      while(!firstBall) {
+        pros::delay(10);
+        timer += 10;
+        if(timer > 1000)
+          break;
+      }
+      // while(!thirdBall)
+      //   pros::delay(10);
+      //pros::delay(200);
+      // while(!secondBall) {
+      //   timer += 10;
+      //   pros::delay(10);
+      //   if(timer > 500) break;
+      // }
+      shooting_macro(1); //score second goal
+      intake(stop);
+      pros::delay(200);
+      intake(outward);
+      driveDistance(-17,10);
+      if(countHeldBalls() == 1)
+        eject(1);
+      facePID(270,p,i,d);
+      //facePID(12,-108,p,i,d);
+      intake(inward);
+      //adaptiveDrive(-84,-3, 8);
+
+      xPts.push_back(robotX);
+      yPts.push_back(robotY);
+
+      xPts.push_back(-80);
+      yPts.push_back(robotY);
+
+      xPts.push_back(-100);
+      yPts.push_back(-6);
+
+      purePursuit(24,0,xPts,yPts,8,0.5,12.0,5000);
+
+      delayDrive(500,8000);
+      //driveUntilStopped(8000);
+
+      //intake(outward);
+      conveyorState = 99;
+      // while(!botBall_low && !firstBall && !botBall)
+      //   pros::delay(10);
+      //intake(outward);
+      timer = 0;
+      while(!thirdBall) {
+        pros::delay(10);
+        timer += 10;
+        if(timer > 1000)
+          break;
+      }
+      shooting_macro(2); //score third goal
+      intake(outward);
+      //pros::delay(200);
+      delayDrive(400,-8000);
     break;
   }
 }
