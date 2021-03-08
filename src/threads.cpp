@@ -507,9 +507,10 @@ void thread_subsystems(void* p)
   topBall_task.suspend();
   pros::Task intake_thread (thread_intake, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task intake_control (thread_intakecontrol, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  int* r_r = std::find(red,redEnd,auton);
-  int* r_b = std::find(blue,blueEnd,auton);
+
   while(true) {
+    int* r_r = std::find(red,redEnd,auton);
+    int* r_b = std::find(blue,blueEnd,auton);
     switch(conveyorState) {
       case 0: //idle state
         if( driverControl  && (r_r != redEnd || r_b != blueEnd) ){
