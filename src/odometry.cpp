@@ -1568,11 +1568,12 @@ void waypointDrive(std::pair<double,double> waypoints[], double accel, double ma
 }
 
 std::vector<std::pair<double,double>> repos_goals(std::vector<std::pair<double,double>> goals, double robotX, double robotY){
-  for(std::pair<double,double> pr : goals){
-    pr.first -= robotX;
-    pr.second -= robotY;
+  std::vector<std::pair<double,double>> retGoals = goals;
+  for(int i = 0; i < 4; i++){
+    retGoals[i].first -= robotX;
+    retGoals[i].second -= robotY;
   }
-  return goals;
+  return retGoals;
 }
 
 std::pair<double,double> repos_robot(std::vector<std::pair<double,double>> goals, double r, double robotTheta, int position){
