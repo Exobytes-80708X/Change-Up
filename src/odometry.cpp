@@ -1566,3 +1566,46 @@ void waypointDrive(std::pair<double,double> waypoints[], double accel, double ma
 {
 
 }
+
+std::vector<std::pair<double,double>> repos_goals(std::vector<std::pair<double,double>> goals, double robotX, double robotY){
+  for(std::pair<double,double> pr : goals){
+    pr.first -= robotX;
+    pr.second -= robotY;
+  }
+  return goals;
+}
+
+std::pair<double,double> repos_robot(std::vector<std::pair<double,double>> goals, double r, double robotTheta, int position){
+  double thetaChange = 0;
+  double measureTheta = 0;
+  switch(position){
+      case 0:
+          measureTheta = M_PI / 2;
+          thetaChange = M_PI;
+          break;
+
+      case 1:
+          measureTheta = 0;
+          thetaChange = (3/2) * M_PI;
+          break;
+
+      case 2:
+          measureTheta = (3/2) * M_PI;
+          thetaChange = 0;
+          break;
+
+      case 3:
+          measureTheta = M_PI;
+          thetaChange = M_PI / 2;
+          break;
+
+      default:
+          break;
+  }
+
+  double circTheta = measureTheta - robotTheta  + thetaChange;
+
+  return std::make_pair(r * cos(circTheta) + goals[position].first, r * sin(circTheta)+ goals[position].second);
+
+
+}
