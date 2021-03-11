@@ -124,3 +124,4 @@ extern int blue[];
 #include <utility>
 #include <ctime>
 #include <algorithm>
+#include <vector>

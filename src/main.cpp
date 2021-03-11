@@ -3,6 +3,7 @@
 typedef double db;
 typedef std::vector<db> vdb;
 typedef std::vector<std::pair<db,db>> vpdb;
+typedef std::pair<double,double> pdd;
 
 bool isRobotDisabled = true;
 bool driverControl = false;
@@ -12,6 +13,8 @@ int *redEnd = red + redSize;
 int blue[] = { 2,5 };
 size_t blueSize = sizeof(blue) / sizeof(int);
 int *blueEnd = blue + blueSize;
+
+vpdb goals;
 
 void initialize()
 {
@@ -26,80 +29,22 @@ void initialize()
   pros::Task task_2 (thread_subsystems, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
 }
 
-void disabled()
-{
+void disabled(){}
 
+void competition_initialize(){}
+
+void delay_drive_thread(void*p)
+{
+  delayDrive(500,3000);
 }
 
-void competition_initialize()
+void reset(int position)
 {
-
-}
-
-void benchmark_speeds()
-{
-  double prevX;
-  double dX;
-  double prevY;
-  double dY;
-
-  double dS;
-
-  double max_j;
-  double max_a;
-  double max_v;
-
-  double current_a;
-  double prev_a = 0;
-  double dA;
-
-  double current_v;
-  double prev_v = 0;
-  double dV;
-
-  double current_j;
-
-  double start_time = pros::millis()/1000.0;//std::clock();
-  double current_time = start_time;
-  double prev_time = current_time;
-  double dT = current_time - prev_time;
-
-  while(current_time - start_time <= 3)
-  {
-    rightDrive.moveVoltage(8000);
-    leftDrive.moveVoltage(8000);
-    pros::delay(10);
-    current_time = pros::millis()/1000.0;//std::clock();
-    dT = current_time - prev_time;
-    prev_time = current_time;
-
-    dS = calcDistance(prevX,prevY,robotX,robotY);
-    prevX = robotX;
-    prevY = robotY;
-
-    current_v = dS/dT; //inches per second
-    dV = current_v - prev_v;
-    prev_v = current_v;
-
-    if(current_v > max_v) max_v = current_v;
-
-    current_a = dV/dT; //inches per second^2
-    dA = current_a - prev_a;
-    prev_a = current_a;
-
-    if(current_a > max_a) max_v = current_a;
-
-    current_j = dA/dT; //inches per second^3
-
-    if(current_j > max_j) max_j = current_j;
-
-    updateVarLabel(debugLabel1,"MAX VELOCITY",debugValue1,max_v,"IN/S",3);
-    updateVarLabel(debugLabel2,"MAX ACCEL",debugValue2,max_a*180/M_PI,"IN/S^2",3);
-    updateVarLabel(debugLabel3,"MAX JERK",debugValue3,max_j,"IN/S^3",0);
-  }
-  rightDrive.moveVoltage(0);
-  leftDrive.moveVoltage(0);
-
+  pros::Task sub (delay_drive_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  db r = 5.645+4.125;
+  pdd xy = repos_robot(goals,r,robotTheta,position);
+  robotX = xy.first;
+  robotY = xy.second;
 }
 
 void intake(int state){
@@ -142,11 +87,6 @@ void waitForThirdBall()
     if(timeOut > 1000)
       return;
   }
-}
-
-void waitForFirstBall()
-{
-
 }
 
 void asynchShoot(void*p)
@@ -198,7 +138,13 @@ void autonomous()
   std::vector<double> yPts;
   std::vector<double> xPts1;
   std::vector<double> yPts1;
+  pdd start_pos = std::make_pair(-53.375,13.25);
+  goals.push_back(std::make_pair(-5.645,70.25));                // GOAL 1
+  goals.push_back(std::make_pair(-70.25,134.855));              // GOAL 2
+  goals.push_back(std::make_pair(-134.855,70.25));              // GOAL 3
+  goals.push_back(std::make_pair(-70.25,5.645));                // GOAL 4
   int timer = 0;
+  goals = repos_goals(goals,-53.375,13.25);
 
   // xPts.push_back(robotX);
   // yPts.push_back(robotY);
@@ -230,16 +176,16 @@ void autonomous()
       //driveUntilStopped(8000);
       //shoot(1);
       //delayDriveSmooth(2000,8,0.3,fwd);
-      intake(inward);
-      timer = 0;
-      while(!thirdBall) {
-        pros::delay(10);
-        timer += 10;
-        if(timer > 2000)
-          break;
-      }
+      // intake(inward);
+      // timer = 0;
+      // while(!thirdBall) {
+      //   pros::delay(10);
+      //   timer += 10;
+      //   if(timer > 2000)
+      //     break;
+      // }
       super_macro2(1,2); //score second goal middle
-      intake(outward);
+      delayDrive(1000,3000);
       break;
 
     case 1: //red auton
