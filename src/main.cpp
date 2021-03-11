@@ -38,14 +38,20 @@ void delay_drive_thread(void*p)
   delayDrive(500,3000);
 }
 
-void reset(int position)
+int position;
+void reset_thread(void*p)
 {
-  pros::Task sub (delay_drive_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  db r = 5.645+4.125;
   pros::delay(250);
+  db r = 5.645+4.125;
   pdd xy = repos_robot(goals,r,robotTheta,position);
   robotX = xy.first;
   robotY = xy.second;
+}
+
+void reset(int position)
+{
+  pros::Task sub (delay_drive_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task sub2 (reset_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
 }
 
 void intake(int state){
