@@ -1,3 +1,6 @@
+
+#include <bits/stl_vector.h>
+#include <bits/stl_pair.h>
 extern double robotTheta;
 extern double robotX;
 extern double robotY;
