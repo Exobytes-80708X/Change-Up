@@ -90,6 +90,7 @@ int top_low_avg;
 int bot_high_avg;
 int bot_low_avg;
 int ejector_avg;
+int color_avg;
 
 void thread_sensors_filter(void*p) //rolling average
 {
@@ -99,19 +100,22 @@ void thread_sensors_filter(void*p) //rolling average
   int bot_high_raw = botDetector.get_value();
   int bot_low_raw = pros::c::ext_adi_analog_read(5,'A');
   int ejector_raw = pros::c::ext_adi_analog_read(5,'C');
+  int color_raw = pros::c::optical_get_rgb(4).red/pros::c::optical_get_rgb(4).blue;
 
   int top_high_values[SIZE]{top_high_raw,top_high_raw,top_high_raw,top_high_raw,top_high_raw};
   int top_low_values[SIZE]{top_low_raw,top_low_raw,top_low_raw,top_low_raw,top_low_raw,};
   int bot_high_values[SIZE]{bot_high_raw,bot_high_raw,bot_high_raw,bot_high_raw,bot_high_raw};
   int bot_low_values[SIZE]{bot_low_raw,bot_low_raw,bot_low_raw,bot_low_raw,bot_low_raw};
   int ejector_values[SIZE]{ejector_raw,ejector_raw,ejector_raw,ejector_raw,ejector_raw};
+  int color_values[SIZE]{color_raw,color_raw,color_raw,color_raw,color_raw};
 
   while(true) {
-    int top_high_raw = pros::c::ext_adi_analog_read(5,'B'); //update raw values
-    int top_low_raw = topDetector.get_value();
-    int bot_high_raw = botDetector.get_value();
-    int bot_low_raw = pros::c::ext_adi_analog_read(5,'A');
-    int ejector_raw = pros::c::ext_adi_analog_read(5,'C');
+    top_high_raw = pros::c::ext_adi_analog_read(5,'B'); //update raw values
+    top_low_raw = topDetector.get_value();
+    bot_high_raw = botDetector.get_value();
+    bot_low_raw = pros::c::ext_adi_analog_read(5,'A');
+    ejector_raw = pros::c::ext_adi_analog_read(5,'C');
+    color_raw = pros::c::optical_get_rgb(4).red/pros::c::optical_get_rgb(4).blue;
 
     for(int i = 1; i < SIZE; i++) { //shift arrays
       top_high_values[i] = top_high_values[i-1];
@@ -119,18 +123,21 @@ void thread_sensors_filter(void*p) //rolling average
       bot_high_values[i] = bot_high_values[i-1];
       bot_low_values[i] = bot_low_values[i-1];
       ejector_values[i] = ejector_values[i-1];
+      color_values[i] = color_values[i-1];
     }
     top_high_values[0] = top_high_raw; //add new raw value
     top_low_values[0] = top_low_raw;
     bot_high_values[0] = bot_high_raw;
     bot_low_values[0] = bot_low_raw;
     ejector_values[0] = ejector_raw;
+    color_values[0] = color_raw;
 
     top_high_avg = avg(top_high_values,SIZE); //calc avg for all arrays
     top_low_avg = avg(top_low_values,SIZE);
     bot_high_avg = avg(bot_high_values,SIZE);
     bot_low_avg = avg(bot_low_values,SIZE);
     ejector_avg = avg(ejector_values,SIZE);
+    color_avg = avg(color_values,SIZE);
 
     //======================================================================================================
 
@@ -143,9 +150,9 @@ void thread_sensors_filter(void*p) //rolling average
     else topBall_high = false;
 
     pros::c::optical_set_led_pwm(4, 50);
-    if(bot_high_avg < 2800) {
+    if( bot_high_avg < 2800) {
       botBall = true;
-      if(pros::c::optical_get_rgb(4).red/pros::c::optical_get_rgb(4).blue >= 2)
+      if( color_avg >= 2)
         optical_state = RED_BALL;
       else
         optical_state = BLUE_BALL;
@@ -339,6 +346,7 @@ void shooting_macro_2_thread(void*p)
   if(!firstBall) {
     if(!driverControl)
       conveyorState = 0;
+
     finished = true;
     return;
   }
