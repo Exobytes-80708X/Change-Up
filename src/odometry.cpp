@@ -1607,5 +1607,4 @@ std::pair<double,double> repos_robot(std::vector<std::pair<double,double>> goals
 
   return std::make_pair(r * cos(circTheta) + goals[position].first, r * sin(circTheta)+ goals[position].second);
 
-
 }
