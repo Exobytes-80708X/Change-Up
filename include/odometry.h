@@ -32,5 +32,7 @@ extern void driveVector(double currentSpeed, double angleSpeed, double maxV);
 extern void driveUntilStopped(double);
 extern void delayDriveSmooth(int,double,double,bool);
 extern void delayDriveSmooth(int,double,bool);
+extern std::pair<double,double> repos_robot(std::vector<std::pair<double,double>> goals, double r, double robotTheta, int position);
+extern std::vector<std::pair<double,double>> repos_goals(std::vector<std::pair<double,double>> goals, double robotX, double robotY);
 extern bool rev;
 extern bool fwd;
