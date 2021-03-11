@@ -35,7 +35,7 @@ void competition_initialize(){}
 
 void delay_drive_thread(void*p)
 {
-  delayDrive(500,3000);
+  delayDrive(500,5000);
 }
 
 int position;
@@ -338,7 +338,6 @@ void autonomous()
       intake(outward);
       delayDrive(500,-7000);
       intake(inward);
-      pros::delay(100);
       facePID(robotX-25,120,p,i,d);
       eject(3); //eject middle balls
       //waitForBallToEject();
@@ -346,7 +345,6 @@ void autonomous()
       waitForBallToEject();
       waitForBallToEject();
       //waitForBallToEject();
-      pros::delay(50);
       intake(inward);
       facePID(90.5,p,i,d); //face 3rd goal
       adaptiveDrive(32,robotY,8);
@@ -394,7 +392,7 @@ void autonomous()
       eject(2);
       adaptiveDrive(-25,79,0.2,8,0.7,10.0,1.0,250,10000);
       //adaptiveDrive(-22,90, 8);
-      driveDistance(-8,8000);
+      driveDistance(-8,9);
       //driveDistance(calcDistance(-12,84),8);
       facePID(-19,125,p,i,d);
       intake(stop);
@@ -430,7 +428,7 @@ void autonomous()
       super_macro(1,2);
       intake(outward);
       pros::delay(50);
-      driveDistance(-10,9);
+      driveDistance(-10,9.5);
       facePID(-50.5,52,p,i,d);
       eject(2);
       intake(inward);
@@ -454,10 +452,10 @@ void autonomous()
       intake(inward);
       //facePID(-58,20,p,i,d);
       eject(1);
-      adaptiveDrive(-62,4,0.2,7,0.6,8.0,1.0,250,10000);
+      adaptiveDrive(-66,-1,0.2,7,0.6,8.0,1.0,250,10000);
       //driveDistance(calcDistance(-60,20),9);
       //driveDistance(-4.5,9);
-      facePID(-100,-12,p,i,d);
+      facePID(-87,-15,p,i,d);
       intake(stop);
 
       delayDriveSmooth(1150,9,0.3,fwd);
@@ -475,8 +473,8 @@ void autonomous()
       driveDistance(-15,9);
       intake(inward);
       eject(2);
-      adaptiveDrive(-13,34.5,0.2,7,0.6,8.0,1.0,250,10000);
-      facePID(-18.5,-10,p,i,d);
+      adaptiveDrive(-22,20,0.2,7,0.6,7.0,1.0,250,10000);
+      facePID(-22,-10,p,i,d);
       intake(stop);
       delayDriveSmooth(1300,8.5,0.3,fwd);
       timer = 0;
