@@ -86,9 +86,10 @@ int ejectBalls = 0;
 
 void eject_thread(void*p)
 {
-  for(int n = 0; n < ejectBalls; n++) {
-    waitForBallToEject();
-  }
+  // for(int n = 0; n < ejectBalls; n++) {
+  //   waitForBallToEject();
+  // }
+  waitForBallsToEject(ejectBalls);
   ejectBalls = 0;
   conveyorState = 0;
 }

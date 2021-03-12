@@ -18,6 +18,7 @@ extern void thread_sensors(void*p);
 extern void thread_sensors_filter(void*p);
 extern void shooting_macro(int);
 extern void waitForBallToEject();
+extern void waitForBallsToEject(int);
 extern void countIntakeBalls(int);
 extern void super_macro(int,int);
 extern void super_macro2(int,int);

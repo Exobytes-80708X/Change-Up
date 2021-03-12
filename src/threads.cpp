@@ -224,6 +224,27 @@ void waitForBallToEject()
    }
 }
 
+void waitForBallsToEject(int b)
+{
+  int timer;
+  for(int i = 0; i < b; i++) {
+    timer = 0;
+    while(ballInEjector){
+      pros::delay(10);
+      timer += 10;
+      if(timer > 1000) return;
+    }
+    if(i < b-1) {
+      timer = 0;
+      while(!ballInEjector) {
+         pros::delay(10);
+         timer += 10;
+         if(timer > 1000) return;
+      }
+    }
+  }
+}
+
 void waitForTopBalltoLower()
 {
   while(firstBall) {
