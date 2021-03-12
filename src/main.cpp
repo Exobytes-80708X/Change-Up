@@ -216,7 +216,8 @@ void autonomous()
       // }
       //super_macro2(2,2); //score second goal middle
       //delayDrive(1000,3000);
-      eject(1);
+      intake(inward);
+      eject(3);
       break;
 
     case 1: //red auton
@@ -390,7 +391,7 @@ void autonomous()
       super_macro2(1,1); //score 3rd goals
       intake(outward);
       driveDistance(-10,7.6);
-      eject(2);
+      eject(1);
       intake(inward);
       adaptiveDrive(21.5,104,0.2,7,0.6,10.0,1.0,250,10000);
       //facePID(21,110,p,i,d)

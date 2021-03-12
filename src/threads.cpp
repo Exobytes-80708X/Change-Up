@@ -487,8 +487,15 @@ void waitForBallsToEject(int b)
 {
   total_count = b;
   counter = 0;
+  updateVarLabel(debugLabel6,"TOTAL",debugValue6,total_count,"",0);
   pros::Task sub (eject_task, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
-  while(counter != total_count) pros::delay(10);
+  int timerjj = 0;
+  while(counter != total_count) {
+    updateVarLabel(debugLabel5,"COUNTER",debugValue5,counter,"",0);
+    timerjj += 10;
+    if (timerjj > 3000) return;
+    pros::delay(10);
+  }
 }
 
 int countHeldBalls()
