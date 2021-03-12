@@ -74,6 +74,7 @@ void thread_intake_sim(void*p)
     if(timer > 2000)
       break;
     }
+  intake(stop);
 }
 
 void intake_sim()
@@ -214,10 +215,7 @@ void autonomous()
       // }
       //super_macro2(2,2); //score second goal middle
       //delayDrive(1000,3000);
-      pros::delay(5000);
-      robotX = 999;
-      robotY = 999;
-      pros::delay(10000);
+      eject(1);
       break;
 
     case 1: //red auton
@@ -333,8 +331,8 @@ void autonomous()
       robotTheta = 1.09694499; //M_PI/3;
       intake(inward);
       //adaptiveDrive(25, 20, 8);
-      driveDistance(calcDistance(25,20)-4,6);
-      facePID(45,0,p,i,d);
+      driveDistance(calcDistance(25,20)-9,6);
+      facePID(48,-4,p,i,d);
       intake(outward);
       //driveDistance(calcDistance(46,0)-7,6);
       delayDrive(950,6000);
@@ -371,14 +369,14 @@ void autonomous()
       waitForBallToEject();
       //waitForBallToEject();
       intake(inward);
-      facePID(90,p,i,d); //face 3rd goal
       //adaptiveDrive(32,robotY,8);
       //adaptiveDrive(32,robotY,0.2,7,0.6,10.0,1.0,250,10000);
       //adaptiveDrive(32,robotY,8); //face third goal side
       //driveDistance(calcDistance(34,64),8);
-      facePID(46,robotY,p,i,d);
+      facePID(46,robotY-2,p,i,d);
       //driveDistance(calcDistance(46,58)-7,6);\
-      delayDriveSmooth(1400,8,0.3,fwd);
+      intake_sim();
+      delayDriveSmooth(1400,7.2,0.3,fwd);
       //shooting_macro2(1); //score third goal side
       timer = 0;
       while(!firstBall){
@@ -416,7 +414,7 @@ void autonomous()
       intake(inward);
       //facePID(-22,91,p,i,d);
       eject(2);
-      adaptiveDrive(-21,84,0.2,8,0.7,7.0,1.0,250,10000);
+      adaptiveDrive(-21,86,0.2,8,0.7,7.0,1.0,250,10000);
       //adaptiveDrive(-22,90, 8);
       driveDistance(-5,9);
       //driveDistance(calcDistance(-12,84),8);
@@ -440,8 +438,8 @@ void autonomous()
       //facePID(-62,118,p,i,d);
       //driveDistance(calcDistance(-62,118),8);
       eject(1);
-      adaptiveDrive(-62,113,0.2,7,0.6,8.0,1.0,250,10000);
-      facePID(-92,130,p,i,d);
+      adaptiveDrive(-60,109,0.2,7,0.6,8.0,1.0,250,10000);
+      facePID(-93,132,p,i,d);
       intake(stop);
       delayDriveSmooth(1100,8.5,0.3,fwd);
       //shooting_macro2(1); //score 6th goal corner
@@ -451,16 +449,16 @@ void autonomous()
         timer += 10;
         if(timer > 1000)
           break;
-        }
+      }
       super_macro(1,2); //score 6th goal
       intake(outward);
       driveDistance(-10,9.5);
-      facePID(-50.5,52,p,i,d);
+      facePID(-47,52,p,i,d);
       eject(2);
       intake(inward);
-      driveDistance(calcDistance(-46,62)+7,8);
-      driveDistance(-12.25,10);
-      facePID(-120,62.25,p,i,d);
+      driveDistance(calcDistance(-46,62)+9,8);
+      driveDistance(-8,10);
+      facePID(-120,61,p,i,d);
       delayDriveSmooth(1300,8,0.3,fwd);
       //intake(stop);
       //delayDrive(500,8000);
@@ -478,11 +476,12 @@ void autonomous()
       driveDistance(-20,9);
       intake(inward);
       //facePID(-58,20,p,i,d);
+      pros::delay(50);
       eject(1);
-      adaptiveDrive(-66,-1,0.2,7,0.6,8.0,1.0,250,10000);
+      adaptiveDrive(-57,8,0.2,7,0.6,8.0,1.0,250,10000);
       //driveDistance(calcDistance(-60,20),9);
-      //driveDistance(-4.5,9);
-      facePID(-87,-15,p,i,d);
+      driveDistance(-5,9);
+      facePID(-89,-15,p,i,d);
       intake(stop);
 
       delayDriveSmooth(1150,9,0.3,fwd);
@@ -492,15 +491,15 @@ void autonomous()
         timer += 10;
         if(timer > 1000)
           break;
-        }
+      }
       //shooting_macro2(1); //8th goal
       super_macro2(1,2); //score 8th goals
       intake(outward);
       driveDistance(-15,9);
       intake(inward);
       eject(2);
-      adaptiveDrive(-22,20,0.2,7,0.6,7.0,1.0,250,10000);
-      facePID(-22,-10,p,i,d);
+      adaptiveDrive(-19,21,0.2,7,0.6,7.0,1.0,250,10000);
+      facePID(-19,-10,p,i,d);
       intake(stop);
       delayDriveSmooth(1300,8.5,0.3,fwd);
       timer = 0;
