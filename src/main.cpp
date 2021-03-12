@@ -64,6 +64,23 @@ void shoot(int a){
     conveyorState = 3;
 }
 
+void thread_intake_sim(void*p)
+{
+  int timer = 0;
+  intake(inward);
+  while(!botBall_low){
+    pros::delay(10);
+    timer += 10;
+    if(timer > 2000)
+      break;
+    }
+}
+
+void intake_sim()
+{
+  pros::Task task_2 (thread_subsystems, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+}
+
 int ejectBalls = 0;
 
 void eject_thread(void*p)
