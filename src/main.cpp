@@ -313,7 +313,7 @@ void autonomous()
     break;
 
     case 3: // skills auton
-      robotTheta = M_PI/3;
+      robotTheta = 1.09694499; //M_PI/3;
       intake(inward);
       //adaptiveDrive(25, 20, 8);
       driveDistance(calcDistance(25,20),6);
