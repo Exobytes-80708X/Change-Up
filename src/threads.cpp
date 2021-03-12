@@ -428,24 +428,66 @@ void thread_centerTopBall(void*p)
   }
 }
 
-void waitForBallsToEject(int b)
+int counter = 0;
+int total_count;
+void eject_thread(void*p)
 {
+  counter = 0;
   pros::Task topBall_task (thread_centerTopBall, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
-  botConveyor.move_velocity(300);
-  waitForBallToEject();
   topBall_task.suspend();
-  if(b == 2) {
+  if(thirdBall) {
+    topBall_task.resume();
+    botConveyor.move_velocity(300);
+    waitForBallToEject();
+    counter += 1;
+    topBall_task.suspend();
+    if(counter != total_count) {
+      topBall_task.resume();
+      botConveyor.move_velocity(600);
+      waitForBallToEject();
+      topBall_task.suspend();
+      counter += 1;
+      if(counter != total_count) {
+        waitForTopBalltoLower();
+        topConveyor.move_velocity(-600);
+        botConveyor.move_velocity(600);
+        waitForBallToEject();
+        counter += 1;
+      }
+    }
+  }
+  else if(secondBall) {
     topBall_task.resume();
     botConveyor.move_velocity(600);
     waitForBallToEject();
     topBall_task.suspend();
-    if(b == 3) {
+    counter += 1;
+    if(counter != total_count) {
       waitForTopBalltoLower();
       topConveyor.move_velocity(-600);
       botConveyor.move_velocity(600);
       waitForBallToEject();
+      counter += 1;
     }
   }
+  else if(firstBall) {
+    waitForTopBalltoLower();
+    topConveyor.move_velocity(-600);
+    botConveyor.move_velocity(600);
+    waitForBallToEject();
+    counter += 1;
+  }
+  else if(!topBall_high) {
+    topConveyor.move_velocity(-600);
+    botConveyor.move_velocity(600);
+    counter += 1;
+  }
+}
+
+void waitForBallsToEject(int b)
+{
+  total_count = b;
+  pros::Task sub (eject_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
 }
 
 int countHeldBalls()
