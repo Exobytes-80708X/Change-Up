@@ -388,7 +388,7 @@ void autonomous()
       reset(0);
       super_macro2(1,1); //score 3rd goals
       intake(outward);
-      driveDistance(-10,9);
+      driveDistance(-10,7.6);
       eject(2);
       intake(inward);
       adaptiveDrive(21.5,104,0.2,7,0.6,10.0,1.0,250,10000);
@@ -414,7 +414,7 @@ void autonomous()
       intake(inward);
       //facePID(-22,91,p,i,d);
       eject(2);
-      adaptiveDrive(-21,86,0.2,8,0.7,7.0,1.0,250,10000);
+      adaptiveDrive(-21,87,0.2,8,0.7,7.0,1.0,250,10000);
       //adaptiveDrive(-22,90, 8);
       driveDistance(-5,9);
       //driveDistance(calcDistance(-12,84),8);
