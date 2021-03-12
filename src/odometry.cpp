@@ -1581,23 +1581,23 @@ std::pair<double,double> repos_robot(std::vector<std::pair<double,double>> goals
   double measureTheta = 0;
   switch(position){
       case 0:
-          measureTheta = M_PI / 2;
+          measureTheta = M_PI / 2.0;
           thetaChange = M_PI;
           break;
 
       case 1:
-          measureTheta = 0;
-          thetaChange = (3/2) * M_PI;
+          measureTheta = 0.0;
+          thetaChange = (3.0/2.0) * M_PI;
           break;
 
       case 2:
-          measureTheta = (3/2) * M_PI;
-          thetaChange = 0;
+          measureTheta = (3.0/2.0) * M_PI;
+          thetaChange = 0.0;
           break;
 
       case 3:
           measureTheta = M_PI;
-          thetaChange = M_PI / 2;
+          thetaChange = M_PI / 2.0;
           break;
 
       default:

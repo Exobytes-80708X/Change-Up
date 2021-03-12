@@ -153,6 +153,9 @@ void autonomous()
   goals.push_back(std::make_pair(-70.25,5.645));                // GOAL 4
   int timer = 0;
   goals = repos_goals(goals,-53.375,13.25);
+  updateVarLabel(debugLabel3,"R1",debugValue3,goals[0],"",3);
+  updateVarLabel(debugLabel4,"R2",debugValue4,goals[1],"",3);
+  updateVarLabel(debugLabel5,"R3",debugValue5,goals[2],"",3);
 
   // xPts.push_back(robotX);
   // yPts.push_back(robotY);
@@ -192,8 +195,12 @@ void autonomous()
       //   if(timer > 2000)
       //     break;
       // }
-      super_macro2(1,2); //score second goal middle
-      delayDrive(1000,3000);
+      //super_macro2(2,2); //score second goal middle
+      //delayDrive(1000,3000);
+      pros::delay(5000);
+      robotX = 999;
+      robotY = 999;
+      pros::delay(10000);
       break;
 
     case 1: //red auton
@@ -318,6 +325,7 @@ void autonomous()
       super_macro2(2,2);
       //pros::delay(100);
       //intake(outward);
+      intake(outward);
       driveDistance(-20,6);
       intake(inward);
       facePID(8,62,p,i,d);
@@ -364,7 +372,9 @@ void autonomous()
           break;
         }
       reset(0);
-      super_macro2(1,1);
+      super_macro2(1,1); //score 3rd goals
+      pros::delay(10000);
+      intake(outward);
       driveDistance(-10,9);
       eject(2);
       intake(inward);
@@ -385,7 +395,8 @@ void autonomous()
         if(timer > 1000)
           break;
         }
-      super_macro2(1,2);
+      super_macro2(1,2); //score 4th goal
+      intake(outward);
       driveDistance(-10,9);
       intake(inward);
       //facePID(-22,91,p,i,d);
@@ -407,7 +418,9 @@ void autonomous()
           break;
         }
       reset(1);
-      super_macro2(1,1);
+      super_macro2(1,1); //score 5th goal
+      pros::delay(10000);
+      intake(outward);
       driveDistance(-20,8);
       intake(inward);
       //facePID(-62,118,p,i,d);
@@ -425,9 +438,8 @@ void autonomous()
         if(timer > 1000)
           break;
         }
-      super_macro(1,2);
+      super_macro(1,2); //score 6th goal
       intake(outward);
-      pros::delay(50);
       driveDistance(-10,9.5);
       facePID(-50.5,52,p,i,d);
       eject(2);
@@ -435,7 +447,7 @@ void autonomous()
       driveDistance(calcDistance(-46,62)+7,8);
       driveDistance(-12.25,10);
       facePID(-120,62.25,p,i,d);
-      delayDriveSmooth(1300,8,0.2,fwd);
+      delayDriveSmooth(1300,8,0.3,fwd);
       //intake(stop);
       //delayDrive(500,8000);
       //shooting_macro2(1); //7th goal side
@@ -447,7 +459,9 @@ void autonomous()
           break;
         }
       reset(2);
-      super_macro2(1,1);
+      super_macro2(1,1); //score 7th goals
+      pros::delay(10000);
+      intake(outward);
       driveDistance(-20,9);
       intake(inward);
       //facePID(-58,20,p,i,d);
@@ -467,9 +481,8 @@ void autonomous()
           break;
         }
       //shooting_macro2(1); //8th goal
-      super_macro2(1,2);
-      pros::delay(50);
-      ///???
+      super_macro2(1,2); //score 8th goals
+      intake(outward);
       driveDistance(-15,9);
       intake(inward);
       eject(2);

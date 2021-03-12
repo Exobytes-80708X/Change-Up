@@ -236,12 +236,12 @@ void waitForTopBalltoLower()
 bool fi = false;
 void untilsecondball_thread(void*p)
 {
-  while(!botBall && !fi) {
+  while(pros::c::optical_get_proximity(4) != 255 && !fi) {
     botConveyor.move_velocity(200);
     pros::delay(10); }
+  botConveyor.move_velocity(0);
   while(!fi) {
-    botConveyor.move_velocity(0);
-      pros::delay(10); }
+    pros::delay(10); }
 }
 
 void countBalls(int numOfBalls)
