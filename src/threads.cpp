@@ -241,6 +241,7 @@ void waitForBallsToEject(int b)
        if(timer > 1000) return;
     }
   }
+  conveyorState = 0;
 }
 
 void waitForTopBalltoLower()
