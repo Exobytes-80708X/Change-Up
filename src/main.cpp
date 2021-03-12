@@ -216,7 +216,7 @@ void autonomous()
       // }
       //super_macro2(2,2); //score second goal middle
       //delayDrive(1000,3000);
-      eject(1);
+      eject(2);
       break;
 
     case 1: //red auton
@@ -477,7 +477,6 @@ void autonomous()
       driveDistance(-20,9);
       intake(inward);
       //facePID(-58,20,p,i,d);
-      pros::delay(50);
       eject(1);
       adaptiveDrive(-57,8,0.2,7,0.6,8.0,1.0,250,10000);
       //driveDistance(calcDistance(-60,20),9);
@@ -510,7 +509,8 @@ void autonomous()
         if(timer > 1000)
           break;
         }
-      shooting_macro2(2); //last goal
+      super_macro2(2,1);
+      driveDistance(-15,10);
       //delayDrive(400,-8000);
       //driveDistance(-20,9);
       // //facePID(90,p,i,d);
