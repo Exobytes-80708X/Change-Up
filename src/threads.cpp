@@ -226,26 +226,19 @@ void waitForBallToEject()
 
 void waitForBallsToEject(int b)
 {
-  int timer;
-  while(!ballInEjector) {
-     pros::delay(10);
-     timer += 10;
-     if(timer > 1000) return;
-  }
+  int timer = 0;
   for(int i = 0; i < b; i++) {
     timer = 0;
-    while(ballInEjector){
+    while(!ballInEjector){
       pros::delay(10);
       timer += 10;
       if(timer > 1000) return;
     }
-    if(i < b-1) {
-      timer = 0;
-      while(!ballInEjector) {
-         pros::delay(10);
-         timer += 10;
-         if(timer > 1000) return;
-      }
+    timer = 0;
+    while(ballInEjector) {
+       pros::delay(10);
+       timer += 10;
+       if(timer > 1000) return;
     }
   }
 }
