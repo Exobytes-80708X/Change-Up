@@ -300,8 +300,8 @@ void autonomous()
       xPts.push_back(-80);
       yPts.push_back(robotY);
 
-      xPts.push_back(-100);
-      yPts.push_back(-6);
+      xPts.push_back(-95);
+      yPts.push_back(-1);
 
       purePursuit(24,0,xPts,yPts,8,0.5,12.0,5000);
 
@@ -319,9 +319,6 @@ void autonomous()
         timer += 10;
         if(timer > 1000)
           break;
-      }
-      while(!firstBall){
-        pros::delay(10);
       }
       shooting_macro(2); //score third goal
       intake(outward);
