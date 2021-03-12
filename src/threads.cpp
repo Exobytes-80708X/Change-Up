@@ -224,26 +224,6 @@ void waitForBallToEject()
    }
 }
 
-void waitForBallsToEject(int b)
-{
-  int timer = 0;
-  for(int i = 0; i < b; i++) {
-    timer = 0;
-    while(!ballInEjector){
-      pros::delay(10);
-      timer += 10;
-      if(timer > 1000) return;
-    }
-    timer = 0;
-    while(ballInEjector) {
-       pros::delay(10);
-       timer += 10;
-       if(timer > 1000) return;
-    }
-  }
-  conveyorState = 0;
-}
-
 void waitForTopBalltoLower()
 {
   while(firstBall) {
@@ -427,6 +407,8 @@ void centerTopBall()
     topConveyor.move_velocity(0);
 }
 
+
+
 void adjustTopBall()
 {
   while(!(!topBall_low && topBall_high)) {
@@ -443,6 +425,26 @@ void thread_centerTopBall(void*p)
     else
       topConveyor.move_velocity(0);
     pros::delay(10);
+  }
+}
+
+void waitForBallsToEject(int b)
+{
+  pros::Task topBall_task (thread_centerTopBall, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
+  botConveyor.move_velocity(300);
+  waitForBallToEject();
+  topBall_task.suspend();
+  if(b == 2) {
+    topBall_task.resume();
+    botConveyor.move_velocity(600);
+    waitForBallToEject();
+    topBall_task.suspend();
+    if(b == 3) {
+      waitForTopBalltoLower();
+      topConveyor.move_velocity(-600);
+      botConveyor.move_velocity(600);
+      waitForBallToEject();
+    }
   }
 }
 
