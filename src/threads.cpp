@@ -479,6 +479,7 @@ void eject_task(void*p)
   else if(!topBall_high) {
     topConveyor.move_velocity(-600);
     botConveyor.move_velocity(600);
+    waitForBallToEject();
     counter += 1;
   }
 }
