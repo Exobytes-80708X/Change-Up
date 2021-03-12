@@ -430,9 +430,8 @@ void thread_centerTopBall(void*p)
 
 int counter = 0;
 int total_count;
-void eject_thread(void*p)
+void eject_task(void*p)
 {
-  counter = 0;
   pros::Task topBall_task (thread_centerTopBall, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
   topBall_task.suspend();
   if(thirdBall) {
@@ -487,7 +486,9 @@ void eject_thread(void*p)
 void waitForBallsToEject(int b)
 {
   total_count = b;
-  pros::Task sub (eject_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
+  counter = 0;
+  pros::Task sub (eject_task, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "For opcontrol ONLY");
+  while(counter != total_count) pros::delay(10);
 }
 
 int countHeldBalls()
