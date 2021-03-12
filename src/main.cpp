@@ -391,8 +391,8 @@ void autonomous()
       super_macro2(1,1); //score 3rd goals
       intake(outward);
       driveDistance(-10,7.6);
-      eject(1);
       intake(inward);
+      eject(1);
       adaptiveDrive(21.5,104,0.2,7,0.6,10.0,1.0,250,10000);
       //facePID(21,110,p,i,d)
       //driveDistance(calcDistance(17,110)+6,8);
@@ -511,7 +511,8 @@ void autonomous()
         if(timer > 1000)
           break;
         }
-      shooting_macro2(2); //last goal
+      super_macro2(2,1); //last goal
+      driveDistance(-20,10);
       //delayDrive(400,-8000);
       //driveDistance(-20,9);
       // //facePID(90,p,i,d);
