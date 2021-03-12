@@ -389,6 +389,7 @@ void autonomous()
         }
       reset(0);
       super_macro2(1,1); //score 3rd goals
+      pros::delay(100);
       intake(outward);
       driveDistance(-10,7.6);
       intake(inward);
