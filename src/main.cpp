@@ -38,6 +38,7 @@ void delay_drive_thread(void*p)
   delayDrive(500,5000);
 }
 
+
 int position;
 void reset_thread(void*p)
 {
@@ -59,6 +60,19 @@ void intake(int state){
   // state - What intake state to switch to. in = 0, out = 1, stop = 2
   intakeState = state;
 }
+
+void release(int n)
+{
+  conveyorState = 7;
+
+  topConveyor.move_velocity(-300);
+  botConveyor.move_velocity(-300);
+  intake(outward);
+  countReleaseBalls(n);
+  intake(stop);
+  conveyorState = 0;
+}
+
 
 void shoot(int a){
     conveyorState = 3;
@@ -216,8 +230,10 @@ void autonomous()
       // }
       //super_macro2(2,2); //score second goal middle
       //delayDrive(1000,3000);
-      intake(inward);
-      eject(3);
+      // intake(inward);
+      // eject(3);
+      release(1);
+      pros::delay(3000);
       break;
 
     case 1: //red auton

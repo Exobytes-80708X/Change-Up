@@ -286,6 +286,33 @@ void countBalls(int numOfBalls)
   fi = true;
 }
 
+void countReleaseBalls(int numOfBalls)
+{
+  int timer=0;
+  for(int n = 0; n < numOfBalls; n++) {
+    timer = 0;
+    while(botBall_low) {
+      timer+=10;
+      pros::delay(10);
+      if(timer > 2500){
+        return;
+      }
+    }
+    timer = 0;
+    if(numOfBalls == 3 && n == 2) {
+      pros::delay(500);
+      continue;
+    }
+    while(!botBall_low) {
+      timer+=10;
+      pros::delay(10);
+      if(timer > 2500) {
+        return;
+      }
+    }
+  }
+}
+
 
 void countIntakeBalls(int numOfBalls)
 {
@@ -833,6 +860,11 @@ void thread_control(void* p)
     else {
        conveyorState = idle;
     }
+
+    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN))
+      auton = 1;
+    if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_B))
+      auton = 2;
 
     pros::delay(10);
   }
