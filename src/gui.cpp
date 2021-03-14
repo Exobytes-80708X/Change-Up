@@ -811,16 +811,18 @@ void thread_sensorDebug(void*p)
     updateValueLabel(sensorValue1,imu.get_heading(),"DEG",3);
     updateValueLabel(sensorValue2,left.get(),"",0);
     updateValueLabel(sensorValue3,right.get(),"",0);
-    n = pros::c::optical_get_rgb(4).red/pros::c::optical_get_rgb(4).blue;
-    if(optical_state == RED_BALL) {
-      updateValueLabel(sensorValue9,n,"RED",0);
-      d = true;
-    }
-    if(optical_state == BLUE_BALL && !d) {
-      updateValueLabel(sensorValue9,n,"BLUE",0);
-    }
-    if(optical_state == NO_BALL && !d)
-      updateValueLabel(sensorValue9,n,"NONE",0);
+    // n = pros::c::optical_get_rgb(4).red/pros::c::optical_get_rgb(4).blue;
+    // if(optical_state == RED_BALL) {
+    //   updateValueLabel(sensorValue9,n,"RED",0);
+    //   d = true;
+    // }
+    // if(optical_state == BLUE_BALL && !d) {
+    //   updateValueLabel(sensorValue9,n,"BLUE",0);
+    // }
+    // if(optical_state == NO_BALL && !d)
+    //   updateValueLabel(sensorValue9,n,"NONE",0);
+
+    updateValueLabel(sensorValue9,pros::c::optical_get_proximity(2),"",0);
     pros::delay(100);
   }
 }

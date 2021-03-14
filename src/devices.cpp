@@ -17,6 +17,7 @@ pros::ADIAnalogIn topDetector ('H');
 pros::ADIAnalogIn botDetector ('G');
 //pros::ADIAnalogIn ejectDetector ('F'); //moved to C on ext ports
 pros::Optical optical(4);
+pros::Optical optical2(2);
 
 okapi::ADIEncoder left('C','D',false);
 okapi::ADIEncoder right('A','B',false);

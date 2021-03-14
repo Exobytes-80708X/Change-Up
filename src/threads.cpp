@@ -150,20 +150,26 @@ void thread_sensors_filter(void*p) //rolling average
 
     //======================================================================================================
 
-    if(top_low_avg < 2725)
-      topBall_low = true;
-    else topBall_low = false;
+    if(pros::c::optical_get_proximity(2) >= 253) {
+      if(top_low_avg < 2700)
+        topBall_low = true;
+      else topBall_low = false;
 
-    if(top_high_avg < 2725)
-      topBall_high = true;
-    else topBall_high = false;
+      if(top_high_avg < 2700)
+        topBall_high = true;
+      else topBall_high = false;
+    }
+    else {
+      topBall_high = false;
+      topBall_low = false;
+    }
 
     pros::c::optical_set_led_pwm(4, 50);
-    if( bot_high_avg < 2800) {
+    if( bot_high_avg < 2700 && pros::c::optical_get_proximity(4) >= 253) {
       botBall = true;
       sb_delay += 1;
       a = color_red_raw/color_blue_raw;
-      if(pros::c::optical_get_proximity(4) == 255) {
+      if(pros::c::optical_get_proximity(4) >= 253) {
         if( a >= 3)
           optical_state = RED_BALL;
         else if( a <= 1)
@@ -177,7 +183,7 @@ void thread_sensors_filter(void*p) //rolling average
       optical_state = NO_BALL;
     }
 
-    if(ejector_avg < 2725)
+    if(ejector_avg < 2000)
       ballInEjector = true;
     else ballInEjector = false;
 
@@ -188,7 +194,7 @@ void thread_sensors_filter(void*p) //rolling average
       botBall_low = false;
     }
 
-    if(topBall_low || topBall_high)
+    if(topBall_low || topBall_high || pros::c::optical_get_proximity(2) >= 253)
       firstBall = true;
     else firstBall = false;
 
@@ -448,7 +454,7 @@ void thread_centerTopBall(void*p)
 {
   while(true) {
     if( (topBall_high && topBall_low) || (!topBall_high && topBall_low))
-      topConveyor.move_velocity(50);
+      topConveyor.move_velocity(25);
     else
       topConveyor.move_velocity(0);
     pros::delay(10);
@@ -537,7 +543,7 @@ int countHeldBalls()
 void idleConveyor()
 {
   if(firstBall)
-    centerTopBall();
+    topConveyor.move_velocity(0);
   else
     topConveyor.move_velocity(200);
 
@@ -554,7 +560,8 @@ void idleConveyor()
 void idleConveyor(int rpm)
 {
   if(firstBall)
-    centerTopBall();
+    //centerTopBall();
+    topConveyor.move_velocity(0);
   else
     topConveyor.move_velocity(200);
 
@@ -773,11 +780,11 @@ void thread_subsystems(void* p)
           botConveyor.move_velocity(600);
           waitForBallToEject();
 
-          botConveyor.move_velocity(0);
-          topConveyor.move_velocity(200);
-          pros::delay(100);
+          // botConveyor.move_velocity(0);
+          // topConveyor.move_velocity(200);
+          // pros::delay(100);
         }
-        if(secondBall) {
+        else if(secondBall) {
           botConveyor.move_velocity(600);
           topBall_task.resume();
           waitForBallToEject();
@@ -788,11 +795,11 @@ void thread_subsystems(void* p)
           botConveyor.move_velocity(600);
           waitForBallToEject();
 
-          botConveyor.move_velocity(0);
-          topConveyor.move_velocity(200);
-          pros::delay(100);
+          // botConveyor.move_velocity(0);
+          // topConveyor.move_velocity(200);
+          // pros::delay(100);
         }
-        if(firstBall) {
+        else if(firstBall) {
           waitForTopBalltoLower();
           topConveyor.move_velocity(-600);
           botConveyor.move_velocity(600);
