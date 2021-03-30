@@ -19,6 +19,8 @@ bool firstBall;
 bool secondBall;
 bool ballInEjector;
 bool thirdBall;
+bool firstBall_uncentered;
+bool secondBall_uncentered;
 
 int iBalls = 0;
 
@@ -214,16 +216,16 @@ void thread_sensors_v2(void*p)
 {
   ballInEjector = false;
   while(true) {
-    if(topDetector_high.get_proximity() > 250)
-      topBall_low = true;
-    else topBall_low = false;
-
-    if(topDetector_low.get_proximity() > 250)
+    if(topDetector_high.get_proximity() > 200)
       topBall_high = true;
     else topBall_high = false;
 
+    if(topDetector_low.get_proximity() > 100)
+      topBall_low = true;
+    else topBall_low = false;
+
     //pros::c::optical_set_led_pwm(4, 50);
-    if(botDetector_high.get_proximity() > 250) {
+    if(botDetector_high.get_proximity() > 200) {
       botBall = true;
       if(botDetector_high.get_rgb().red/botDetector_high.get_rgb().blue >= 2)
         optical_state = RED_BALL;
@@ -247,7 +249,7 @@ void thread_sensors_v2(void*p)
     //   botBall_low = true;
     // else botBall_low = false;
 
-    if(topBall_low || topBall_high)
+    if(/*topBall_low ||*/ topBall_high)
       firstBall = true;
     else firstBall = false;
 
@@ -258,6 +260,18 @@ void thread_sensors_v2(void*p)
     if(secondBall && botBall_low)
       thirdBall = true;
     else thirdBall = false;
+
+    if(topBall_low) {
+      if(secondBall)
+        secondBall_uncentered = true;
+      else
+        secondBall_uncentered = false;
+
+      if(firstBall && !secondBall)
+        firstBall_uncentered = true;
+      else
+        firstBall_uncentered = false;
+    }
     pros::delay(10);
   }
 }
@@ -592,21 +606,48 @@ int countHeldBalls()
   else return 0;
 }
 
+// void idleConveyor()
+// {
+//   if(firstBall)
+//     centerTopBall();
+//   else
+//     topConveyor.move_velocity(200);
+//
+//   if(secondBall && firstBall)
+//     botConveyor.move_velocity(0);
+//   // else if(botBall && !firstBall) {
+//   //     botConveyor.move_velocity(100);
+//   // }
+//   else
+//     botConveyor.move_velocity(300);
+//
+// }
+
 void idleConveyor()
 {
-  if(firstBall)
-    centerTopBall();
-  else
-    topConveyor.move_velocity(200);
-
-  if(secondBall && firstBall)
-    botConveyor.move_velocity(0);
-  // else if(botBall && !firstBall) {
-  //     botConveyor.move_velocity(100);
-  // }
-  else
-    botConveyor.move_velocity(300);
-
+  if(!firstBall) {
+    if(topBall_low) {
+      topConveyor.move_velocity(100);
+      botConveyor.move_velocity(100);
+      while(!firstBall && topBall_low) pros::delay(10);
+      topConveyor.move_velocity(0);
+    }
+    else {
+      topConveyor.move_velocity(200);
+      botConveyor.move_velocity(300);
+    }
+  }
+  else {
+    if(firstBall && !secondBall) {
+      botConveyor.move_velocity(200);
+    }
+    else if(firstBall && secondBall && topBall_low) {
+      botConveyor.move_velocity(-25);
+    }
+    else {
+      botConveyor.move_velocity(0);
+    }
+  }
 }
 
 void idleConveyor(int rpm)
@@ -729,6 +770,7 @@ void thread_subsystems(void* p)
             }
           }
           else idleConveyor();
+          break;
         }
         else idleConveyor();
         break;
