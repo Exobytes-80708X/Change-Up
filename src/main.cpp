@@ -19,11 +19,11 @@ vpdb goals;
 void initialize()
 {
   imu.reset();
-  pros::c::ext_adi_pin_mode(5, 'A', INPUT_ANALOG);
-  pros::c::ext_adi_pin_mode(5, 'B', INPUT_ANALOG);
-  pros::c::ext_adi_pin_mode(5, 'C', INPUT_ANALOG);
+  // pros::c::ext_adi_pin_mode(5, 'A', INPUT_ANALOG);
+  // pros::c::ext_adi_pin_mode(5, 'B', INPUT_ANALOG);
+  // pros::c::ext_adi_pin_mode(5, 'C', INPUT_ANALOG);
   //pros::Task task_1 (thread_sensors, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  pros::Task task_1 (thread_sensors_filter, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task task_1 (thread_sensors_v2, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::delay(250);
   pros::Task task_GUI (initGUI, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task task_2 (thread_subsystems, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");

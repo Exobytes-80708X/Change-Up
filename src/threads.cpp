@@ -29,21 +29,203 @@ const int BLUE_BALL = 2;
 int optical_state = NO_BALL;
 
 
-void thread_sensors(void *p)
+// void thread_sensors(void *p)
+// {
+//   while(true) {
+//     if(topDetector.get_value() < 2750)
+//       topBall_low = true;
+//     else topBall_low = false;
+//
+//     if(pros::c::ext_adi_analog_read(5,'B') < 2750)
+//       topBall_high = true;
+//     else topBall_high = false;
+//
+//     //pros::c::optical_set_led_pwm(4, 50);
+//     if(botDetector.get_value() < 2750) {
+//       botBall = true;
+//       if(pros::c::optical_get_rgb(4).red/pros::c::optical_get_rgb(4).blue >= 2)
+//         optical_state = RED_BALL;
+//       else
+//         optical_state = BLUE_BALL;
+//     }
+//     else {
+//       botBall = false;
+//       optical_state = NO_BALL;
+//     }
+//
+//     if(pros::c::ext_adi_analog_read(5,'C') < 2750)
+//       ballInEjector = true;
+//     else ballInEjector = false;
+//
+//     if(pros::c::ext_adi_analog_read(5,'A') < 1500) //bot detector low
+//       botBall_low = true;
+//     else botBall_low = false;
+//
+//     if(topBall_low || topBall_high)
+//       firstBall = true;
+//     else firstBall = false;
+//
+//     if(firstBall && botBall)
+//       secondBall = true;
+//     else secondBall = false;
+//
+//     if(secondBall && botBall_low)
+//       thirdBall = true;
+//     else thirdBall = false;
+//
+//
+//     pros::delay(50);
+//   }
+// }
+//
+// int avg(int* array, int size) {
+//   int sum = 0;
+//   for (int i = 0; i < size; i++)
+//     sum += array[i];
+//   return int(sum/size);
+// }
+//
+// int top_high_avg;
+// int top_low_avg;
+// int bot_high_avg;
+// int bot_low_avg;
+// int ejector_avg;
+// int color_red_avg;
+// int color_blue_avg;
+//
+// void thread_sensors_filter(void*p) //rolling average
+// {
+//   int sb_delay = 0;
+//   const int SIZE = 5;
+//   int top_high_raw = pros::c::ext_adi_analog_read(5,'B');
+//   int top_low_raw = topDetector.get_value();
+//   int bot_high_raw = botDetector.get_value();
+//   int bot_low_raw = pros::c::ext_adi_analog_read(5,'A');
+//   int ejector_raw = pros::c::ext_adi_analog_read(5,'C');
+//   int color_red_raw = pros::c::optical_get_rgb(4).red;
+//   int color_blue_raw = pros::c::optical_get_rgb(4).blue;
+//
+//   int top_high_values[SIZE]{top_high_raw,top_high_raw,top_high_raw,top_high_raw,top_high_raw};
+//   int top_low_values[SIZE]{top_low_raw,top_low_raw,top_low_raw,top_low_raw,top_low_raw,};
+//   int bot_high_values[SIZE]{bot_high_raw,bot_high_raw,bot_high_raw,bot_high_raw,bot_high_raw};
+//   int bot_low_values[SIZE]{bot_low_raw,bot_low_raw,bot_low_raw,bot_low_raw,bot_low_raw};
+//   int ejector_values[SIZE]{ejector_raw,ejector_raw,ejector_raw,ejector_raw,ejector_raw};
+//   int color_red_values[SIZE]{color_red_raw,color_red_raw,color_red_raw,color_red_raw,color_red_raw};
+//   int color_blue_values[SIZE]{ color_blue_raw, color_blue_raw, color_blue_raw, color_blue_raw, color_blue_raw};
+//   int a;
+//
+//   while(true) {
+//     top_high_raw = pros::c::ext_adi_analog_read(5,'B'); //update raw values
+//     top_low_raw = topDetector.get_value();
+//     bot_high_raw = botDetector.get_value();
+//     bot_low_raw = pros::c::ext_adi_analog_read(5,'A');
+//     ejector_raw = pros::c::ext_adi_analog_read(5,'C');
+//     color_red_raw = pros::c::optical_get_rgb(4).red;
+//     color_blue_raw = pros::c::optical_get_rgb(4).blue;
+//
+//     for(int i = 1; i < SIZE; i++) { //shift arrays
+//       top_high_values[i] = top_high_values[i-1];
+//       top_low_values[i] = top_low_values[i-1];
+//       bot_high_values[i] = bot_high_values[i-1];
+//       bot_low_values[i] = bot_low_values[i-1];
+//       ejector_values[i] = ejector_values[i-1];
+//       color_red_values[i] = color_red_values[i-1];
+//       color_blue_values[i] = color_blue_values[i-1];
+//     }
+//     top_high_values[0] = top_high_raw; //add new raw value
+//     top_low_values[0] = top_low_raw;
+//     bot_high_values[0] = bot_high_raw;
+//     bot_low_values[0] = bot_low_raw;
+//     ejector_values[0] = ejector_raw;
+//     color_red_values[0] = color_red_raw;
+//     color_blue_values[0] = color_blue_raw;
+//
+//     top_high_avg = avg(top_high_values,SIZE); //calc avg for all arrays
+//     top_low_avg = avg(top_low_values,SIZE);
+//     bot_high_avg = avg(bot_high_values,SIZE);
+//     bot_low_avg = avg(bot_low_values,SIZE);
+//     ejector_avg = avg(ejector_values,SIZE);
+//     color_red_avg = avg(color_red_values,SIZE);
+//     color_blue_avg = avg(color_blue_values,SIZE);
+//
+//     //======================================================================================================
+//
+//     if(pros::c::optical_get_proximity(2) >= 253) {
+//       if(top_low_avg < 2700)
+//         topBall_low = true;
+//       else topBall_low = false;
+//
+//       if(top_high_avg < 2700)
+//         topBall_high = true;
+//       else topBall_high = false;
+//     }
+//     else {
+//       topBall_high = false;
+//       topBall_low = false;
+//     }
+//
+//     pros::c::optical_set_led_pwm(4, 50);
+//     if( bot_high_avg < 2700 && pros::c::optical_get_proximity(4) >= 253) {
+//       botBall = true;
+//       sb_delay += 1;
+//       a = color_red_raw/color_blue_raw;
+//       if(pros::c::optical_get_proximity(4) >= 253) {
+//         if( a >= 3)
+//           optical_state = RED_BALL;
+//         else if( a <= 1)
+//           optical_state = BLUE_BALL;
+//       }
+//       else optical_state = NO_BALL;
+//     }
+//     else {
+//       botBall = false;
+//       sb_delay = 0;
+//       optical_state = NO_BALL;
+//     }
+//
+//     if(ejector_avg < 2000)
+//       ballInEjector = true;
+//     else ballInEjector = false;
+//
+//     if(bot_low_avg < 2800) {
+//       botBall_low = true;
+//     }
+//     else {
+//       botBall_low = false;
+//     }
+//
+//     if(topBall_low || topBall_high || pros::c::optical_get_proximity(2) >= 253)
+//       firstBall = true;
+//     else firstBall = false;
+//
+//     if(firstBall && botBall)
+//       secondBall = true;
+//     else secondBall = false;
+//
+//     if(secondBall && botBall_low)
+//       thirdBall = true;
+//     else thirdBall = false;
+//
+//     pros::delay(10);
+//   }
+// }
+
+void thread_sensors_v2(void*p)
 {
+  ballInEjector = false;
   while(true) {
-    if(topDetector.get_value() < 2750)
+    if(topDetector_high.get_proximity() > 250)
       topBall_low = true;
     else topBall_low = false;
 
-    if(pros::c::ext_adi_analog_read(5,'B') < 2750)
+    if(topDetector_low.get_proximity() > 250)
       topBall_high = true;
     else topBall_high = false;
 
     //pros::c::optical_set_led_pwm(4, 50);
-    if(botDetector.get_value() < 2750) {
+    if(botDetector_high.get_proximity() > 250) {
       botBall = true;
-      if(pros::c::optical_get_rgb(4).red/pros::c::optical_get_rgb(4).blue >= 2)
+      if(botDetector_high.get_rgb().red/botDetector_high.get_rgb().blue >= 2)
         optical_state = RED_BALL;
       else
         optical_state = BLUE_BALL;
@@ -53,13 +235,17 @@ void thread_sensors(void *p)
       optical_state = NO_BALL;
     }
 
-    if(pros::c::ext_adi_analog_read(5,'C') < 2750)
-      ballInEjector = true;
-    else ballInEjector = false;
-
-    if(pros::c::ext_adi_analog_read(5,'A') < 1500) //bot detector low
+    if(botDetector_low.get() < 100)
       botBall_low = true;
     else botBall_low = false;
+
+    // if(pros::c::ext_adi_analog_read(5,'C') < 2750)
+    //   ballInEjector = true;
+    // else ballInEjector = false;
+    //
+    // if(pros::c::ext_adi_analog_read(5,'A') < 1500) //bot detector low
+    //   botBall_low = true;
+    // else botBall_low = false;
 
     if(topBall_low || topBall_high)
       firstBall = true;
@@ -72,140 +258,6 @@ void thread_sensors(void *p)
     if(secondBall && botBall_low)
       thirdBall = true;
     else thirdBall = false;
-
-
-    pros::delay(50);
-  }
-}
-
-int avg(int* array, int size) {
-  int sum = 0;
-  for (int i = 0; i < size; i++)
-    sum += array[i];
-  return int(sum/size);
-}
-
-int top_high_avg;
-int top_low_avg;
-int bot_high_avg;
-int bot_low_avg;
-int ejector_avg;
-int color_red_avg;
-int color_blue_avg;
-
-void thread_sensors_filter(void*p) //rolling average
-{
-  int sb_delay = 0;
-  const int SIZE = 5;
-  int top_high_raw = pros::c::ext_adi_analog_read(5,'B');
-  int top_low_raw = topDetector.get_value();
-  int bot_high_raw = botDetector.get_value();
-  int bot_low_raw = pros::c::ext_adi_analog_read(5,'A');
-  int ejector_raw = pros::c::ext_adi_analog_read(5,'C');
-  int color_red_raw = pros::c::optical_get_rgb(4).red;
-  int color_blue_raw = pros::c::optical_get_rgb(4).blue;
-
-  int top_high_values[SIZE]{top_high_raw,top_high_raw,top_high_raw,top_high_raw,top_high_raw};
-  int top_low_values[SIZE]{top_low_raw,top_low_raw,top_low_raw,top_low_raw,top_low_raw,};
-  int bot_high_values[SIZE]{bot_high_raw,bot_high_raw,bot_high_raw,bot_high_raw,bot_high_raw};
-  int bot_low_values[SIZE]{bot_low_raw,bot_low_raw,bot_low_raw,bot_low_raw,bot_low_raw};
-  int ejector_values[SIZE]{ejector_raw,ejector_raw,ejector_raw,ejector_raw,ejector_raw};
-  int color_red_values[SIZE]{color_red_raw,color_red_raw,color_red_raw,color_red_raw,color_red_raw};
-  int color_blue_values[SIZE]{ color_blue_raw, color_blue_raw, color_blue_raw, color_blue_raw, color_blue_raw};
-  int a;
-
-  while(true) {
-    top_high_raw = pros::c::ext_adi_analog_read(5,'B'); //update raw values
-    top_low_raw = topDetector.get_value();
-    bot_high_raw = botDetector.get_value();
-    bot_low_raw = pros::c::ext_adi_analog_read(5,'A');
-    ejector_raw = pros::c::ext_adi_analog_read(5,'C');
-    color_red_raw = pros::c::optical_get_rgb(4).red;
-    color_blue_raw = pros::c::optical_get_rgb(4).blue;
-
-    for(int i = 1; i < SIZE; i++) { //shift arrays
-      top_high_values[i] = top_high_values[i-1];
-      top_low_values[i] = top_low_values[i-1];
-      bot_high_values[i] = bot_high_values[i-1];
-      bot_low_values[i] = bot_low_values[i-1];
-      ejector_values[i] = ejector_values[i-1];
-      color_red_values[i] = color_red_values[i-1];
-      color_blue_values[i] = color_blue_values[i-1];
-    }
-    top_high_values[0] = top_high_raw; //add new raw value
-    top_low_values[0] = top_low_raw;
-    bot_high_values[0] = bot_high_raw;
-    bot_low_values[0] = bot_low_raw;
-    ejector_values[0] = ejector_raw;
-    color_red_values[0] = color_red_raw;
-    color_blue_values[0] = color_blue_raw;
-
-    top_high_avg = avg(top_high_values,SIZE); //calc avg for all arrays
-    top_low_avg = avg(top_low_values,SIZE);
-    bot_high_avg = avg(bot_high_values,SIZE);
-    bot_low_avg = avg(bot_low_values,SIZE);
-    ejector_avg = avg(ejector_values,SIZE);
-    color_red_avg = avg(color_red_values,SIZE);
-    color_blue_avg = avg(color_blue_values,SIZE);
-
-    //======================================================================================================
-
-    if(pros::c::optical_get_proximity(2) >= 253) {
-      if(top_low_avg < 2700)
-        topBall_low = true;
-      else topBall_low = false;
-
-      if(top_high_avg < 2700)
-        topBall_high = true;
-      else topBall_high = false;
-    }
-    else {
-      topBall_high = false;
-      topBall_low = false;
-    }
-
-    pros::c::optical_set_led_pwm(4, 50);
-    if( bot_high_avg < 2700 && pros::c::optical_get_proximity(4) >= 253) {
-      botBall = true;
-      sb_delay += 1;
-      a = color_red_raw/color_blue_raw;
-      if(pros::c::optical_get_proximity(4) >= 253) {
-        if( a >= 3)
-          optical_state = RED_BALL;
-        else if( a <= 1)
-          optical_state = BLUE_BALL;
-      }
-      else optical_state = NO_BALL;
-    }
-    else {
-      botBall = false;
-      sb_delay = 0;
-      optical_state = NO_BALL;
-    }
-
-    if(ejector_avg < 2000)
-      ballInEjector = true;
-    else ballInEjector = false;
-
-    if(bot_low_avg < 2800) {
-      botBall_low = true;
-    }
-    else {
-      botBall_low = false;
-    }
-
-    if(topBall_low || topBall_high || pros::c::optical_get_proximity(2) >= 253)
-      firstBall = true;
-    else firstBall = false;
-
-    if(firstBall && botBall)
-      secondBall = true;
-    else secondBall = false;
-
-    if(secondBall && botBall_low)
-      thirdBall = true;
-    else thirdBall = false;
-
     pros::delay(10);
   }
 }
@@ -242,7 +294,7 @@ void waitForTopBalltoLower()
 bool fi = false;
 void untilsecondball_thread(void*p)
 {
-  while(pros::c::optical_get_proximity(4) != 255 && !fi) {
+  while(!botBall && !fi) {
     botConveyor.move_velocity(200);
     pros::delay(10); }
   botConveyor.move_velocity(0);
@@ -433,9 +485,9 @@ void shooting_macro2(int nb)
 void centerTopBall()
 {
   if(topBall_high && !topBall_low)
-    topConveyor.move_velocity(-50);
-  else if(!topBall_high && topBall_low)
     topConveyor.move_velocity(25);
+  else if(!topBall_high && topBall_low)
+    topConveyor.move_velocity(-25);
   else
     topConveyor.move_velocity(0);
 }
@@ -543,7 +595,7 @@ int countHeldBalls()
 void idleConveyor()
 {
   if(firstBall)
-    topConveyor.move_velocity(0);
+    centerTopBall();
   else
     topConveyor.move_velocity(200);
 
@@ -682,37 +734,58 @@ void thread_subsystems(void* p)
         break;
       case 99:
         idleConveyor(600);
-      break;
+        break;
       case 1: //shooting manually
-        if(r_r != redEnd || r_b != blueEnd) {
-          topConveyor.move_voltage(12000);
-          pros::delay(200);
-          if(driverControl) {
-            while(conveyorState == 1) {
-              if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
-                if(firstBall) {
-                  botConveyor.move_velocity(0);
-                  pros::delay(200);
-                }
-                topConveyor.move_velocity(-600);
-                botConveyor.move_velocity(150);
-                waitForBallToEject();
-              }
-              topConveyor.move_voltage(12000);
-              botConveyor.move_velocity(600);
+        // topConveyor.move_voltage(12000);
+        // botConveyor.move_velocity(0);
+        // pros::delay(200);
+        // if( (r_r != redEnd || r_b != blueEnd)  && conveyorState == shooting) { //if in a tournament match
+        //
+        //   if(driverControl) {
+        //     while(conveyorState == shooting) {
+        //       if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
+        //         if(firstBall) {
+        //           botConveyor.move_velocity(0);
+        //           pros::delay(200);
+        //         }
+        //         topConveyor.move_velocity(-600);
+        //         botConveyor.move_velocity(150);
+        //         waitForBallToEject();
+        //       }
+        //       topConveyor.move_voltage(12000);
+        //       botConveyor.move_velocity(600);
+        //       pros::delay(10);
+        //     }
+        //   }
+        // }
+        // else { //if in skills or of button released
+        //   pros::delay(200);
+        //   while(conveyorState == shooting)
+        //     botConveyor.move_velocity(600);
+        //     pros::delay(10);
+        // }
+
+        topConveyor.move_voltage(12000);
+        botConveyor.move_velocity(0);
+        pros::delay(200);
+        botConveyor.move_velocity(600);
+        pros::delay(200);
+
+        if( (r_r != redEnd || r_b != blueEnd) && conveyorState == shooting) {
+          if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
+            if(firstBall) {
+              botConveyor.move_velocity(0);
+              pros::delay(200);
             }
+            topConveyor.move_velocity(-600);
+            botConveyor.move_velocity(150);
+            waitForBallToEject();
           }
         }
         else {
-          if(firstBall)
-            botConveyor.move_velocity(0);
-            topConveyor.move_voltage(12000);
-            pros::delay(200);
-            botConveyor.move_velocity(600);
           while(conveyorState == shooting)
             pros::delay(10);
         }
-
         break;
       case 2: //ejecting manually
         if(thirdBall) {
@@ -816,26 +889,6 @@ void thread_subsystems(void* p)
           pros::delay(10);
         break;
 
-      case 8: //sorting sort_trigger
-        if(r_r == redEnd && r_b == blueEnd) break;
-        topConveyor.move_voltage(12000);
-        pros::delay(200);
-        if( (r_r != redEnd || r_b != blueEnd) && driverControl) {
-          while(conveyorState == 8) {
-            if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
-              if(firstBall) {
-                botConveyor.move_velocity(0);
-                pros::delay(200);
-              }
-              topConveyor.move_velocity(-600);
-              botConveyor.move_velocity(150);
-              waitForBallToEject();
-            }
-            topConveyor.move_voltage(12000);
-            botConveyor.move_velocity(600);
-          }
-        }
-        break;
     }
     pros::delay(10);
   }
