@@ -15,7 +15,7 @@ extern pros::Optical topDetector_low;
 extern pros::Optical topDetector_high;
 extern pros::Optical botDetector_high;
 extern pros::Distance botDetector_low;
-extern pros::ADIAnalogIn ejectDetector;
+extern pros::ADIDigitalIn ejectDetector;
 extern okapi::ADIEncoder left;
 extern okapi::ADIEncoder right;
 extern okapi::ADIEncoder middle;

@@ -16,6 +16,7 @@ pros::Motor botConveyor(14,pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODE
 // pros::ADIAnalogIn topDetector ('H');
 // pros::ADIAnalogIn botDetector ('G');
 //pros::ADIAnalogIn ejectDetector ('F'); //moved to C on ext ports
+pros::ADIDigitalIn ejectDetector('B'); 
 pros::Optical topDetector_low(12);
 pros::Optical topDetector_high(11);
 pros::Optical botDetector_high(13);

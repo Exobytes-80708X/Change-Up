@@ -249,6 +249,10 @@ void thread_sensors_v2(void*p)
     //   botBall_low = true;
     // else botBall_low = false;
 
+    if(ejectDetector.get_value() == 1)
+      ballInEjector = true;
+    else ballInEjector = false;
+
     if(/*topBall_low ||*/ topBall_high)
       firstBall = true;
     else firstBall = false;
@@ -758,10 +762,11 @@ void thread_subsystems(void* p)
         if( driverControl  && (r_r != redEnd || r_b != blueEnd) ){
           if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
             if (firstBall) {
-              topBall_task.resume();
+              //topBall_task.resume();
+              topConveyor.move_velocity(0);
               botConveyor.move_velocity(300);
               waitForBallToEject();
-              topBall_task.suspend();
+              //topBall_task.suspend();
             }
             else {
               topConveyor.move_velocity(-600);
@@ -812,21 +817,21 @@ void thread_subsystems(void* p)
         pros::delay(200);
         botConveyor.move_velocity(600);
         pros::delay(200);
-
-        if( (r_r != redEnd || r_b != blueEnd) && conveyorState == shooting) {
-          if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
-            if(firstBall) {
-              botConveyor.move_velocity(0);
-              pros::delay(200);
+        while(conveyorState == shooting) {
+          if( r_r != redEnd || r_b != blueEnd ) {
+            if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
+              if(firstBall) {
+                topConveyor.move_voltage(12000);
+                botConveyor.move_velocity(0);
+                pros::delay(200);
+              }
+              topConveyor.move_velocity(-600);
+              botConveyor.move_velocity(150);
+              waitForBallToEject();
             }
-            topConveyor.move_velocity(-600);
-            botConveyor.move_velocity(150);
-            waitForBallToEject();
           }
-        }
-        else {
-          while(conveyorState == shooting)
-            pros::delay(10);
+          topConveyor.move_voltage(12000);
+          botConveyor.move_velocity(600);
         }
         break;
       case 2: //ejecting manually
