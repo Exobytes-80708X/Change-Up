@@ -215,6 +215,7 @@ int optical_state = NO_BALL;
 void thread_sensors_v2(void*p)
 {
   ballInEjector = false;
+  pros::c::optical_set_led_pwm(13, 50);
   while(true) {
     if(topDetector_high.get_proximity() > 200)
       topBall_high = true;
@@ -227,9 +228,9 @@ void thread_sensors_v2(void*p)
     //pros::c::optical_set_led_pwm(4, 50);
     if(botDetector_high.get_proximity() > 200) {
       botBall = true;
-      if(botDetector_high.get_rgb().red/botDetector_high.get_rgb().blue >= 2)
+      if(botDetector_high.get_hue() < 60 ) /*(botDetector_high.get_rgb().red/botDetector_high.get_rgb().blue >= 2*/
         optical_state = RED_BALL;
-      else
+      else if(botDetector_high.get_hue() > 100 )
         optical_state = BLUE_BALL;
     }
     else {

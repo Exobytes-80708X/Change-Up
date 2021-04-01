@@ -822,7 +822,7 @@ void thread_sensorDebug(void*p)
     // if(optical_state == NO_BALL && !d)
     //   updateValueLabel(sensorValue9,n,"NONE",0);
 
-    updateValueLabel(sensorValue9,pros::c::optical_get_proximity(2),"",0);
+    updateValueLabel(sensorValue9,botDetector_high.get_hue(),"",0);
     pros::delay(100);
   }
 }
