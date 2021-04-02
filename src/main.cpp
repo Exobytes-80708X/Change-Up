@@ -172,9 +172,9 @@ void autonomous()
   pros::delay(200);
   isRobotDisabled = false;
   driverControl = false;
-  double p = 25;
+  double p = 20;
   double i = 0;
-  double d = 50;
+  double d = 70;
   std::vector<double> xPts;
   std::vector<double> yPts;
   std::vector<double> xPts1;
@@ -215,6 +215,15 @@ void autonomous()
   // }
   switch(auton) {
     case 0: //no auton
+    shooting_macro2(1);
+    //facePID(180,p,i,d);
+    // intake(inward);
+    // driveDistance(24,8);
+    // intake(stop);
+    // pros::delay(3000);
+    // intake(inward);
+    // driveDistance(-24,8);
+    // intake(stop);
       //super_macro(2,2);
       //purePursuit(24,0,ptsX,ptsY,8,0.5,10.0,5000);
       //driveUntilStopped(8000);
@@ -232,8 +241,8 @@ void autonomous()
       //delayDrive(1000,3000);
       // intake(inward);
       // eject(3);
-      release(1);
-      pros::delay(3000);
+      //release(1);
+      //pros::delay(3000);
       break;
 
     case 1: //red auton

@@ -1,7 +1,7 @@
 #include "main.h"
 //================ Odometry Variables ================
 
-const double WHEEL_DIAMETER = 2.875;
+const double WHEEL_DIAMETER = 2.8;
 const double ENCODER_WIDTH = 7.0;
 const double MIDDLE_ENCODER_LENGTH = 10.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
@@ -120,7 +120,7 @@ void thread_Odometry_old(void*param) //LINE-BASED 3 WHEELS
 
 void thread_Odometry(void*p) //ARC-BASED 3 WHEELS
 {
-  const double W = 6.5; //inches
+  const double W = 7.0;//7.0; //inches
   const double L = 4.00; //inches
 
   double dX;
@@ -586,7 +586,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 
 void driveDistance(double distance, double maxV)
 {
-  driveDistance2(distance,0.5,3,maxV,0.9,1,250,5000);
+  driveDistance2(distance,0.5,3,maxV,0.8,1,250,5000);
 }
 
 void accel(double accel, int ms)
