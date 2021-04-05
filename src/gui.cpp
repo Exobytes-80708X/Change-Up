@@ -806,7 +806,7 @@ void thread_sensorDebug(void*p)
     updateValueLabel(sensorValue5,ejectDetector.get_value()/*pros::c::ext_adi_analog_read(5,'C')*/,"",0);
     if(!d)
       updateValueLabel(sensorValue6,botDetector_high.get_proximity()/*botDetector.get_value()*/,"",0);
-    updateValueLabel(sensorValue7,topDetector_high.get_proximity()/*pros::c::ext_adi_analog_read(5,'B')*/,"",0);
+    updateValueLabel(sensorValue7,topDetector_high.get_value()/*pros::c::ext_adi_analog_read(5,'B')*/,"",0);
     updateValueLabel(sensorValue8,botDetector_low.get()/*pros::c::ext_adi_analog_read(5,'A')*/,"",0);
     updateValueLabel(sensorValue1,imu.get_heading(),"DEG",3);
     updateValueLabel(sensorValue2,left.get(),"",0);
