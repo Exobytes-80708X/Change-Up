@@ -258,6 +258,8 @@ void thread_sensors_v2(void*p)
     else {
       botBall = false;
       optical_state = NO_BALL;
+      red_counter = 0;
+      blue_counter = 0;
     }
 
     if(botDetector_low.get() < 100)
@@ -299,8 +301,8 @@ void thread_sensors_v2(void*p)
       else
         firstBall_uncentered = false;
     }
-    ///pros::Task::delay_until(&t,10);
-    pros::delay(10);
+    pros::Task::delay_until(&t,5);
+    //pros::delay(10);
   }
 }
 
@@ -313,6 +315,7 @@ void waitForBallToEject()
      pros::delay(2);
      timer += 2;
      if(timer > 1000) return;
+     updateVarLabel(debugLabel6,"ONE",debugValue6,1,"",7);
    }
   while(ballInEjector) {
      pros::delay(2);
@@ -323,6 +326,7 @@ void waitForBallToEject()
        }
      }
      if(timer > 1000) return;
+     updateVarLabel(debugLabel6,"TWO",debugValue6,2,"",7);
    }
 }
 
@@ -830,6 +834,8 @@ void thread_subsystems(void* p)
               botConveyor.move_velocity(100);
               waitForBallToEject();
             }
+            botConveyor.move_velocity(0);
+            pros::delay(100);
           }
         }
         idleConveyor();

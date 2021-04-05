@@ -796,7 +796,6 @@ void animateDeviceDebugRight()
 void thread_sensorDebug(void*p)
 {
   int store = 5000;
-  int n;
   bool d = false;
   while(true) {
     //if(store  > (int)pros::c::ext_adi_analog_read(5,'A') && (int)pros::c::ext_adi_analog_read(5,'A') > 100)
