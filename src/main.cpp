@@ -179,6 +179,8 @@ void autonomous()
   std::vector<double> yPts;
   std::vector<double> xPts1;
   std::vector<double> yPts1;
+  std::vector<double> startXPts;
+  std::vector<double> startYPts;
   pdd start_pos = std::make_pair(-53.375,13.25);
   goals.push_back(std::make_pair(-5.645,70.25));                // GOAL 1
   goals.push_back(std::make_pair(-70.25,134.855));              // GOAL 2
@@ -215,7 +217,8 @@ void autonomous()
   // }
   switch(auton) {
     case 0: //no auton
-    shooting_macro2(1);
+    	adaptiveDrive(24,-48,0.2,8,0.7,5.0,1.0,250,10000);
+    //shooting_macro2(1);
     //facePID(180,p,i,d);
     // intake(inward);
     // driveDistance(24,8);
@@ -339,7 +342,51 @@ void autonomous()
       delayDrive(400,-8000);
     break;
 
-    case 3: // skills auton
+    case 3:
+    robotTheta = 1.09694499; //M_PI/3;
+    pros::delay(400);
+    intake(inward);
+    startXPts.push_back(robotX);
+    startYPts.push_back(robotY);
+
+    startXPts.push_back(24);
+    startYPts.push_back(10);
+
+    startXPts.push_back(46);
+    startYPts.push_back(19);
+
+    purePursuit(24,0,startXPts,startYPts,8,0.5,12.0,5000);
+
+    driveDistance(-16,8);
+    intake(stop);
+
+    facePID(59,-7,p,i,d);
+    delayDriveSmooth(1050,7.2,0.3,fwd);
+    super_macro(2, 2);
+    intake(outward);
+    driveDistance(-20,8);
+    facePID(22,54,p,i,d);
+    intake(inward);
+    eject(2);
+    driveDistance(calcDistance(18,50)+9,8);
+    driveDistance(-2,8);
+    facePID(-99,robotY+2,p,i,d);
+    driveUntilStopped(5000);
+    while(!thirdBall)
+      pros::delay(10);
+    super_macro(1,1);
+    driveDistance(-15,8);
+    facePID(-90,170,p,i,d);
+    eject(3);
+    waitForBallToEject();
+    waitForBallToEject();
+    waitForBallToEject();
+
+    facePID(100,robotY+4,p,i,d);
+    delayDriveSmooth(1100, 7.2,0.3, fwd);
+    break;
+
+    case 69: // old skills auton
       robotTheta = 1.09694499; //M_PI/3;
       intake(inward);
       //adaptiveDrive(25, 20, 8);
