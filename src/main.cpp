@@ -352,7 +352,6 @@ void autonomous()
     conveyorState = 7;
     topConveyor.move_velocity(600);
     pros::delay(400);
-    pros::delay(10000);
     conveyorState = 0;
     intake(inward);
     startXPts.push_back(robotX);
@@ -381,23 +380,23 @@ void autonomous()
     driveDistance(calcDistance(18,50)+9,8);
     driveDistance(-2,8);
     facePID(-12,64,p,i,d);
-    pros::delay(10000);
     driveUntilStopped(3000);
     while(!thirdBall)
       pros::delay(10);
     super_macro(1,1);    // SCORE 2ND GOAL (MIDDLE)
-    pros::delay(10000);
     driveDistance(-15,8);
     facePID(40,0,p,i,d);
     release(3);
     facePID(60,56,p,i,d);
     intake(inward);
-    delayDriveSmooth(1300, 7.2,0.3, fwd);
+    delayDriveSmooth(1300, 7,0.25, fwd);
     while(!firstBall)
       pros::delay(10);
     super_macro(1,0);  // score THIRD GOAL.
     intake(outward);
+    pros::delay(10000);
     reset(0);
+    pros::delay(10000);
     driveDistance(-10,8);
     intake(inward);
     facePID(-30,48,p,i,d);
