@@ -12,7 +12,7 @@ extern pros::Motor rightIntake;
 extern pros::Motor topConveyor;
 extern pros::Motor botConveyor;
 extern pros::Optical topDetector_low;
-extern pros::Distance topDetector_high;
+extern pros::ADIDigitalIn topDetector_high;
 extern pros::Optical botDetector_high;
 extern pros::Optical botDetector_high2;
 extern pros::Distance botDetector_low;

@@ -19,7 +19,7 @@ pros::Motor botConveyor(14,pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODE
 pros::ADIDigitalIn ejectDetector('B');
 pros::Optical topDetector_low(12);
 pros::Optical botDetector_high2(11);
-pros::Distance topDetector_high(20);
+pros::ADIDigitalIn topDetector_high('A');
 pros::Optical botDetector_high(13);
 pros::Distance botDetector_low(4);
 
