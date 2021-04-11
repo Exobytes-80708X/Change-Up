@@ -43,7 +43,7 @@ int position;
 void reset_thread(void*p)
 {
   pros::delay(250);
-  db r = 5.645+4.125;
+  db r = 5.645+4;
   pdd xy = repos_robot(goals,r,robotTheta,position);
   robotX = xy.first;
   robotY = xy.second;
@@ -344,7 +344,10 @@ void autonomous()
 
     case 3:
     robotTheta = 1.09694499; //M_PI/3;
+    conveyorState = 7;
+    topConveyor.move_velocity(600);
     pros::delay(400);
+    conveyorState = 0;
     intake(inward);
     startXPts.push_back(robotX);
     startYPts.push_back(robotY);
@@ -370,20 +373,25 @@ void autonomous()
     eject(2);
     driveDistance(calcDistance(18,50)+9,8);
     driveDistance(-2,8);
-    facePID(-99,robotY+2,p,i,d);
+    facePID(-99,robotY+5,p,i,d);
     driveUntilStopped(5000);
     while(!thirdBall)
       pros::delay(10);
     super_macro(1,1);
     driveDistance(-15,8);
-    facePID(-90,170,p,i,d);
-    eject(3);
-    waitForBallToEject();
-    waitForBallToEject();
-    waitForBallToEject();
-
-    facePID(100,robotY+4,p,i,d);
-    delayDriveSmooth(1100, 7.2,0.3, fwd);
+    facePID(40,0,p,i,d);
+    release(3);
+    facePID(100,robotY-5,p,i,d);
+    intake(inward);
+    delayDriveSmooth(1300, 7.2,0.3, fwd);
+    while(!firstBall)
+      pros::delay(10);
+    super_macro(1,1);
+    intake(outward);
+    reset(0);
+    driveDistance(-20,8);
+    intake(inward);
+    adaptiveDrive(18,94,0.2,8,0.7,2.0,1.0,250,10000);
     break;
 
     case 69: // old skills auton
