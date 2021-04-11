@@ -181,13 +181,18 @@ void autonomous()
   std::vector<double> yPts1;
   std::vector<double> startXPts;
   std::vector<double> startYPts;
-  pdd start_pos = std::make_pair(-53.375,13.25);
-  goals.push_back(std::make_pair(-5.645,70.25));                // GOAL 1
-  goals.push_back(std::make_pair(-70.25,134.855));              // GOAL 2
-  goals.push_back(std::make_pair(-134.855,70.25));              // GOAL 3
-  goals.push_back(std::make_pair(-70.25,5.645));                // GOAL 4
+  pdd start_pos = std::make_pair(0,0);
+  goals.push_back(std::make_pair(0,0));
+  goals.push_back(std::make_pair(0,0));
+  goals.push_back(std::make_pair(0,0));
+  goals.push_back(std::make_pair(0,0));
+  // pdd start_pos = std::make_pair(-53.375,13.25);
+  // goals.push_back(std::make_pair(-5.645,70.25));                // GOAL 1
+  // goals.push_back(std::make_pair(-70.25,134.855));              // GOAL 2
+  // goals.push_back(std::make_pair(-134.855,70.25));              // GOAL 3
+  // goals.push_back(std::make_pair(-70.25,5.645));                // GOAL 4
   int timer = 0;
-  goals = repos_goals(goals,-53.375,13.25);
+  //goals = repos_goals(goals,-53.375,13.25);
   updateVarLabel(debugLabel3,"R1",debugValue3,goals[0],"",3);
   updateVarLabel(debugLabel4,"R2",debugValue4,goals[1],"",3);
   updateVarLabel(debugLabel5,"R3",debugValue5,goals[2],"",3);
@@ -373,7 +378,7 @@ void autonomous()
     eject(2);
     driveDistance(calcDistance(18,50)+9,8);
     driveDistance(-2,8);
-    facePID(-99,robotY+5,p,i,d);
+    facePID(-12,64,p,i,d);
     driveUntilStopped(5000);
     while(!thirdBall)
       pros::delay(10);
@@ -381,17 +386,21 @@ void autonomous()
     driveDistance(-15,8);
     facePID(40,0,p,i,d);
     release(3);
-    facePID(100,robotY-5,p,i,d);
+    facePID(60,56,p,i,d);
     intake(inward);
     delayDriveSmooth(1300, 7.2,0.3, fwd);
     while(!firstBall)
       pros::delay(10);
-    super_macro(1,1);
+    super_macro(1,0);
     intake(outward);
     reset(0);
-    driveDistance(-20,8);
+    driveDistance(-42,8);
     intake(inward);
-    adaptiveDrive(18,94,0.2,8,0.7,2.0,1.0,250,10000);
+    facePID(-42,48,p,i,d);
+    driveDistance(calcDistance(-42,48),8);
+    //driveDistance(-,9);
+    facePID(0,28,p,i,d);
+    driveDistance(calcDistance(0,28),4);
     break;
 
     case 69: // old skills auton
