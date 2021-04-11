@@ -406,8 +406,8 @@ void autonomous()
     facePID(0,37,p,i,d);
     driveDistance(calcDistance(0,32)-2,8);
     driveDistance(-20,8);
-    facePID(0,68,p,i,d);
-    driveDistance(calcDistance(0,68)-7,8);
+    facePID(8,68,p,i,d);
+    driveDistance(calcDistance(8,68)-7,8);
     delayDriveSmooth(1100, 7.2, 0.25, fwd);
     super_macro(2,2);
     driveDistance(-20,8);
