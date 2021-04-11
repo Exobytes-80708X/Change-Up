@@ -170,7 +170,7 @@ void thread_sensors_v2(void*p)
   int red_counter = 0;
   while(true) {
     t = pros::millis();
-    if( topDetector_high.get() <= 50 )
+    if( topDetector_high.get() < 10 )
       topBall_high = true;
     else topBall_high = false;
 
