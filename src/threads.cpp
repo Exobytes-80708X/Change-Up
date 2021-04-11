@@ -170,7 +170,7 @@ void thread_sensors_v2(void*p)
   int red_counter = 0;
   while(true) {
     t = pros::millis();
-    if( topDetector_high.get_value() == 1 )
+    if( topDetector_high.get() <= 50 )
       topBall_high = true;
     else topBall_high = false;
 
@@ -193,10 +193,10 @@ void thread_sensors_v2(void*p)
         blue_counter = 0;
       }
 
-      if(blue_counter > 10) {
+      if(blue_counter >= 5) {
         optical_state = BLUE_BALL;
       }
-      else if(red_counter > 10) {
+      else if(red_counter >= 5) {
         optical_state = RED_BALL;
       }
       else {
@@ -282,51 +282,10 @@ void untilsecondball_thread(void*p)
     pros::delay(10); }
 }
 
-// void countBalls(int numOfBalls)
-// {
-//   fi = false;
-//
-//   if(numOfBalls == 0){
-//     fi = true;
-//     return;
-//   }
-//   int timeOut = 500;
-//   int timer = 0;
-//   botConveyor.move_velocity(600);
-//   while(topBall_high)
-//     pros::delay(10);
-//   while(!topBall_high) {
-//     pros::delay(10);
-//     timer += 10;
-//     if(timer >= timeOut) {
-//       fi = true;
-//       return;
-//     }
-//   }
-//   for(int n = 0; n < numOfBalls; n++) {
-//     timer = 0;
-//     if(n == numOfBalls-1)
-//       pros::Task subthread (untilsecondball_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-//
-//     while(topBall_high) pros::delay(10);
-//
-//     if(n < numOfBalls-1/*n == 0 && numOfBalls == 2*/) {
-//       while(!topBall_high) {
-//         pros::delay(10);
-//         timer += 10;
-//         if(timer >= timeOut) {
-//           fi = true;
-//           return;
-//         }
-//       }
-//     }
-//   }
-//   fi = true;
-// }
-
 void countBalls(int numOfBalls)
 {
   fi = false;
+
   if(numOfBalls == 0){
     fi = true;
     return;
@@ -334,21 +293,32 @@ void countBalls(int numOfBalls)
   int timeOut = 500;
   int timer = 0;
   botConveyor.move_velocity(600);
+  while(topBall_high)
+    pros::delay(10);
+  while(!topBall_high) {
+    pros::delay(10);
+    timer += 10;
+    if(timer >= timeOut) {
+      fi = true;
+      return;
+    }
+  }
   for(int n = 0; n < numOfBalls; n++) {
+    timer = 0;
+    while(topBall_high) pros::delay(10);
     if(n == numOfBalls-1)
       pros::Task subthread (untilsecondball_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
 
-    timer = 0;
-    while(!topBall_high) {
-      pros::delay(10);
-      timer += 10;
-      if(timer >= timeOut) {
-        fi = true;
-        return;
+    if(n < numOfBalls-1/*n == 0 && numOfBalls == 2*/) {
+      while(!topBall_high) {
+        pros::delay(10);
+        timer += 10;
+        if(timer >= timeOut) {
+          fi = true;
+          return;
+        }
       }
     }
-    while(topBall_high) pros::delay(10);
-
   }
   fi = true;
 }
@@ -630,8 +600,6 @@ void idleConveyor()
 
   if(secondBall)
       botConveyor.move_velocity(0);
-  else if(firstBall)
-    botConveyor.move_velocity(200);
   else
     botConveyor.move_velocity(300);
 }
@@ -751,11 +719,9 @@ void thread_subsystems(void* p)
             }
             else {
               topConveyor.move_voltage(-12000);
-              botConveyor.move_velocity(100);
+              botConveyor.move_velocity(300);
               waitForBallToEject();
             }
-            botConveyor.move_velocity(0);
-            pros::delay(100);
           }
         }
         idleConveyor();
@@ -776,7 +742,7 @@ void thread_subsystems(void* p)
                 pros::delay(200);
               }
               topConveyor.move_voltage(-12000);
-              botConveyor.move_velocity(100);
+              botConveyor.move_velocity(300);
               waitForBallToEject();
             }
           }
@@ -814,6 +780,7 @@ void thread_subsystems(void* p)
           }
           ejectState -= 1;
         }
+        break;
         // if(thirdBall) {
         //   topBall_task.resume();
         //   botConveyor.move_velocity(300);
