@@ -352,6 +352,7 @@ void autonomous()
     conveyorState = 7;
     topConveyor.move_velocity(600);
     pros::delay(400);
+    pros::delay(10000);
     conveyorState = 0;
     intake(inward);
     startXPts.push_back(robotX);
@@ -370,19 +371,22 @@ void autonomous()
 
     facePID(59,-7,p,i,d);
     delayDriveSmooth(1050,7.2,0.3,fwd);
-    super_macro(2, 2);
+    super_macro(2, 2); // SCORE FIRST GOAL
     intake(outward);
     driveDistance(-20,8);
     facePID(22,54,p,i,d);
     intake(inward);
     eject(2);
+
     driveDistance(calcDistance(18,50)+9,8);
     driveDistance(-2,8);
     facePID(-12,64,p,i,d);
-    driveUntilStopped(5000);
+    pros::delay(10000);
+    driveUntilStopped(3000);
     while(!thirdBall)
       pros::delay(10);
-    super_macro(1,1);
+    super_macro(1,1);    // SCORE 2ND GOAL (MIDDLE)
+    pros::delay(10000);
     driveDistance(-15,8);
     facePID(40,0,p,i,d);
     release(3);
@@ -391,18 +395,18 @@ void autonomous()
     delayDriveSmooth(1300, 7.2,0.3, fwd);
     while(!firstBall)
       pros::delay(10);
-    super_macro(1,0);
+    super_macro(1,0);  // score THIRD GOAL.
     intake(outward);
     reset(0);
-    driveDistance(-42,8);
+    driveDistance(-10,8);
     intake(inward);
-    facePID(-42,48,p,i,d);
+    facePID(-30,48,p,i,d);
     driveDistance(calcDistance(-42,48),8);
     //driveDistance(-,9);
     facePID(0,28,p,i,d);
     driveDistance(calcDistance(0,28),4);
     break;
-
+//////////////////////////////////////////////////////////////////////
     case 69: // old skills auton
       robotTheta = 1.09694499; //M_PI/3;
       intake(inward);
