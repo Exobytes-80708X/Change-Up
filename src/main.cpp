@@ -394,16 +394,26 @@ void autonomous()
       pros::delay(10);
     super_macro(1,0);  // score THIRD GOAL.
     intake(outward);
-    pros::delay(10000);
+    robotTheta = 1.09694499 + imu.get_heading()*M_PI/180.0;  //imu heading in radians
     reset(0);
-    pros::delay(10000);
-    driveDistance(-10,8);
+    driveDistance(-20,8);
     intake(inward);
-    facePID(-30,48,p,i,d);
-    driveDistance(calcDistance(-42,48),8);
+    facePID(-21,50,p,i,d);
+    eject(1);
+    driveDistance(calcDistance(-21,50),8);
+    driveDistance(-20,8);
     //driveDistance(-,9);
-    facePID(0,28,p,i,d);
-    driveDistance(calcDistance(0,28),4);
+    facePID(0,37,p,i,d);
+    driveDistance(calcDistance(0,32)-2,8);
+    driveDistance(-20,8);
+    facePID(0,68,p,i,d);
+    driveDistance(calcDistance(0,68)-7,8);
+    delayDriveSmooth(1100, 7.2, 0.25, fwd);
+    super_macro(2,2);
+    driveDistance(-20,8);
+    facePID(-68,32,p,i,d);
+    eject(2);
+    driveDistance(calcDistance(-68,32),7);
     break;
 //////////////////////////////////////////////////////////////////////
     case 69: // old skills auton
