@@ -822,7 +822,7 @@ void thread_sensorDebug(void*p)
     //   updateValueLabel(sensorValue9,n,"NONE",0);
 
     updateValueLabel(sensorValue9,botDetector_high.get_hue(),"",0);
-    pros::delay(100);
+    pros::delay(10);
   }
 }
 

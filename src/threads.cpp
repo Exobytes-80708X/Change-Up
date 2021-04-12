@@ -178,7 +178,7 @@ void thread_sensors_v2(void*p)
       topBall_low = true;
     else topBall_low = false;
 
-    if(botDetector_high.get_proximity() > 100) {
+    if(botDetector_high.get_proximity() > 100 || botDetector_high2.get_proximity() > 100) {
       botBall = true;
       if(botDetector_high.get_hue() > 100 || botDetector_high2.get_hue() > 100) {
         blue_counter += 1;
@@ -229,7 +229,7 @@ void thread_sensors_v2(void*p)
     if(secondBall && botBall_low)
       thirdBall = true;
     else thirdBall = false;
-    pros::Task::delay_until(&t,5);
+    pros::Task::delay_until(&t,10);
   }
 }
 
@@ -290,13 +290,14 @@ void countBalls(int numOfBalls)
     fi = true;
     return;
   }
-  int timeOut = 1000;
+  int timeOut = 10000;
   int timer = 0;
   while(topBall_high)
     pros::delay(10);
   botConveyor.move_velocity(600);
-  updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,1.5,"",1);
+
   while(!topBall_high) {
+    updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,1.5,"",1);
     pros::delay(10);
     timer += 10;
     if(timer >= timeOut) {
@@ -309,7 +310,6 @@ void countBalls(int numOfBalls)
     while(topBall_high) pros::delay(10);
     if(n == numOfBalls-1)
       pros::Task subthread (untilsecondball_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-
     if(n < numOfBalls-1/*n == 0 && numOfBalls == 2*/) {
       while(!topBall_high) {
         pros::delay(10);
@@ -430,7 +430,7 @@ void shooting_macro(int numOfBalls)
 
   topConveyor.move_velocity(600);
   botConveyor.move_velocity(0);
-  updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,1,"",0);
+  updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,99,"",0);
   while(topBall_high) pros::delay(10);
   countBalls(numOfBalls-1);
   pros::delay(200);
