@@ -382,12 +382,13 @@ void autonomous()
 
     driveDistance(calcDistance(16,60)+3,9);
     driveDistance(-7,10);
-    facePID(-12,59,p,i,d); //face middle goal
+    facePID(-12,60.5,p,i,d); //face middle goal
     driveUntilStopped(5000);
     while(!thirdBall)
       pros::delay(10);
     super_macro(1,1);    // SCORE 2ND GOAL (MIDDLE)
-    driveDistance(-15,10);
+    intake(outward);
+    driveDistance2(-10,0.7,3,10,0.8,1,250,5000);
     facePID(40,0,p,i,d);
     release(3); //spit middle balls out
     facePID(60,56,p,i,d); //face 3rd goal (right side)
@@ -397,43 +398,46 @@ void autonomous()
       pros::delay(10);
     reset(0);
     super_macro(1,0);  // score THIRD GOAL
-    pros::delay(400);
+    while(firstBall)
+      pros::delay(10);
+    pros::delay(100);
     intake(outward);
     driveDistance(-20,10); //back out from goal
     intake(inward);
     facePID(-25,50,p,i,d); //face flaoting ball for 4th goal (right corner)
     eject(1);
-    driveDistance(calcDistance(-21,50),10); //intake floating ball
-    driveDistance(-22,8);
+    driveDistance(calcDistance(-21,50)-8,10); //intake floating ball
+    driveDistance(-14,10);
     //driveDistance(-,9);
     facePID(0,37,p,i,d); //face wall ball
     delayDriveSmooth(1000,7.2,.3,fwd);
     //driveDistance(calcDistance(0,32)-2,8);
-    driveDistance(-14,9); //get wall ball and drive back
+    driveDistance(-14,10); //get wall ball and drive back
     intake(stop);
     facePID(10,68,p,i,d); //face 5th goal (right corner)
-    driveDistance(calcDistance(10,68)-18,9);
+    driveDistance(calcDistance(10,68)-18,10);
     delayDriveSmooth(300, 7.2, 0.25, fwd);
     super_macro(2,2); //score FIFTH GOAL
     intake(outward);
-    driveDistance(-20,8);
+    driveDistance(-20,10);
     //facePID(-62,28,p,i,d); //face ball for 6th goal (far middle)
     intake(inward);
     eject(2);
-    adaptiveDrive(-62,28,0.2,8,0.7,5.0,1.0,250,10000);
+    adaptiveDrive(-62,25,0.2,8.,0.7,5.0,1.0,250,10000);
     //driveDistance(calcDistance(-62,28),9);
-    driveDistance(-6,8);
+    driveDistance(-6,10);
     facePID(-62,68,p,i,d);
     delayDriveSmooth(1000, 9, 0.3, fwd);
     reset(1);
     super_macro(1,1); //score FIFTH GOAL
+    intake(outward);
     driveDistance(-15,10);
     facePID(-36,-15,p,i,d);
     skills2ndX.push_back(robotX);
     skills2ndY.push_back(robotY);
 
     skills2ndX.push_back(-36); //set points for pure pursuit
-    skills2ndY.push_back(-13);
+    skills2ndY.push_back(-14.4);
 
     skills2ndX.push_back(-44); //set points for pure pursuit
     skills2ndY.push_back(-11);
@@ -444,18 +448,21 @@ void autonomous()
     eject(1);
     purePursuit(24,0,skills2ndX,skills2ndY,8,0.5,12.0,5000);
     intake(stop);
-    delayDriveSmooth(700,6.2,0.3,fwd);
+    delayDriveSmooth(200,7.5,0.3,fwd);
+    while(!firstBall)
+      pros::delay(10);
     super_macro(1,2); // score 6th goals
+    intake(outward);
     driveDistance(-14,10);
     //facePID(-62,-24,p,i,d);
     //intake(inward);
     //eject(2);
     //delayDriveSmooth(1300,7.2,0.3,fwd);
     //driveDistance(-19,10);
-    facePID(-24,-70,p,i,d);
+    facePID(-25,-70,p,i,d);
     intake(inward);
     eject(2);
-    adaptiveDrive(-23,-70,0.2,8,0.7,5.0,1.0,250,10000);
+    adaptiveDrive(-27,-70,0.2,8,0.7,5.0,1.0,250,10000);
     driveDistance(-11,10);
     facePID(-100,robotY,p,i,d);
     driveDistance(26,10);
@@ -463,19 +470,21 @@ void autonomous()
     delayDriveSmooth(400,7.2,0.3,fwd);
     reset(2);
     super_macro(2,1);  // SCORE 7TH GOAL
+    intake(outward);
     driveDistance(-20,10);
     facePID(25,-48,p,i,d);
     intake(inward);
     eject(1);
     driveDistance(calcDistance(25,-48)+3,10);
+    driveDistance(-12,10);
     facePID(0,-39,p,i,d);
-    delayDriveSmooth(1100,7.2,0.3,fwd);
-    driveDistance(-10,8);
+    delayDriveSmooth(850,7.3,0.4,fwd);
+    driveDistance(-10,10);
     intake(stop);
-    facePID(-3,-72,p,i,d);
+    facePID(-9,-72,p,i,d);
     delayDriveSmooth(1400,7.2,0.3,fwd);
     super_macro(2,2);
-    driveDistance(-20,8);
+    driveDistance(-20,10);
     facePID(72,-24,p,i,d);
     eject(2);
     intake(inward);

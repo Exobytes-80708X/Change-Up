@@ -19,6 +19,7 @@ extern void adaptiveDrive_reversed(double x, double y, double maxV);
 extern void face(double x, double y);
 extern void face(double theta);
 extern void driveDistance(double distance, double maxV);
+extern void driveDistance2(double distance, double accel, double minV, double maxV, double distkP, double anglekP, int settleTime, int timeout);
 extern void delayDrive(int ms, double vel);
 extern void delayTurn(int ms, double velL, double velR);
 extern void delayFacePID(double, bool, double, double, double, double, int, int, int);
