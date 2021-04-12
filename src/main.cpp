@@ -16,6 +16,8 @@ int *blueEnd = blue + blueSize;
 
 vpdb goals;
 
+double start_theta = 0.0;
+
 void initialize()
 {
   imu.reset();
@@ -256,9 +258,8 @@ void autonomous()
     case 1: //red auton
 
     case 2: //blue auton
-      robotTheta = M_PI/2;
-      //robotX = 12.0;
-      //robotY = 6.0;
+      //robotTheta = M_PI/2;
+      start_theta = M_PI/2;
       intake(inward);
       pointTurn(0,300,135,false,40,i,d);
       // xPts1.push_back(robotX);
@@ -348,72 +349,80 @@ void autonomous()
     break;
 
     case 3:
-    robotTheta = 1.09694499; //M_PI/3;
+    start_theta = 1.09694499; //M_PI/3;
     conveyorState = 7;
     topConveyor.move_velocity(600);
     pros::delay(400);
-    conveyorState = 0;
+    conveyorState = 0; //lift hood, shoot ball into goal
     intake(inward);
     startXPts.push_back(robotX);
     startYPts.push_back(robotY);
 
-    startXPts.push_back(24);
+    startXPts.push_back(24); //set points for pure pursuit
     startYPts.push_back(10);
 
     startXPts.push_back(46);
     startYPts.push_back(19);
 
-    purePursuit(24,0,startXPts,startYPts,8,0.5,12.0,5000);
+    purePursuit(24,0,startXPts,startYPts,8,0.5,12.0,5000); //pure pursuit, pick 2 balls
 
     driveDistance(-16,8);
     intake(stop);
 
-    facePID(59,-7,p,i,d);
+    facePID(59,-7,p,i,d); //face goal
     delayDriveSmooth(1050,7.2,0.3,fwd);
     super_macro(2, 2); // SCORE FIRST GOAL
     intake(outward);
     driveDistance(-20,8);
-    facePID(22,54,p,i,d);
+    facePID(16,60,p,i,d); //face ball for middle goal
     intake(inward);
     eject(2);
 
-    driveDistance(calcDistance(18,50)+9,8);
-    driveDistance(-2,8);
-    facePID(-12,64,p,i,d);
+    driveDistance(calcDistance(16,60)+3,9);
+    driveDistance(-5,8);
+    facePID(-12,60,p,i,d); //face middle goal
     driveUntilStopped(3000);
     while(!thirdBall)
       pros::delay(10);
     super_macro(1,1);    // SCORE 2ND GOAL (MIDDLE)
     driveDistance(-15,8);
     facePID(40,0,p,i,d);
-    release(3);
-    facePID(60,56,p,i,d);
+    release(3); //spit middle balls out
+    facePID(60,56,p,i,d); //face 3rd goal (right side)
     intake(inward);
-    delayDriveSmooth(1300, 7,0.25, fwd);
+    delayDriveSmooth(1300, 7, 0.25, fwd);
     while(!firstBall)
       pros::delay(10);
-    super_macro(1,0);  // score THIRD GOAL.
+    super_macro(1,0);  // score THIRD GOAL
     intake(outward);
-    robotTheta = 1.09694499 + imu.get_heading()*M_PI/180.0;  //imu heading in radians
     reset(0);
-    driveDistance(-20,8);
+    driveDistance(-20,8); //back out from goal
     intake(inward);
-    facePID(-21,50,p,i,d);
+    facePID(-22,50,p,i,d); //face flaoting ball for 4th goal (right corner)
     eject(1);
-    driveDistance(calcDistance(-21,50),8);
+    driveDistance(calcDistance(-21,50),8); //intake floating ball
     driveDistance(-20,8);
     //driveDistance(-,9);
-    facePID(0,37,p,i,d);
+    facePID(0,37,p,i,d); //face wall ball
     driveDistance(calcDistance(0,32)-2,8);
+    driveDistance(-20,8); //get wall ball and drive back
+    intake(stop);
+    facePID(10,68,p,i,d); //face 5th goal (right corner)
+    driveDistance(calcDistance(10,68)-16,8);
+    delayDriveSmooth(500, 7.2, 0.25, fwd);
+    super_macro(2,2); //score FIFTH GOAL
+    intake(outward);
     driveDistance(-20,8);
-    facePID(8,68,p,i,d);
-    driveDistance(calcDistance(8,68)-7,8);
-    delayDriveSmooth(1100, 7.2, 0.25, fwd);
-    super_macro(2,2);
-    driveDistance(-20,8);
-    facePID(-68,32,p,i,d);
+    //facePID(-62,28,p,i,d); //face ball for 6th goal (far middle)
+    intake(inward);
     eject(2);
-    driveDistance(calcDistance(-68,32),7);
+    adaptiveDrive(-62,28,0.2,8,0.7,5.0,1.0,250,10000);
+    //driveDistance(calcDistance(-62,28),9);
+    driveDistance(-6,8);
+    facePID(-62,68,p,i,d);
+    delayDriveSmooth(1000, 9, 0.3, fwd);
+    super_macro(1,1); //score FIFTH GOAL
+    driveDistance(-10,8);
     break;
 //////////////////////////////////////////////////////////////////////
     case 69: // old skills auton

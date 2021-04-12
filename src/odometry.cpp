@@ -120,7 +120,7 @@ void thread_Odometry_old(void*param) //LINE-BASED 3 WHEELS
 
 void thread_Odometry(void*p) //ARC-BASED 3 WHEELS
 {
-  const double W = 7.0;//7.0; //inches
+  const double W = 6.9;//7.0; //inches
   const double L = 4.00; //inches
 
   double dX;
@@ -151,9 +151,10 @@ void thread_Odometry(void*p) //ARC-BASED 3 WHEELS
   int rightReset = right.reset();
   int midReset = middle.reset();
   pros::delay(200);
-
+  std::uint32_t t;
   while(true)
   {
+    t = pros::millis();
     cR = right.get()/360.0*WHEEL_CIRCUMFERENCE; //convert to inches
     cL = left.get()/360.0*WHEEL_CIRCUMFERENCE;
     cM = middle.get()/360.0*WHEEL_CIRCUMFERENCE;
@@ -169,13 +170,12 @@ void thread_Odometry(void*p) //ARC-BASED 3 WHEELS
     pM = cM;
     pIMU = cIMU;
 
-    //dTheta = (dL - dR)/W;
-
     if(fabs(dIMU) > M_PI) {
       dIMU = 2*M_PI*(dIMU/fabs(dIMU)) - dIMU;
     }
 
     dTheta = dIMU;
+    //dTheta = (dL - dR)/W;
 
     avgTheta = robotTheta + dTheta/2.0;
     avgTheta = fmod(avgTheta, 2*M_PI);
@@ -194,6 +194,7 @@ void thread_Odometry(void*p) //ARC-BASED 3 WHEELS
 
     robotX += dX;
     robotY += dY;
+    robotTheta = cIMU + start_theta;
     robotTheta += dTheta;
     robotTheta = fmod(robotTheta, 2*M_PI);
     if(robotTheta < 0) robotTheta += 2*M_PI;
@@ -201,7 +202,7 @@ void thread_Odometry(void*p) //ARC-BASED 3 WHEELS
     updateValueLabel(xValue,robotX, "IN",3);
     updateValueLabel(yValue,robotY, "IN",3);
     updateValueLabel(thetaValue,robotTheta*180/M_PI,"DEG",3);
-    pros::delay(10);
+    pros::Task::delay_until(&t,10);
   }
 }
 // =============================================== math ===============================================================

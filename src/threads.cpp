@@ -210,7 +210,7 @@ void thread_sensors_v2(void*p)
       blue_counter = 0;
     }
 
-    if(botDetector_low.get() < 10)
+    if(botDetector_low.get() < 20)
       botBall_low = true;
     else botBall_low = false;
 
