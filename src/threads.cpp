@@ -178,7 +178,7 @@ void thread_sensors_v2(void*p)
       topBall_low = true;
     else topBall_low = false;
 
-    if(botDetector_high2.get_proximity() > 100) {
+    if(botDetector_high.get_proximity() > 100) {
       botBall = true;
       if(botDetector_high.get_hue() > 100 || botDetector_high2.get_hue() > 100) {
         blue_counter += 1;
@@ -290,11 +290,12 @@ void countBalls(int numOfBalls)
     fi = true;
     return;
   }
-  int timeOut = 500;
+  int timeOut = 1000;
   int timer = 0;
-  botConveyor.move_velocity(600);
   while(topBall_high)
     pros::delay(10);
+  botConveyor.move_velocity(600);
+  updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,1.5,"",1);
   while(!topBall_high) {
     pros::delay(10);
     timer += 10;
@@ -319,6 +320,7 @@ void countBalls(int numOfBalls)
         }
       }
     }
+    updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,2,"",0);
   }
   fi = true;
 }
@@ -428,7 +430,8 @@ void shooting_macro(int numOfBalls)
 
   topConveyor.move_velocity(600);
   botConveyor.move_velocity(0);
-  pros::delay(200);
+  updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,1,"",0);
+  while(topBall_high) pros::delay(10);
   countBalls(numOfBalls-1);
   pros::delay(200);
   topConveyor.move_velocity(0);
