@@ -452,17 +452,17 @@ void autonomous()
     intake(stop);
     facePID(8,68,p,i,d); //face 5th goal (right corner)
     driveDistance(calcDistance(10,68)-18,10);
-    delayDriveSmooth(350, 7.2, 0.25, fwd);
+    delayDriveSmooth(400, 7.2, 0.25, fwd);
     super_macro(2,2); //score FIFTH GOAL
     intake(outward);
     driveDistance(-20,10);
     //facePID(-62,28,p,i,d); //face ball for 6th goal (far middle)
     intake(inward);
     eject(2);
-    adaptiveDrive(-64,26,0.2,8.,0.7,5.0,1.0,250,10000);
+    adaptiveDrive(-64,29,0.2,8.,0.7,5.0,1.0,250,10000);
     //driveDistance(calcDistance(-62,28),9);
     driveDistance(-6,10);
-    facePID(-62,68,p,i,d);
+    facePID(-64,68,p,i,d);
     delayDriveSmooth(1000, 9, 0.3, fwd);
     reset(1);
     super_macro(1,1); //score FIFTH GOAL
@@ -473,10 +473,10 @@ void autonomous()
     skills2ndY.push_back(robotY);
 
     skills2ndX.push_back(-36); //set points for pure pursuit
-    skills2ndY.push_back(-14.4);
+    skills2ndY.push_back(-16);
 
     skills2ndX.push_back(-44); //set points for pure pursuit
-    skills2ndY.push_back(-11);
+    skills2ndY.push_back(-13);
 
     skills2ndX.push_back(-56);
     skills2ndY.push_back(-4);
@@ -511,7 +511,7 @@ void autonomous()
     //facePID(25,-48,p,i,d);
     intake(inward);
     eject(countHeldBalls());
-    adaptiveDrive(25,-48,0.2,8,0.7,5.0,1.0,250,10000);
+    adaptiveDrive(25,-46,0.2,8,0.7,7.0,1.0,250,10000);
     //driveDistance(calcDistance(25,-48)+3,10);
     driveDistance(-12,10);
     facePID(0,-39,p,i,d);
@@ -531,6 +531,7 @@ void autonomous()
     intake(stop);
     delayDriveSmooth(1400,8,0.32,fwd);
     super_macro(1,1);
+    intake(outward);
     driveDistance(-30,10);
 
 
