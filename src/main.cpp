@@ -378,7 +378,7 @@ void autonomous()
     driveDistance(-20,10);
     facePID(16,60,p,i,d); //face ball for middle goal
     intake(inward);
-    eject(2);
+    eject(countHeldBalls());
 
     driveDistance(calcDistance(16,60)+3,9);
     driveDistance(-7,10);
@@ -390,7 +390,7 @@ void autonomous()
     intake(outward);
     driveDistance2(-10,0.7,3,10,0.8,1,250,5000);
     facePID(40,0,p,i,d);
-    release(3); //spit middle balls out
+    release(countHeldBalls()); //spit middle balls out
     facePID(60,56,p,i,d); //face 3rd goal (right side)
     intake(inward);
     delayDriveSmooth(1300, 7, 0.25, fwd);
@@ -405,7 +405,7 @@ void autonomous()
     driveDistance(-20,10); //back out from goal
     intake(inward);
     facePID(-25,50,p,i,d); //face flaoting ball for 4th goal (right corner)
-    eject(1);
+    eject(countHeldBalls());
     driveDistance(calcDistance(-21,50)-8,10); //intake floating ball
     driveDistance(-14,10);
     //driveDistance(-,9);
@@ -445,7 +445,7 @@ void autonomous()
     skills2ndX.push_back(-56);
     skills2ndY.push_back(-4);
     intake(inward);
-    eject(1);
+    eject(countHeldBalls());
     purePursuit(24,0,skills2ndX,skills2ndY,8,0.5,12.0,5000);
     intake(stop);
     delayDriveSmooth(200,7.5,0.3,fwd);
@@ -461,7 +461,7 @@ void autonomous()
     //driveDistance(-19,10);
     facePID(-25,-70,p,i,d);
     intake(inward);
-    eject(2);
+    eject(countHeldBalls());
     adaptiveDrive(-27,-70,0.2,8,0.7,5.0,1.0,250,10000);
     driveDistance(-11,10);
     facePID(-100,robotY,p,i,d);
@@ -474,7 +474,7 @@ void autonomous()
     driveDistance(-20,10);
     facePID(25,-48,p,i,d);
     intake(inward);
-    eject(1);
+    eject(countHeldBalls());
     driveDistance(calcDistance(25,-48)+3,10);
     driveDistance(-12,10);
     facePID(0,-39,p,i,d);
@@ -486,7 +486,7 @@ void autonomous()
     super_macro(2,2);
     driveDistance(-20,10);
     facePID(72,-24,p,i,d);
-    eject(2);
+    eject(countHeldBalls());
     intake(inward);
     driveDistance(calcDistance(72,-24)+2,8);
     driveDistance(-4,8);

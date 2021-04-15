@@ -352,34 +352,6 @@ void countReleaseBalls(int numOfBalls)
   }
 }
 
-// void countIntakeBalls(int numOfBalls)
-// {
-//   int timer=0;
-//   while(botBall_low){
-//        pros::delay(10);
-//   }
-//   for(int n = 0; n < numOfBalls; n++) {
-//     timer = 0;
-//     while(!botBall_low) {
-//       timer+=10;
-//       pros::delay(10);
-//       if(timer > 2500){
-//         return;
-//       }
-//     }
-//     timer = 0;
-//     if(n != numOfBalls-1) {
-//       while(botBall_low) {
-//         timer+=10;
-//         pros::delay(10);
-//         if(timer > 2500) {
-//           return;
-//         }
-//       }
-//     }
-//   }
-// }
-
 void countIntakeBalls(int numOfBalls)
 {
   int timer=0;
@@ -423,14 +395,25 @@ void shooting_macro(int numOfBalls)
   if(!driverControl)
     conveyorState = 7;
   if(!firstBall) {
-    if(!driverControl)
-      conveyorState = 0;
+    // if(!driverControl)
+    //   conveyorState = 0;
+    topConveyor.move_velocity(600);
+    botConveyor.move_velocity(600);
+    int timer = 0;
+    while(!topBall_high) {
+      timer+=10;
+      pros::delay(10);
+      if(timer > 2500) {
+        return;
+      }
+    }
     return;
   }
-
-  topConveyor.move_velocity(600);
-  botConveyor.move_velocity(0);
-  updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,99,"",0);
+  else {
+    topConveyor.move_velocity(600);
+    botConveyor.move_velocity(0);
+    updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,99,"",0);
+  }
   while(topBall_high) pros::delay(10);
   countBalls(numOfBalls-1);
   pros::delay(200);
@@ -733,9 +716,11 @@ void thread_subsystems(void* p)
         idleConveyor(600);
         break;
       case 1: //shooting manually
-        topConveyor.move_voltage(12000);
-        botConveyor.move_velocity(0);
-        pros::delay(400);
+        if(firstBall) {
+          topConveyor.move_voltage(12000);
+          botConveyor.move_velocity(0);
+          pros::delay(400);
+        }
         while(conveyorState == shooting) {
           if( r_r != redEnd || r_b != blueEnd ) {
             if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
@@ -758,7 +743,7 @@ void thread_subsystems(void* p)
         ejectState = countHeldBalls();
         while(conveyorState == 2) {
           switch(ejectState) {
-            case 0:
+            case int(-1E9)...0:
               topConveyor.move_velocity(-600);
               botConveyor.move_velocity(600);
               break;
