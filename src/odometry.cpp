@@ -400,7 +400,8 @@ void driveVector(double currentSpeed, double angleSpeed, double maxV)
 	rightDrive.moveVoltage(rightSpeed);
 }
 
-void driveDistance(double distance, double accel, double minV, double maxV, double distkP, double anglekP, int settleTime, int timeout)
+//OLD
+void driveDistance(double distance, double accel, double minV, double maxV, double distkP, double anglekP, int settleTime, int timeout) //OLD
 {
   /*
   Arguments:
