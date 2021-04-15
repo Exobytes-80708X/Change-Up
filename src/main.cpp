@@ -388,9 +388,9 @@ void autonomous()
       pros::delay(10);
     super_macro(1,1);    // SCORE 2ND GOAL (MIDDLE)
     intake(outward);
-    driveDistance2(-10,0.7,3,10,0.8,1,250,5000);
+    driveDistance2(-10,0.9,3,10,0.8,1,250,5000);
     facePID(40,0,p,i,d);
-    release(countHeldBalls()); //spit middle balls out
+    release(3); //spit middle balls out
     facePID(60,56,p,i,d); //face 3rd goal (right side)
     intake(inward);
     delayDriveSmooth(1300, 7, 0.25, fwd);
@@ -400,13 +400,16 @@ void autonomous()
     super_macro(1,0);  // score THIRD GOAL
     while(firstBall)
       pros::delay(10);
-    pros::delay(100);
+    pros::delay(400);
     intake(outward);
     driveDistance(-20,10); //back out from goal
     intake(inward);
-    facePID(-25,50,p,i,d); //face flaoting ball for 4th goal (right corner)
+    //facePID(-25,50,p,i,d); //face flaoting ball for 4th goal (right corner)
     eject(countHeldBalls());
-    driveDistance(calcDistance(-21,50)-8,10); //intake floating ball
+
+    adaptiveDrive(-27,48,0.2,8,0.7,7.0,1.0,250,10000);
+    //adaptiveDrive(-21,50,7.75);
+    //driveDistance(calcDistance(-21,50)-8,10); //intake floating ball
     driveDistance(-14,10);
     //driveDistance(-,9);
     facePID(0,37,p,i,d); //face wall ball
@@ -448,7 +451,7 @@ void autonomous()
     eject(countHeldBalls());
     purePursuit(24,0,skills2ndX,skills2ndY,8,0.5,12.0,5000);
     intake(stop);
-    delayDriveSmooth(200,7.5,0.3,fwd);
+    delayDriveSmooth(500,7.5,0.3,fwd);
     while(!firstBall)
       pros::delay(10);
     super_macro(1,2); // score 6th goals
@@ -472,10 +475,11 @@ void autonomous()
     super_macro(2,1);  // SCORE 7TH GOAL
     intake(outward);
     driveDistance(-20,10);
-    facePID(25,-48,p,i,d);
+    //facePID(25,-48,p,i,d);
     intake(inward);
     eject(countHeldBalls());
-    driveDistance(calcDistance(25,-48)+3,10);
+    adaptiveDrive(25,-48,9);
+    //driveDistance(calcDistance(25,-48)+3,10);
     driveDistance(-12,10);
     facePID(0,-39,p,i,d);
     delayDriveSmooth(850,7.3,0.4,fwd);
