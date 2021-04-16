@@ -745,7 +745,7 @@ void facePID(double x, double y, bool reversed, double maxV, double kP, double k
 
 void facePID(double x, double y, double kP,double kI, double kD)
 {
-  facePID(x, y, false, 8, kP, kI, kD, 200, 5000);
+  facePID(x, y, false, 8, kP, kI, kD, 100, 5000);
 }
 
 void facePID(double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout){
@@ -820,7 +820,7 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
 
 void facePID(double theta, double kP, double kI, double kD)
 {
-  facePID(theta, false, 8, kP,kI,kD, 200, 10000);
+  facePID(theta, false, 8, kP,kI,kD, 100, 10000);
 }
 
 void pointTurn(int side, int oppRPM, double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout)
