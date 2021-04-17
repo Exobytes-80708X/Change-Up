@@ -141,8 +141,10 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
   maxV *= 1000;
   timekP *= 1000;
   anglekP *= 1000;
+  int timer = 0;
 
-  while(settleTimer < 200) {
+  while(settleTimer < 200 && timer < timeout) {
+    timer += 10;
     adaptRadius = minRadius;
     distanceTraveled += calcDistance(prevX,prevY);
     distToEnd = calcDistance(xPts[SIZE-1],yPts[SIZE-1]);
