@@ -75,6 +75,10 @@ void release(int n)
   conveyorState = 0;
 }
 
+void release_thread(void* p) {
+  release(1);
+}
+
 
 void shoot(int a){
     conveyorState = 3;
@@ -188,8 +192,10 @@ void autonomous()
   pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task f (asynchShoot, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task a (intake_delay, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task r (release_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   f.suspend();
   a.suspend();
+  r.suspend();
   pros::delay(200);
   isRobotDisabled = false;
   driverControl = false;
@@ -247,24 +253,15 @@ void autonomous()
   // }
   switch(auton) {
     case 0: //no auton
-    pros::delay(2000);
-    intake(inward);
-    if(thirdBall)
-      shooting_macro(1);
-    if(secondBall)
-      super_macro(1,1);
-    if(firstBall)
-      super_macro(1,2);
-    intake(stop);
-      break;
+    pointTurn(0,300,135,false,40,i,d);
 
     case 1: //red auton
 
     case 2: //blue auton
       //robotTheta = M_PI/2;
-      start_theta = M_PI/2;
+      start_theta = 3*M_PI/2;
       intake(inward);
-      pointTurn(0,300,135,false,40,i,d);
+      pointTurn(1,100,225,false,40,i,d);
       // xPts1.push_back(robotX);
       // yPts1.push_back(robotY);
       // xPts1.push_back(24*sin(robotTheta));
@@ -285,9 +282,9 @@ void autonomous()
       //shooting_macro(2);
       //pros::delay(200);
       intake(outward);
-      adaptiveDrive_reversed(-36,16,9.5);
+      adaptiveDrive_reversed(36,16,9.5);
       //shooting_macro(1); //shoot oppposite ball
-      f.resume();
+      //f.resume();
       facePID(180,p,i,d);
       intake(inward);
       delayDrive(800,9000);
@@ -322,11 +319,11 @@ void autonomous()
       xPts.push_back(robotX);
       yPts.push_back(robotY);
 
-      xPts.push_back(-80);
+      xPts.push_back(80);
       yPts.push_back(robotY);
 
-      xPts.push_back(-96);
-      yPts.push_back(-2);
+      xPts.push_back(93);
+      yPts.push_back(0);
 
       purePursuit(24,0,xPts,yPts,8,0.5,12.0,5000);
 
