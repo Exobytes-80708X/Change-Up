@@ -330,7 +330,7 @@ void countReleaseBalls(int numOfBalls)
   int timer=0;
   for(int n = 0; n < numOfBalls; n++) {
     timer = 0;
-    while(botBall_low) {
+    while(!botBall_low) {
       timer+=10;
       pros::delay(10);
       if(timer > 2500){
@@ -342,7 +342,7 @@ void countReleaseBalls(int numOfBalls)
       pros::delay(500);
       continue;
     }
-    while(!botBall_low) {
+    while(botBall_low) {
       timer+=10;
       pros::delay(10);
       if(timer > 2500) {

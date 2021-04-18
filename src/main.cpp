@@ -76,6 +76,7 @@ void release(int n)
 }
 
 void release_thread(void* p) {
+  pros::delay(750);
   release(1);
 }
 
@@ -253,13 +254,16 @@ void autonomous()
   // }
   switch(auton) {
     case 0: //no auton
-    pointTurn(0,300,135,false,40,i,d);
+    r.resume();
+    pros::delay(10000);
+    break;
 
     case 1: //red auton
 
     case 2: //blue auton
       //robotTheta = M_PI/2;
       start_theta = 3*M_PI/2;
+      pros::delay(250);
       intake(inward);
       pointTurn(1,100,225,false,40,i,d);
       // xPts1.push_back(robotX);
@@ -282,6 +286,7 @@ void autonomous()
       //shooting_macro(2);
       //pros::delay(200);
       intake(outward);
+      r.resume();
       adaptiveDrive_reversed(36,16,9.5);
       //shooting_macro(1); //shoot oppposite ball
       //f.resume();
@@ -319,13 +324,13 @@ void autonomous()
       xPts.push_back(robotX);
       yPts.push_back(robotY);
 
-      xPts.push_back(80);
+      xPts.push_back(70);
       yPts.push_back(robotY);
 
-      xPts.push_back(93);
+      xPts.push_back(94);
       yPts.push_back(0);
 
-      purePursuit(24,0,xPts,yPts,8,0.5,12.0,5000);
+      purePursuit(24,0,xPts,yPts,8,0.8,8.0,5000);
 
       delayDrive(500,8000);
       //driveUntilStopped(8000);
