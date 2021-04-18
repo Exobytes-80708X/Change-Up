@@ -207,7 +207,7 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     if(distError < 6.0 && minRadius > 6.0)
       angleError = 0;
 
-    if(distError < 2.0 || fabs(angleError) > 85.0*M_PI/180.0) settleTimer += 10;
+    if(distError < 2.0 || (fabs(angleError) > 85.0*M_PI/180.0 &&  currentTime > SIZE-1.2)) settleTimer += 10;
     else settleTimer = 0;
 
     fwdSpeed = distError*timekP*cos(angleError); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down
@@ -223,6 +223,144 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     updateVarLabel(debugLabel3,"FWD_SPEED",debugValue3,fwdSpeed,"mV",3);
     updateVarLabel(debugLabel4,"C_TIME",debugValue4,currentTime,"",3);
     updateVarLabel(debugLabel5,"FOLLOW X",debugValue5,followX,"IN",3);
+    updateVarLabel(debugLabel6,"FOLLOW Y",debugValue6,followY,"IN",3);
+
+    driveVector(fwdSpeed,angleSpeed,maxV);
+    pros::delay(10);
+  }
+  rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	rightDrive.moveVelocity(0);
+  leftDrive.moveVelocity(0);
+}
+
+void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, db anglekP, db finAnglekP, int timeout)
+{
+  int SIZE = xPts.size();
+  db END_TIME = SIZE-1;
+  db currentTime = 0;
+  db distError;
+  db angleError;
+  db prevDistError = distError;
+
+  db derivative;
+
+  db fwdSpeed;
+  db angleSpeed;
+
+  int settleTimer = 0;
+  int timeOutTimer = 0;
+
+  pdb followPoint;
+  dpdb data;
+
+  db followX;
+  db followY;
+
+  db prevX = robotX;
+  db prevY = robotY;
+
+  db distanceTraveled = 0.0;
+  db distToEnd;
+
+  db adaptRadius = minRadius;
+
+  db x0;
+  db y0;
+  db a;
+  db b;
+  dpdb r_data;
+  db d;
+  pdb point;
+
+  maxV *= 1000;
+  timekP *= 1000;
+  anglekP *= 1000;
+  int timer = 0;
+
+  while(settleTimer < 200 && timer < timeout) {
+    timer += 10;
+    adaptRadius = minRadius;
+    distanceTraveled += calcDistance(prevX,prevY);
+    distToEnd = calcDistance(xPts[SIZE-1],yPts[SIZE-1]);
+    prevX = robotX;
+    prevY = robotY;
+
+    //updateVarLabel(debugLabel3,"RADIUS",debugValue3,adaptRadius,"IN",3);
+    data = findFurthestPoint(xPts,yPts,adaptRadius);
+    currentTime = data.first;
+    //updateVarLabel(debugLabel1,"TIME",debugValue1,currentTime,"",3);
+    //updateVarLabel(debugLabel2,"B",debugValue2,b,"IN",3);
+    //updateVarLabel(debugLabel3,"X_l",debugValue3,x0,"IN",3);
+    //updateVarLabel(debugLabel4,"Y_l",debugValue4,y0,"IN",3);
+
+    if(currentTime == -1) { //if robot radius has no intersection
+      db minDistance = 1000000000;
+      db minTime = SIZE+1;
+      for(int i = 0; i < SIZE-1; i++) {
+        x0 = xPts[i];
+        y0 = yPts[i];
+        a = xPts[i+1] - x0;
+        b = yPts[i+1] - y0;
+        r_data = shortestRforIntersect(robotX,robotY,x0,y0,a,b);
+        point = r_data.second;
+        d = calcDistance(robotX,robotY,point.first,point.second);
+        if (d < minDistance) {
+          minDistance = d;
+          minTime = i;
+        }
+      }
+      adaptRadius = minDistance;
+      //currentTime = minTime;
+    }
+    data = findFurthestPoint(xPts,yPts,adaptRadius);
+    currentTime = data.first;
+    followPoint = data.second;
+    followX = followPoint.first;
+    followY = followPoint.second;
+    //updateVarLabel(debugLabel5,"FOLLOW X",debugValue5,followX,"IN",3);
+    //updateVarLabel(debugLabel6,"FOLLOW Y",debugValue6,followY,"IN",3);
+    //updateVarLabel(debugLabel6,"TIME",debugValue6,currentTime,"",0);
+
+    if(distToEnd < adaptRadius) { //end point is within radius of robot
+        adaptRadius = distToEnd; //shrink radius with distance to endPoint
+        followX = xPts[SIZE-1];
+        followY = yPts[SIZE-1];
+
+        distError = adaptRadius;
+        angleError = calcAngleError(followX,followY);
+    }
+    else {
+      adaptRadius = calcDistance(followX,followY); //shrink adaptRadius based on  distance to closest intersection until it is less than minRadius
+      if(adaptRadius < minRadius)
+        adaptRadius = minRadius;
+
+        distError = findDistError(xPts,yPts,currentTime,adaptRadius);
+        angleError = calcAngleError(followX,followY);
+    }
+
+    if(distError < 6.0 && minRadius > 6.0)
+      angleError = 0;
+
+    if(int(currentTime) == SIZE-2)
+      anglekP = finAnglekP;
+
+    if(distError < 2.0 || (fabs(angleError) > 85.0*M_PI/180.0 && currentTime > SIZE-1.2)) settleTimer += 10;
+    else settleTimer = 0;
+
+    fwdSpeed = distError*timekP*cos(angleError); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down
+    angleSpeed = angleError*anglekP;
+
+    if(fabs(fwdSpeed) > maxV) fwdSpeed = maxV*fwdSpeed/fabs(fwdSpeed);
+
+    derivative = distError - prevDistError;
+    prevDistError = distError;
+
+    updateVarLabel(debugLabel1,"RADIUS",debugValue1,adaptRadius,"IN",3);
+    updateVarLabel(debugLabel2,"SIZE",debugValue2,SIZE,"DEG",3);
+    updateVarLabel(debugLabel3,"C_TIME",debugValue3,currentTime,"mV",3);
+    updateVarLabel(debugLabel4,"C_TIME INT",debugValue4,int(currentTime),"",3);
+    updateVarLabel(debugLabel5,"SIZE",debugValue5,SIZE,"IN",3);
     updateVarLabel(debugLabel6,"FOLLOW Y",debugValue6,followY,"IN",3);
 
     driveVector(fwdSpeed,angleSpeed,maxV);

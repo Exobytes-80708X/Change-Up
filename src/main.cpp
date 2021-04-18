@@ -76,7 +76,7 @@ void release(int n)
 }
 
 void release_thread(void* p) {
-  pros::delay(750);
+  pros::delay(250);
   release(1);
 }
 
@@ -263,7 +263,11 @@ void autonomous()
     case 2: //blue auton
       //robotTheta = M_PI/2;
       start_theta = 3*M_PI/2;
+      conveyorState = 7;
+      topConveyor.move_velocity(0);
+      botConveyor.move_velocity(100);
       pros::delay(250);
+      conveyorState = 0;
       intake(inward);
       pointTurn(1,100,225,false,40,i,d);
       // xPts1.push_back(robotX);
@@ -325,12 +329,12 @@ void autonomous()
       yPts.push_back(robotY);
 
       xPts.push_back(70);
-      yPts.push_back(robotY);
+      yPts.push_back(20);
 
       xPts.push_back(94);
       yPts.push_back(0);
 
-      purePursuit(24,0,xPts,yPts,8,0.8,8.0,5000);
+      purePursuit(24,0,xPts,yPts,8,0.8,5.0,10.0,5000);
 
       delayDrive(500,8000);
       //driveUntilStopped(8000);
@@ -379,7 +383,7 @@ void autonomous()
     super_macro(2, 2); // SCORE SECOND GOAL
     intake(outward);
     driveDistance(-20,10);
-    facePID(16,60,p,i,d); //face ball for middle goal
+    facePID(14,60,p,i,d); //face ball for middle goal
     intake(inward);
     eject(countHeldBalls());
 
@@ -487,7 +491,7 @@ void autonomous()
     //facePID(-25,-70,p,i,d);
     intake(inward);
     eject(countHeldBalls());
-    adaptiveDrive(-29,-70,0.2,8,0.7,5.0,1.0,250,10000); //ball for EIGHTH (left side)
+    adaptiveDrive(-26.5,-70,0.2,8,0.7,5.0,1.0,250,10000); //ball for EIGHTH (left side)
     driveDistance(-8,10);
     facePID(-100,-65,p,i,d);
     driveDistance(26,10);
@@ -500,7 +504,7 @@ void autonomous()
     //facePID(25,-48,p,i,d);
     intake(inward);
     eject(countHeldBalls());
-    adaptiveDrive(25,-48,0.2,8,0.7,7.0,1.0,250,10000); //ball for 9th goal (left near corner)
+    adaptiveDrive(27,-48,0.2,8,0.7,7.0,1.0,250,10000); //ball for 9th goal (left near corner)
     //driveDistance(calcDistance(25,-48)+3,10);
     //driveDistance(-12,10);
     facePID(0,-39,p,i,d);

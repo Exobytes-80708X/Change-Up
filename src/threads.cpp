@@ -699,7 +699,6 @@ void thread_subsystems(void* p)
           if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
             if (firstBall) {
               topBall_task.resume();
-              topConveyor.move_velocity(0);
               botConveyor.move_velocity(300);
               waitForBallToEject();
               topBall_task.suspend();
@@ -726,11 +725,14 @@ void thread_subsystems(void* p)
           if( r_r != redEnd || r_b != blueEnd ) {
             if( (r_r != redEnd && optical_state == BLUE_BALL) || (r_b != blueEnd && optical_state == RED_BALL) ) {
               if(firstBall) {
-                topConveyor.move_voltage(12000);
-                botConveyor.move_velocity(0);
-                pros::delay(200);
+                topBall_task.resume();
+                botConveyor.move_velocity(300);
+                waitForBallToEject();
+                topBall_task.suspend();
               }
               topConveyor.move_voltage(-12000);
+              botConveyor.move_velocity(0);
+              pros::delay(100);
               botConveyor.move_velocity(300);
               waitForBallToEject();
             }
