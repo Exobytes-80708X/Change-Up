@@ -1,9 +1,9 @@
 #include "main.h"
 
-okapi::Motor ld_1(3,true,okapi::AbstractMotor::gearset::blue,okapi::AbstractMotor::encoderUnits::counts);
-okapi::Motor ld_2(7,true,okapi::AbstractMotor::gearset::blue,okapi::AbstractMotor::encoderUnits::counts);
-okapi::Motor rd_1(2,false,okapi::AbstractMotor::gearset::blue,okapi::AbstractMotor::encoderUnits::counts);
-okapi::Motor rd_2(6,false,okapi::AbstractMotor::gearset::blue,okapi::AbstractMotor::encoderUnits::counts);
+okapi::Motor ld_1(3,true,okapi::AbstractMotor::gearset::green,okapi::AbstractMotor::encoderUnits::counts);
+okapi::Motor ld_2(7,true,okapi::AbstractMotor::gearset::green,okapi::AbstractMotor::encoderUnits::counts);
+okapi::Motor rd_1(2,false,okapi::AbstractMotor::gearset::green,okapi::AbstractMotor::encoderUnits::counts);
+okapi::Motor rd_2(6,false,okapi::AbstractMotor::gearset::green,okapi::AbstractMotor::encoderUnits::counts);
 
 okapi::MotorGroup leftDrive({ld_1,ld_2});
 okapi::MotorGroup rightDrive({rd_1,rd_2});

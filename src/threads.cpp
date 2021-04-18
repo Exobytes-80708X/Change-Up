@@ -413,13 +413,7 @@ void shooting_macro(int numOfBalls)
     botConveyor.move_velocity(0);
     updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,99,"",0);
     int timer = 0;
-    while(!topBall_high) {
-      timer+=10;
-      pros::delay(10);
-      if(timer > 2500) {
-        return;
-      }
-    }
+    pros::delay(200);
   }
   while(topBall_high) pros::delay(10);
   countBalls(numOfBalls-1);
