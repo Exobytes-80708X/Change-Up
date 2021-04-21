@@ -1299,8 +1299,8 @@ void delayDrive(int ms,double vel){
   leftDrive.moveVoltage(0);
 }
 
-bool fwd = true;
-bool rev = false;
+bool fwd = false;
+bool rev = true;
 void delayDriveSmooth(int duration, double maxV, double accel, bool dir) {
   int t1 = pros::millis();
   int t2 = t1 + duration/2;
