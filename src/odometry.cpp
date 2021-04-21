@@ -1308,14 +1308,19 @@ void delayDriveSmooth(int duration, double maxV, double accel, bool dir) {
   maxV *= 1000;
   accel *= 1000;
   double currentSpeed = 0.0;
+  double appliedSpeed;
   while(pros::millis() < t2) {
     currentSpeed += accel;
     if(currentSpeed > maxV)
       currentSpeed = maxV;
-    if(dir == rev) currentSpeed *= -1;
 
-    rightDrive.moveVoltage(currentSpeed);
-    leftDrive.moveVoltage(currentSpeed);
+    if(dir == false)
+      appliedSpeed = currentSpeed;
+    else
+      appliedSpeed = -currentSpeed;
+
+    rightDrive.moveVoltage(appliedSpeed);
+    leftDrive.moveVoltage(appliedSpeed);
     pros::delay(10);
   }
   double dT = currentSpeed/accel * 10;
@@ -1326,10 +1331,14 @@ void delayDriveSmooth(int duration, double maxV, double accel, bool dir) {
     currentSpeed -= accel;
     if(currentSpeed < 0)
       currentSpeed = 0;
-    if(dir == rev) currentSpeed *= -1;
 
-    rightDrive.moveVoltage(currentSpeed);
-    leftDrive.moveVoltage(currentSpeed);
+    if(dir == false)
+      appliedSpeed = currentSpeed;
+    else
+      appliedSpeed = -currentSpeed;
+
+    rightDrive.moveVoltage(appliedSpeed);
+    leftDrive.moveVoltage(appliedSpeed);
     pros::delay(10);
   }
   rightDrive.moveVoltage(0);

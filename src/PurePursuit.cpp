@@ -138,6 +138,8 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
   db d;
   pdb point;
 
+  db realAngleError;
+
   maxV *= 1000;
   timekP *= 1000;
   anglekP *= 1000;
@@ -204,10 +206,11 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
         angleError = calcAngleError(followX,followY);
     }
 
+    realAngleError = angleError;
     if(distError < 6.0 && minRadius > 6.0)
       angleError = 0;
 
-    if(distError < 2.0 || (fabs(angleError) > 85.0*M_PI/180.0 &&  currentTime > SIZE-1.2)) settleTimer += 10;
+    if(distError < 2.0 || (fabs(realAngleError) > 85.0*M_PI/180.0 && distError < 6.0)) settleTimer += 10;
     else settleTimer = 0;
 
     fwdSpeed = distError*timekP*cos(angleError); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down
@@ -273,9 +276,12 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
   db d;
   pdb point;
 
+  db realAngleError;
+
   maxV *= 1000;
   timekP *= 1000;
   anglekP *= 1000;
+  finAnglekP *= 1000;
   int timer = 0;
 
   while(settleTimer < 200 && timer < timeout) {
@@ -328,7 +334,6 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
         followY = yPts[SIZE-1];
 
         distError = adaptRadius;
-        angleError = calcAngleError(followX,followY);
     }
     else {
       adaptRadius = calcDistance(followX,followY); //shrink adaptRadius based on  distance to closest intersection until it is less than minRadius
@@ -336,16 +341,16 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
         adaptRadius = minRadius;
 
         distError = findDistError(xPts,yPts,currentTime,adaptRadius);
-        angleError = calcAngleError(followX,followY);
     }
-
-    if(distError < 6.0 && minRadius > 6.0)
-      angleError = 0;
-
+    angleError = calcAngleError(followX,followY);
     if(int(currentTime) == SIZE-2)
       anglekP = finAnglekP;
 
-    if(distError < 2.0 || (fabs(angleError) > 85.0*M_PI/180.0 && currentTime > SIZE-1.2)) settleTimer += 10;
+    realAngleError = angleError;
+    if(distError < 6.0 && minRadius > 6.0)
+      angleError = 0;
+
+    if(distError < 2.0 || (fabs(realAngleError) > 85.0*M_PI/180.0 && distError < 6.0)) settleTimer += 10;
     else settleTimer = 0;
 
     fwdSpeed = distError*timekP*cos(angleError); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down
@@ -357,10 +362,10 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     prevDistError = distError;
 
     updateVarLabel(debugLabel1,"RADIUS",debugValue1,adaptRadius,"IN",3);
-    updateVarLabel(debugLabel2,"SIZE",debugValue2,SIZE,"DEG",3);
+    updateVarLabel(debugLabel2,"ANGLE SPEED",debugValue2,angleSpeed,"DEG",3);
     updateVarLabel(debugLabel3,"C_TIME",debugValue3,currentTime,"mV",3);
-    updateVarLabel(debugLabel4,"C_TIME INT",debugValue4,int(currentTime),"",3);
-    updateVarLabel(debugLabel5,"SIZE",debugValue5,SIZE,"IN",3);
+    updateVarLabel(debugLabel4,"FWD SPEED",debugValue4,fwdSpeed,"",3);
+    updateVarLabel(debugLabel5,"FOLLOW X",debugValue5,followX,"IN",3);
     updateVarLabel(debugLabel6,"FOLLOW Y",debugValue6,followY,"IN",3);
 
     driveVector(fwdSpeed,angleSpeed,maxV);
