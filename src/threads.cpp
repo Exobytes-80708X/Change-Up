@@ -178,7 +178,7 @@ void thread_sensors_v2(void*p)
       topBall_low = true;
     else topBall_low = false;
 
-    if(botDetector_high.get_proximity() > 100 || botDetector_high2.get_proximity() > 100) {
+    if(botDetector_high2.get_proximity() > 100) {
       botBall = true;
       if(botDetector_high.get_hue() > 100 || botDetector_high2.get_hue() > 100) {
         blue_counter += 1;
