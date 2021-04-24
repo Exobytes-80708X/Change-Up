@@ -588,7 +588,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 
 void driveDistance(double distance, double maxV)
 {
-  driveDistance2(distance,0.5,3,maxV,0.8,1,250,5000);
+  driveDistance2(distance,0.5,3,maxV,0.8,1,250,3000);
 }
 
 void accel(double accel, int ms)

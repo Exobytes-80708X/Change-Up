@@ -67,18 +67,19 @@ void release(int n)
   botConveyor.move_velocity(-300);
   intake(outward);
   countReleaseBalls(n);
-  intake(stop);
   conveyorState = 0;
+  pros::delay(250);
 }
 
 void release_thread(void* p) {
   pros::delay(250);
   release(1);
-  intake(outward);
-  pros::delay(100);
 }
 
-
+void release_thread2(void* p) {
+  pros::delay(250);
+  release(countHeldBalls()-1);
+}
 void shoot(int a){
     conveyorState = 3;
 }
@@ -171,7 +172,7 @@ vpdb bezToLines(vdb xPts, vdb yPts, int numLines){
 void intake_delay(void*p)
 {
   intake(stop);
-  pros::delay(250);
+  pros::delay(100);
   intake(outward);
 }
 
@@ -189,17 +190,28 @@ void delayed_eject(void*p){
   pros::delay(500);
   eject(countHeldBalls());
 }
+
+void unfold(){
+  conveyorState = 7;
+  topConveyor.move_velocity(100);
+  botConveyor.move_velocity(100);
+  pros::delay(250);
+  conveyorState = 0;
+}
 //------------------------------------------------------
 void autonomous()
 {
+  std::uint32_t t = pros::millis();
   pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task f (asynchShoot, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task a (intake_delay, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task r (release_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task r2 (release_thread2, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task e (delayed_eject, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   f.suspend();
   a.suspend();
   r.suspend();
+  r2.suspend();
   e.suspend();
   pros::delay(200);
   isRobotDisabled = false;
@@ -239,11 +251,7 @@ void autonomous()
     case 2: //blue auton
       //robotTheta = M_PI/2;
       start_theta = 3*M_PI/2;
-      conveyorState = 7;
-      topConveyor.move_velocity(0);
-      botConveyor.move_velocity(100);
-      pros::delay(250);
-      conveyorState = 0;
+      unfold();
       intake(inward);
       pointTurn(1,100,225,false,40,i,d);
       timer = 0;
@@ -314,7 +322,7 @@ void autonomous()
 
       purePursuit(24,0,startXPts,startYPts,8.8,0.9,12.0,5000); //pure pursuit, pick 2 balls
 
-      driveDistance(-11,11);
+      driveDistance(-13,11);
       intake(stop);
 
       facePID(59,-7,p,i,d); //face goal
@@ -327,8 +335,8 @@ void autonomous()
       //eject(countHeldBalls());
       e.resume();
 
-      adaptiveDrive(9.5,58,0.2,8,0.7,5.0,1.0,250,10000);
-      facePID(63,59,p,i,d); //face THIRD goal (right side)
+      adaptiveDrive(9,57,0.2,8,0.5,5.0,1.0,250,10000);
+      facePID(63,58,p,i,d); //face THIRD goal (right side)
       intake(inward);
       delayDriveSmooth(1350, 8.2, 0.4, fwd);
       reset(0);
@@ -339,9 +347,9 @@ void autonomous()
       eject(countHeldBalls());
 
       adaptiveDrive(-31,46,0.6,8.9,0.7,7.3,1.0,250,10000);//intake floating ball
-      facePID(0,38,p,i,d); //face wall ball
+      facePID(0,37,p,i,d); //face wall ball
       //delayDriveSmooth(1300,6,.4,fwd);
-      driveDistance(calcDistance(0,39)-11,8.5);
+      driveDistance(calcDistance(0,37)-13,8.5);
       driveDistance(-14,10); //get wall ball and drive back
       intake(stop);
       facePID(3,74,p,i,d); //face FOURTHh goal (right corner)
@@ -353,9 +361,9 @@ void autonomous()
       //facePID(-62,28,p,i,d); //face ball for FIFTH goal (far middle)
       intake(inward);
       eject(countHeldBalls());
-      adaptiveDrive(-64,21,0.4,8.6,0.8,5.0,1.0,250,10000); //get ball for FIFTH goal
-      facePID(-70.5,68,p,i,d);
-      delayDriveSmooth(1150, 9, 0.3, fwd);
+      adaptiveDrive(-64,21,0.4,8.6,0.6,5.0,1.0,250,10000); //get ball for FIFTH goal (far middle)
+      facePID(-69,68,p,i,d);
+      delayDriveSmooth(1300, 8, 0.4, fwd);
       reset(1);
       super_macro(1,1); //score FIFTH GOAL
       intake(outward);
@@ -370,12 +378,11 @@ void autonomous()
       skills2ndX.push_back(-44); //set points for pure pursuit
       skills2ndY.push_back(-15.5);
 
-      skills2ndX.push_back(-54);
-      skills2ndY.push_back(-8);
+      skills2ndX.push_back(-52);
+      skills2ndY.push_back(-10);
       intake(inward);
       eject(countHeldBalls());
       purePursuit(24,0,skills2ndX,skills2ndY,8,0.7,10.0,3000); //anglekp was 12 //get ball for SIXTH Goal (far left corner)
-      intake(stop);
       delayDriveSmooth(500,7.5,0.5,fwd);
       timer = 0;
       while(!firstBall)
@@ -383,7 +390,7 @@ void autonomous()
         timer+= 10;
         if(timer > 1000)
           break;
-
+      intake(stop);
       if(thirdBall)
         shooting_macro(1);
       if(secondBall)
@@ -396,35 +403,38 @@ void autonomous()
       intake(inward);
       eject(countHeldBalls());
 
-      driveDistance2(calcDistance(-62,-24)-4.3,0.5,3,10,0.8,1,250,1500); //grab wall ball
+      driveDistance2(calcDistance(-62,-24)-5,0.5,3,10,0.8,1,250,1500); //grab wall ball
       delayDriveSmooth(600,9.2,0.5,rev);
       //driveDistance(-19,10);
       //facePID(-25,-70,p,i,d);
       intake(inward);
-      adaptiveDrive(-19,-68,0.38,8.8,0.7,10,1.0,250,10000); //ball for SEVENTH (left side)
+      adaptiveDrive(-19,-68,0.38,8.8,0.5,10,1.0,250,10000); //ball for SEVENTH (left side)
       //driveDistance(-7,10);
       facePID(-100,-67.5,p,i,d);
       driveDistance(26,10);
       intake(stop);
       delayDriveSmooth(400,8.6,0.4,fwd);
       reset(2);
-      super_macro(countHeldBalls(),2);  // SCORE SEVENTH GOAL (left side)
+      super_macro(countHeldBalls(),1);  // SCORE 8TH GOAL (left side)
+      intake(outward);
+      driveDistance(-20,10);
+      //facePID(25,-48,p,i,d);
+      intake(inward);
+      eject(countHeldBalls());
+      adaptiveDrive(33,-48,0.5,8.6,0.8,7.0,1.0,250,10000); //ball for 9th goal (left near corner)
+      //driveDistance(calcDistance(25,-48)+3,10);
+      driveDistance(-12,10);
+      facePID(-5,-71,p,i,d);
+      delayDriveSmooth(1200,8,0.5,fwd);
+      super_macro(countHeldBalls(),2); //SCORE LEFT NEAR CORNER
       intake(outward);
       driveDistance(-20,10);
       intake(inward);
       eject(countHeldBalls());
-      adaptiveDrive(31,-48,0.5,8.6,0.8,7.0,1.0,250,10000); //ball for EIGHTH goal (left near corner)
-      driveDistance(-12,10);
-      facePID(-11,-74,p,i,d);
-      delayDriveSmooth(1200,8,0.5,fwd);
-      super_macro(countHeldBalls(),2); //score EIGHTH goal (left near corner)
-      driveDistance(-20,10);
-      intake(inward);
-      eject(countHeldBalls());
-      adaptiveDrive(66,-25,0.5,8,0.7,7.0,1.0,250,10000); //grab ball for middle
-      driveDistance(-6,9);
-      facePID(64,5,p,i,d);
-      driveUntilStopped(9000);
+      adaptiveDrive(66,-24,0.5,8,0.5,5.0,1.0,250,10000);
+      //driveDistance(-6,9);
+      facePID(68,5,p,i,d);
+      driveUntilStopped(7000);
       timer = 0;
       while(!thirdBall) {
         pros::delay(10);
@@ -448,56 +458,42 @@ void autonomous()
     case 4: //red mid auton
 
     case 5: //blue mid auton
-      robotTheta = M_PI/2;
-      intake(inward);
-      pointTurn(0,300,135,false,40,i,d);
 
-      timer = 0;
-      while(!secondBall) {
-        pros::delay(10);
-        timer += 10;
-        if(timer > 1000)
-          break;
-      }
-      timer = 0;
+      bool worked = false;
+      start_theta = 0;
+      intake(inward);
+      driveDistance2(44, 0.3, 0, 8, 0.5, 3, 250, 2000);
+      delayDriveSmooth(250,8,0.5,rev);
+      //driveDistance(-24,10);
+      adaptiveDrive(-20,4,0.5,8,0.5,6.0,1.0,250,2000);
       while(!thirdBall) {
         pros::delay(10);
         timer += 10;
         if(timer > 1000)
           break;
       }
-      super_macro(2, 1); //score first goal
+      if(countHeldBalls()==3)
+        worked = true;
       intake(stop);
-      driveDistance(-10,8);
+      delayDriveSmooth(1000,5,0.5,fwd);
+      if(worked)
+        super_macro(3,2);
+      else
+        super_macro(2,2);
+      r2.resume();
+      adaptiveDrive_reversed(38,16,0.5,8,0.5,7.0,1.0,250,2000);
+      release(countHeldBalls()-1);
+      facePID(180,p,i,d);
       intake(inward);
-      adaptiveDrive_reversed(-36,16,9.5);
-      facePID(-40,-40,p,i,d);
+      delayDriveSmooth(1000,7,0.5,fwd);
+      countIntakeBalls(2);
       intake(stop);
-      delayDriveSmooth(1200,8,0.2,fwd);
-      timer = 0;
-      while(!firstBall) {
-        pros::delay(10);
-        timer += 10;
-        if(timer > 1000)
-          break;
-      }
-      super_macro(1,2); //score second goal
-      intake(stop);
-      pros::delay(200);
+      if(countHeldBalls()==3)
+        shooting_macro(2);
+      else if(countHeldBalls()==2)
+        shooting_macro(1);
       intake(outward);
-      driveDistance(-17,10);
-      facePID(140,p,i,d);
-      shooting_macro(1);
-      //facePID(12,-108,p,i,d);
-      intake(inward);
-      facePID(-38,50,p,i,d);
-      //adaptiveDrive(-42,40,6);
-      driveDistance(calcDistance(-42,40)-5,8);
-      driveUntilStopped(5000);
-      shooting_macro(1);
-      pros::delay(200);
-      intake(outward);
-      driveDistance(-12,8);
+      delayDriveSmooth(1000,8,0.5,rev);
     break;
   }
 }

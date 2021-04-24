@@ -338,10 +338,6 @@ void countReleaseBalls(int numOfBalls)
       }
     }
     timer = 0;
-    if(numOfBalls == 3 && n == 2) {
-      pros::delay(500);
-      continue;
-    }
     while(botBall_low) {
       timer+=10;
       pros::delay(10);
