@@ -88,7 +88,7 @@ void thread_intake_sim(void*p)
 {
   int timer = 0;
   intake(inward);
-  while(!botBall_low){
+  while(!botBall){
     pros::delay(10);
     timer += 10;
     if(timer > 2000)
@@ -102,23 +102,23 @@ void intake_sim()
   pros::Task task_2 (thread_subsystems, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
 }
 
-int ejectBalls = 0;
-
-void eject_thread(void*p)
-{
-  // for(int n = 0; n < ejectBalls; n++) {
-  //   waitForBallToEject();
-  // }
-  waitForBallsToEject(ejectBalls);
-  ejectBalls = 0;
-  conveyorState = 0;
-}
-
-void eject(int numBalls){
-  conveyorState = 7;
-  ejectBalls = numBalls;
-  pros::Task sub (eject_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-}
+// int ejectBalls = 0;
+//
+// void eject_thread(void*p)
+// {
+//   // for(int n = 0; n < ejectBalls; n++) {
+//   //   waitForBallToEject();
+//   // }
+//   waitForBallsToEject(ejectBalls);
+//   ejectBalls = 0;
+//   conveyorState = 0;
+// }
+//
+// void eject(int numBalls){
+//   conveyorState = 7;
+//   ejectBalls = numBalls;
+//   pros::Task sub (eject_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+// }
 
 void waitForThirdBall()
 {
@@ -186,10 +186,10 @@ void waitForBall(bool ball) {
   }
 }
 
-void delayed_eject(void*p){
-  pros::delay(500);
-  eject(countHeldBalls());
-}
+// void delayed_eject(void*p){
+//   pros::delay(500);
+//   eject(countHeldBalls());
+// }
 
 void unfold(){
   conveyorState = 7;
@@ -207,12 +207,10 @@ void autonomous()
   pros::Task a (intake_delay, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task r (release_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task r2 (release_thread2, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  pros::Task e (delayed_eject, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   f.suspend();
   a.suspend();
   r.suspend();
   r2.suspend();
-  e.suspend();
   pros::delay(200);
   isRobotDisabled = false;
   driverControl = false;
@@ -299,7 +297,7 @@ void autonomous()
       xPts.push_back(95);
       yPts.push_back(0);
 
-      eject(countHeldBalls());
+      //eject(countHeldBalls());
       pros::delay(100);
       purePursuit(24,0,xPts,yPts,8,0.8,5.0,8.0,5000);
 
@@ -346,8 +344,8 @@ void autonomous()
       driveDistance(-13,10);
       //facePID(14,60,p,i,d); //face ball for middle goal
       intake(inward);
-      //eject(countHeldBalls());
-      e.resume();
+      ////eject(countHeldBalls());
+      //e.resume();
 
       adaptiveDrive(14,57,0.2,8,0.5,5.0,1.0,250,10000);
       facePID(63,58,p,i,d); //face THIRD goal (right side)
@@ -358,7 +356,7 @@ void autonomous()
       intake(outward);
       driveDistance(-11,10); //back out from goal
       intake(inward);
-      eject(countHeldBalls());
+      //eject(countHeldBalls());
 
       adaptiveDrive(-30,46,0.6,8.9,0.7,7.3,1.0,250,10000);//intake floating ball
       facePID(0,35,p,i,d); //face wall ball
@@ -374,7 +372,7 @@ void autonomous()
       driveDistance(-11,10);
       //facePID(-62,28,p,i,d); //face ball for FIFTH goal (far middle)
       intake(inward);
-      eject(countHeldBalls());
+      //eject(countHeldBalls());
       adaptiveDrive(-66.25,25.5,0.4,8.6,0.6,5.0,1.0,250,10000); //get ball for FIFTH goal (far middle)
       facePID(-69,68,p,i,d);
       delayDriveSmooth(1300, 8, 0.4, fwd);
@@ -395,7 +393,7 @@ void autonomous()
       skills2ndX.push_back(-55);
       skills2ndY.push_back(-10);
       intake(inward);
-      eject(countHeldBalls());
+      //eject(countHeldBalls());
       purePursuit(24,0,skills2ndX,skills2ndY,8,0.7,10.0,3000); //anglekp was 12 //get ball for SIXTH Goal (far left corner)
       delayDriveSmooth(500,7.5,0.5,fwd);
       timer = 0;
@@ -415,7 +413,7 @@ void autonomous()
       driveDistance(-14,10);
       facePID(-62,-30,p,i,d);
       intake(inward);
-      eject(countHeldBalls());
+      //eject(countHeldBalls());
 
       driveDistance2(calcDistance(-62,-24)-5,0.5,3,10,0.8,1,250,1500); //grab wall ball
       delayDriveSmooth(600,9.2,0.5,rev);
@@ -434,7 +432,7 @@ void autonomous()
       driveDistance(-20,10);
       //facePID(25,-48,p,i,d);
       intake(inward);
-      eject(countHeldBalls());
+      //eject(countHeldBalls());
       adaptiveDrive(34.5,-48,0.5,8.6,0.8,7.0,1.0,250,10000); //ball for 9th goal (left near corner)
       //driveDistance(calcDistance(25,-48)+3,10);
       driveDistance(-12,10);
@@ -444,7 +442,7 @@ void autonomous()
       intake(outward);
       driveDistance(-20,10);
       intake(inward);
-      eject(countHeldBalls());
+      //eject(countHeldBalls());
       adaptiveDrive(66,-24,0.5,8,0.5,5.0,1.0,250,10000);
       //driveDistance(-6,9);
       facePID(68,5,p,i,d);

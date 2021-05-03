@@ -801,12 +801,12 @@ void thread_sensorDebug(void*p)
     //if(store  > (int)pros::c::ext_adi_analog_read(5,'A') && (int)pros::c::ext_adi_analog_read(5,'A') > 100)
     //  store = (int)pros::c::ext_adi_analog_read(5,'A');
 
-    updateValueLabel(sensorValue4,topDetector_low.get_proximity()/*topDetector.get_value()*/,"",0);
-    updateValueLabel(sensorValue5,ejectDetector.get_value()/*pros::c::ext_adi_analog_read(5,'C')*/,"",0);
+    updateValueLabel(sensorValue4,topDetector.get_value()/*topDetector.get_value()*/,"",0);
+    //updateValueLabel(sensorValue5,ejectDetector.get_value()/*pros::c::ext_adi_analog_read(5,'C')*/,"",0);
     if(!d)
-      updateValueLabel(sensorValue6,botDetector_high.get_proximity()/*botDetector.get_value()*/,"",0);
-    updateValueLabel(sensorValue7,topDetector_high.get_value()/*pros::c::ext_adi_analog_read(5,'B')*/,"",0);
-    updateValueLabel(sensorValue8,botDetector_low.get()/*pros::c::ext_adi_analog_read(5,'A')*/,"",0);
+      updateValueLabel(sensorValue6,midDetector.get()/*botDetector.get_value()*/,"",0);
+    //updateValueLabel(sensorValue7,topDetector_high.get_value()/*pros::c::ext_adi_analog_read(5,'B')*/,"",0);
+    updateValueLabel(sensorValue8,botDetector.get()/*pros::c::ext_adi_analog_read(5,'A')*/,"",0);
     updateValueLabel(sensorValue1,imu.get_heading(),"DEG",3);
     updateValueLabel(sensorValue2,left.get(),"",0);
     updateValueLabel(sensorValue3,right.get(),"",0);
@@ -821,7 +821,7 @@ void thread_sensorDebug(void*p)
     // if(optical_state == NO_BALL && !d)
     //   updateValueLabel(sensorValue9,n,"NONE",0);
 
-    updateValueLabel(sensorValue9,botDetector_high.get_hue(),"",0);
+    //updateValueLabel(sensorValue9,botDetector_high.get_hue(),"",0);
     pros::delay(10);
   }
 }
@@ -882,11 +882,11 @@ void initSensorDebug()
   sensorLabel1 = createTextLabel(sensorLabel1, "[1] INERTIAL SENSOR", DEBUG_X_1, y);
   sensorLabel2 = createTextLabel(sensorLabel2, "[AB] LEFT ENCODER", DEBUG_X_1, y+20);
   sensorLabel3 = createTextLabel(sensorLabel3, "[CD] RIGHT ENCODER", DEBUG_X_1, y+40);
-  sensorLabel4 = createTextLabel(sensorLabel4, "[E] TOPBALL LOW", DEBUG_X_1, y+60);
+  sensorLabel4 = createTextLabel(sensorLabel4, "[E] TOPBALL", DEBUG_X_1, y+60);
   sensorLabel5 = createTextLabel(sensorLabel5, "[F] EJECTOR", DEBUG_X_1, y+80);
-  sensorLabel6 = createTextLabel(sensorLabel6, "[G] BOTBALL", DEBUG_X_1, y+100);
-  sensorLabel7 = createTextLabel(sensorLabel7, "[H] TOPBALL HIGH", DEBUG_X_1, y+120);
-  sensorLabel8 = createTextLabel(sensorLabel8, "[EXT] BOTBALL LOW", DEBUG_X_1, y+140);
+  sensorLabel6 = createTextLabel(sensorLabel6, "[G] MIDBALL", DEBUG_X_1, y+100);
+  sensorLabel7 = createTextLabel(sensorLabel7, "[H] ", DEBUG_X_1, y+120);
+  sensorLabel8 = createTextLabel(sensorLabel8, "[EXT] BOTBALL", DEBUG_X_1, y+140);
   sensorLabel9 = createTextLabel(sensorLabel9, "[4] OPTICAL", DEBUG_X_1, y+160);
 
 
