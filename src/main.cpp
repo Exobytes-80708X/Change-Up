@@ -175,8 +175,7 @@ void waitForBall(bool ball) {
 
 void unfold(){
   conveyorState = 7;
-  topConveyor.move_velocity(100);
-  botConveyor.move_velocity(100);
+  botConveyor.move_velocity(-100);
   pros::delay(250);
   conveyorState = 0;
 }
