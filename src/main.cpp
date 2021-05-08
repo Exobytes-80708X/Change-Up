@@ -223,6 +223,7 @@ void autonomous()
   updateVarLabel(debugLabel5,"R3",debugValue5,goals[2],"",3);
   switch(auton) {
     case 0: //no auton
+    super_macro(3,2);
     delayDriveSmooth(500,8,0.5,true);
     break;
 

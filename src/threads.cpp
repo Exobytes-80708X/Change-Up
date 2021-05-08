@@ -41,7 +41,7 @@ void thread_sensors_v2(void*p)
       midBall = true;
     else midBall = false;
 
-    if(botDetector.get() < 20)
+    if(botDetector.get() < 50)
       botBall = true;
     else botBall = false;
 
@@ -240,12 +240,11 @@ int countHeldBalls()
 
 void idleConveyor()
 {
+  topConveyor.move_voltage(-3000);
   if(secondBall) {
     botConveyor.move_velocity(0);
-    topConveyor.move_velocity(0);
   }
   else {
-    topConveyor.move_velocity(-300);
     botConveyor.move_voltage(12000);
   }
 }
@@ -345,7 +344,8 @@ void thread_subsystems(void* p)
       case 1: //shooting manually
           topConveyor.move_voltage(12000);
           botConveyor.move_velocity(12000);
-          pros::delay(400);
+          while(firstBall) pros::delay(10);
+          pros::delay(100);
           while(conveyorState == 1) {
             pros::delay(10);
           }
@@ -362,6 +362,11 @@ void thread_subsystems(void* p)
             rightIntake.move_voltage(-12000);
             pros::delay(10);
           }
+          topConveyor.move_voltage(-300);
+          botConveyor.move_velocity(0);
+          leftIntake.move_voltage(-12000);
+          rightIntake.move_voltage(-12000);
+          pros::delay(250);
           intake_thread.resume();
           break;
       case 3: //macro1
