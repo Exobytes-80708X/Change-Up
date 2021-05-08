@@ -184,6 +184,32 @@ void shooting_macro(int numOfBalls)
     conveyorState = 0;
 }
 
+void shooting_macro_slowed(int numOfBalls)
+{
+  if(!driverControl)
+    conveyorState = 7;
+    // if(!driverControl)
+    //   conveyorState = 0;
+  topConveyor.move_voltage(12000);
+  botConveyor.move_voltage(6000);
+  int timer = 0;
+  while(!topBall) {
+    timer+=10;
+    pros::delay(10);
+    if(timer > 2500) {
+      return;
+    }
+  }
+  while(topBall) pros::delay(10);
+  updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,1,"",0);
+  countBalls(numOfBalls-1);
+  botConveyor.move_velocity(0);
+  pros::delay(400);
+  if(!driverControl)
+    conveyorState = 0;
+}
+
+
 int numOfBalls2;
 bool finished;
 void shooting_macro_2_thread(void*p)
@@ -257,6 +283,21 @@ void super_macro(int shootBalls, int intakeBalls)
   iBalls = intakeBalls;
   pros::Task subthread (intake_subthread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   shooting_macro(shootBalls);
+  while(!intakeFinished) {
+    idleConveyor();
+  }
+  if(!driverControl)
+    conveyorState = 0;
+}
+
+void super_macro_slowed(int shootBalls, int intakeBalls)
+{
+  intakeFinished = false;
+  if(!driverControl)
+    conveyorState = 7;
+  iBalls = intakeBalls;
+  pros::Task subthread (intake_subthread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  shooting_macro_slowed(shootBalls);
   while(!intakeFinished) {
     idleConveyor();
   }

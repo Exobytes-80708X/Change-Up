@@ -84,6 +84,16 @@ void shoot(int a){
     conveyorState = 3;
 }
 
+int r_ball = 0;
+void release_thread_count(void*p) {
+  release(r_ball);
+}
+
+void release_asynch(int r) {
+  r_ball = r;
+  pros::Task tas (release_thread_count, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+}
+
 void thread_intake_sim(void*p)
 {
   int timer = 0;
@@ -250,9 +260,9 @@ void autonomous()
       }
       // pros::delay(200);
       if(thirdBall)
-        super_macro(3,1); //score first goal
+        super_macro_slowed(3,1); //score first goal
       else
-        super_macro(3,2);
+        super_macro_slowed(3,2);
       intake(outward);
       r.resume();
       adaptiveDrive_reversed(34,16,9.5);
@@ -482,8 +492,10 @@ void autonomous()
       else
         super_macro(2,2);
       r2.resume();
-      adaptiveDrive_reversed(45,16,0.5,8,0.5,6.0,1.0,250,2000);
-      release(countHeldBalls()-1);
+      //adaptiveDrive_reversed(45,16,0.5,8,0.5,6.0,1.0,250,2000);
+      release_asynch(countHeldBalls()-1);
+      adaptiveDrive_reversed(34,16,8.0);
+      //release(countHeldBalls()-1);
       facePID(180,p,i,d);
       intake(inward);
       delayDriveSmooth(1000,7,0.5,fwd);
@@ -499,7 +511,35 @@ void autonomous()
       else if(secondBall)
         shooting_macro(1);
       intake(outward);
-      delayDriveSmooth(1000,8,0.5,rev);
+      delayDriveSmooth(500,8,0.5,rev);
+      release_asynch(1);
+
+      xPts.push_back(robotX);
+      yPts.push_back(robotY);
+
+      xPts.push_back(70);
+      yPts.push_back(20);
+
+      xPts.push_back(95);
+      yPts.push_back(0);
+
+      //eject(countHeldBalls());
+      pros::delay(100);
+      purePursuit(24,0,xPts,yPts,8,0.8,5.0,8.0,5000);
+
+      delayDrive(500,8000);
+      conveyorState = 99;
+      timer = 0;
+      while(!thirdBall) {
+        pros::delay(10);
+        timer += 10;
+        if(timer > 1000)
+          break;
+      }
+      intake(stop);
+      shooting_macro(2); //score third goal
+      intake(outward);
+      delayDrive(400,-8000);
     break;
   }
 }

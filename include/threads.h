@@ -22,6 +22,7 @@ extern void shooting_macro(int);
 extern void countIntakeBalls(int);
 extern void countReleaseBalls(int);
 extern void super_macro(int,int);
+extern void super_macro_slowed(int,int);
 extern void super_macro2(int,int);
 extern void countIntakeBalls(int);
 extern int countHeldBalls();
