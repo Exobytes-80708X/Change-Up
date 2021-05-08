@@ -176,8 +176,12 @@ void waitForBall(bool ball) {
 void unfold(){
   conveyorState = 7;
   botConveyor.move_velocity(-100);
-  pros::delay(250);
+  pros::delay(500);
   conveyorState = 0;
+}
+
+void unfold_thread(void*p) {
+  unfold();
 }
 //------------------------------------------------------
 void autonomous()
@@ -188,6 +192,7 @@ void autonomous()
   pros::Task a (intake_delay, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task r (release_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task r2 (release_thread2, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task u (unfold_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   f.suspend();
   a.suspend();
   r.suspend();
@@ -222,8 +227,10 @@ void autonomous()
   updateVarLabel(debugLabel5,"R3",debugValue5,goals[2],"",3);
   switch(auton) {
     case 0: //no auton
-    super_macro(3,2);
-    delayDriveSmooth(500,8,0.5,true);
+    //super_macro(3,2);
+    pros::delay(1000);
+    shooting_macro(countHeldBalls());
+    //delayDriveSmooth(500,8,0.5,true);
     break;
 
     case 1: //red auton
@@ -456,7 +463,7 @@ void autonomous()
       bool worked = false;
       start_theta = 0;
       intake(inward);
-      driveDistance2(44, 0.3, 0, 8, 0.5, 3, 250, 2000);
+      driveDistance2(44, 0.5, 0, 8, 1.0, 3, 250, 2000);
       delayDriveSmooth(250,8,0.5,rev);
       //driveDistance(-24,10);
       adaptiveDrive(-20,4,0.5,8,0.5,6.0,1.0,250,2000);
@@ -475,7 +482,7 @@ void autonomous()
       else
         super_macro(2,2);
       r2.resume();
-      adaptiveDrive_reversed(45,16,0.5,8,0.5,7.0,1.0,250,2000);
+      adaptiveDrive_reversed(45,16,0.5,8,0.5,6.0,1.0,250,2000);
       release(countHeldBalls()-1);
       facePID(180,p,i,d);
       intake(inward);

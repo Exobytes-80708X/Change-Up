@@ -24,8 +24,8 @@ pros::Distance midDetector(14);
 pros::Distance botDetector(3);
 
 okapi::ADIEncoder left('E','F',true);
-okapi::ADIEncoder right('A','B',false);
-okapi::ADIEncoder middle('C','D',false);
+okapi::ADIEncoder right('A','B',true);
+okapi::ADIEncoder middle('C','D',true);
 
-pros::Imu imu (5);
+pros::Imu imu (15);
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
