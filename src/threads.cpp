@@ -41,7 +41,7 @@ void thread_sensors_v2(void*p)
       midBall = true;
     else midBall = false;
 
-    if(botDetector.get() < 50)
+    if(botDetector.get() < 60)
       botBall = true;
     else botBall = false;
 

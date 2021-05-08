@@ -91,6 +91,7 @@ void release_thread_count(void*p) {
 
 void release_asynch(int r) {
   r_ball = r;
+  pros::delay(250);
   pros::Task tas (release_thread_count, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
 }
 
@@ -201,12 +202,12 @@ void autonomous()
   pros::Task f (asynchShoot, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task a (intake_delay, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task r (release_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  pros::Task r2 (release_thread2, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  //pros::Task r2 (release_thread2, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task u (unfold_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   f.suspend();
   a.suspend();
   r.suspend();
-  r2.suspend();
+  //r2.suspend();
   pros::delay(200);
   isRobotDisabled = false;
   driverControl = false;
@@ -474,7 +475,7 @@ void autonomous()
       start_theta = 0;
       intake(inward);
       driveDistance2(44, 0.7, 0, 8, 1.0, 3, 250, 2000);
-      //delayDriveSmooth(250,8,0.5,rev);
+      delayDriveSmooth(250,8,0.5,rev);
       //driveDistance(-24,10);
       adaptiveDrive(-27,-7,0.5,8,0.5,6.0,1.0,250,2000);
       while(!thirdBall) {
@@ -491,14 +492,16 @@ void autonomous()
         super_macro_slowed(3,2);
       else
         super_macro_slowed(2,2);
-      r2.resume();
+      //r2.resume();
       //adaptiveDrive_reversed(45,16,0.5,8,0.5,6.0,1.0,250,2000);
       release_asynch(countHeldBalls()-1);
-      adaptiveDrive_reversed(30,12,8.0);
+      adaptiveDrive_reversed(30,15,8.0);
       //release(countHeldBalls()-1);
-      facePID(180,p,i,d);
+      //facePID(180,p,i,d);
       intake(inward);
-      delayDriveSmooth(1000,8,0.5,fwd);
+      //delayDriveSmooth(1000,8,0.5,fwd);
+      adaptiveDrive(36,-7,0.5,8,0.5,8.0,2.0,250,2000);
+
       while(!thirdBall) {
         pros::delay(10);
         timer += 10;
@@ -511,22 +514,23 @@ void autonomous()
       else if(secondBall)
         shooting_macro(1);
       intake(outward);
-      release_asynch(1);
-      delayDriveSmooth(500,8,0.7,rev);
-
-      xPts.push_back(robotX);
-      yPts.push_back(robotY);
-
-      xPts.push_back(60);
-      yPts.push_back(20);
-
-      xPts.push_back(85);
-      yPts.push_back(0);
+      delayDriveSmooth(600,8,0.7,rev);
+      //
+      // xPts.push_back(robotX);
+      // yPts.push_back(robotY);
+      //
+      // xPts.push_back(60);
+      // yPts.push_back(8);
+      //
+      // xPts.push_back(93);
+      // yPts.push_back(0);
 
       //eject(countHeldBalls());
       pros::delay(100);
-      purePursuit(24,0,xPts,yPts,8,0.8,5.0,8.0,5000);
+      intake(inward);
+      //purePursuit(24,0,xPts,yPts,8,0.8,6.5,8.0,5000);
 
+      adaptiveDrive(96,-10,0.5,8,0.5,5.5,1.0,250,2000);
       delayDrive(500,8000);
       conveyorState = 99;
       timer = 0;
@@ -537,7 +541,7 @@ void autonomous()
           break;
       }
       intake(stop);
-      shooting_macro(2); //score third goal
+      super_macro_slowed(3,2); //score third goal
       intake(outward);
       delayDrive(400,-8000);
     break;
