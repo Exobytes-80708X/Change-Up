@@ -191,7 +191,7 @@ void shooting_macro_slowed(int numOfBalls)
     // if(!driverControl)
     //   conveyorState = 0;
   topConveyor.move_voltage(12000);
-  botConveyor.move_velocity(300);
+  botConveyor.move_velocity(400);
   int timer = 0;
   while(!topBall) {
     timer+=10;

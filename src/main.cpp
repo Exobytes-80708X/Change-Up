@@ -77,7 +77,7 @@ void release_thread(void* p) {
 }
 
 void release_thread2(void* p) {
-  pros::delay(250);
+  pros::delay(500);
   release(countHeldBalls()-1);
 }
 void shoot(int a){
@@ -202,12 +202,12 @@ void autonomous()
   pros::Task f (asynchShoot, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task a (intake_delay, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task r (release_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
-  //pros::Task r2 (release_thread2, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task r2 (release_thread2, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task u (unfold_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   f.suspend();
   a.suspend();
   r.suspend();
-  //r2.suspend();
+  r2.suspend();
   pros::delay(200);
   isRobotDisabled = false;
   driverControl = false;
@@ -240,7 +240,9 @@ void autonomous()
     case 0: //no auton
     //super_macro(3,2);
     pros::delay(1000);
-    shooting_macro(countHeldBalls());
+    release_asynch(countHeldBalls()-1);
+    delayDriveSmooth(700,8,0.5,rev);
+    pros::delay(10000);
     //delayDriveSmooth(500,8,0.5,true);
     break;
 
@@ -492,15 +494,16 @@ void autonomous()
         super_macro_slowed(3,2);
       else
         super_macro_slowed(2,2);
-      //r2.resume();
+      r2.resume();
       //adaptiveDrive_reversed(45,16,0.5,8,0.5,6.0,1.0,250,2000);
-      release_asynch(countHeldBalls()-1);
+      //pros::delay(150);
+      //release_asynch(countHeldBalls()-1);
       adaptiveDrive_reversed(30,15,8.0);
       //release(countHeldBalls()-1);
       //facePID(180,p,i,d);
       intake(inward);
       //delayDriveSmooth(1000,8,0.5,fwd);
-      adaptiveDrive(36,-7,0.5,8,0.5,8.0,2.0,250,2000);
+      adaptiveDrive(36,-7,0.5,8.5,0.5,8.0,2.0,250,1000);
 
       while(!thirdBall) {
         pros::delay(10);
@@ -514,7 +517,7 @@ void autonomous()
       else if(secondBall)
         shooting_macro(1);
       intake(outward);
-      delayDriveSmooth(600,8,0.7,rev);
+      delayDriveSmooth(700,9,0.7,rev);
       //
       // xPts.push_back(robotX);
       // yPts.push_back(robotY);
@@ -530,7 +533,7 @@ void autonomous()
       intake(inward);
       //purePursuit(24,0,xPts,yPts,8,0.8,6.5,8.0,5000);
 
-      adaptiveDrive(96,-10,0.5,8,0.5,5.5,1.0,250,2000);
+      adaptiveDrive(96,-10,0.7,8.5,0.5,6.0,2.0,250,2000);
       delayDrive(500,8000);
       conveyorState = 99;
       timer = 0;
