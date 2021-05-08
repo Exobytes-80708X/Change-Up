@@ -63,8 +63,8 @@ void release(int n)
 {
   conveyorState = 7;
 
-  topConveyor.move_velocity(-300);
-  botConveyor.move_velocity(-300);
+  topConveyor.move_velocity(-600);
+  botConveyor.move_velocity(-600);
   intake(outward);
   countReleaseBalls(n);
   conveyorState = 0;
@@ -473,10 +473,10 @@ void autonomous()
       bool worked = false;
       start_theta = 0;
       intake(inward);
-      driveDistance2(44, 0.5, 0, 8, 1.0, 3, 250, 2000);
-      delayDriveSmooth(250,8,0.5,rev);
+      driveDistance2(44, 0.7, 0, 8, 1.0, 3, 250, 2000);
+      //delayDriveSmooth(250,8,0.5,rev);
       //driveDistance(-24,10);
-      adaptiveDrive(-20,4,0.5,8,0.5,6.0,1.0,250,2000);
+      adaptiveDrive(-27,-7,0.5,8,0.5,6.0,1.0,250,2000);
       while(!thirdBall) {
         pros::delay(10);
         timer += 10;
@@ -486,19 +486,19 @@ void autonomous()
       if(countHeldBalls()==3)
         worked = true;
       intake(stop);
-      delayDriveSmooth(1000,5,0.5,fwd);
+      //delayDriveSmooth(1000,5,0.5,fwd);
       if(worked)
-        super_macro(3,2);
+        super_macro_slowed(3,2);
       else
-        super_macro(2,2);
+        super_macro_slowed(2,2);
       r2.resume();
       //adaptiveDrive_reversed(45,16,0.5,8,0.5,6.0,1.0,250,2000);
       release_asynch(countHeldBalls()-1);
-      adaptiveDrive_reversed(34,16,8.0);
+      adaptiveDrive_reversed(30,12,8.0);
       //release(countHeldBalls()-1);
       facePID(180,p,i,d);
       intake(inward);
-      delayDriveSmooth(1000,7,0.5,fwd);
+      delayDriveSmooth(1000,8,0.5,fwd);
       while(!thirdBall) {
         pros::delay(10);
         timer += 10;
@@ -511,16 +511,16 @@ void autonomous()
       else if(secondBall)
         shooting_macro(1);
       intake(outward);
-      delayDriveSmooth(500,8,0.5,rev);
       release_asynch(1);
+      delayDriveSmooth(500,8,0.7,rev);
 
       xPts.push_back(robotX);
       yPts.push_back(robotY);
 
-      xPts.push_back(70);
+      xPts.push_back(60);
       yPts.push_back(20);
 
-      xPts.push_back(95);
+      xPts.push_back(85);
       yPts.push_back(0);
 
       //eject(countHeldBalls());
