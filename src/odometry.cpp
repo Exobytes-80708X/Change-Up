@@ -1173,6 +1173,114 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
   leftDrive.moveVelocity(0);
 }
 
+void adaptiveDrive_flow(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)
+{
+  /*
+  Arguments:
+  x           - desired x coordinate
+  y           - desired y coordinate
+  accel       - rate of acceleration, affeceted by distance p-controller
+  maxV        - maximum voltage
+  distkP      - constant for tuning distance p-controller
+  anglekP     - constant for tuning angle p-controller
+  scalePower  - used to tune how soon distkP should start ramping up
+  settleTime  - the amount of time robot must be within a certain range of the target point before declaring the movement as finished
+  timeout     - maximum amount of time the movement can take
+  debugOn     - disables/enables debugging
+  */
+	double initX = robotX;
+	double initY = robotY;
+	double initTheta = robotTheta;
+  //saves intial position the robot
+
+	double distError; //distance from robots current position to target point
+	double angleError; //how much robot has to turn to face the target point
+
+	double distSpeed; //speed based on distError*distkP
+	double angleSpeed; //speed based on angleError*anglekP
+	double currentSpeed; //speed sent to robot based on distkP, used for controlling acceleration
+
+	double projection; //vector projection to calculate how far robot has to travel to get as close to target point WITHOUT changing its heading
+	double distkPScale; //used to scale distkP
+	double scaledDistkP; //scaled distkP value
+
+	double leftSpeed; //speed of left side
+	double rightSpeed; //speed of right side
+
+	accel *= 1200;
+	//minV *= 1000;
+	maxV *= 1000;
+	distkP *= 1000;
+	anglekP *= 1000;
+  //scales all arguments to be the correct units
+
+	int settleTimer = 0;
+	int timeoutTimer = 0;
+  //initialize timers
+
+	double settleMargin = 0.5; //if robot is this distance from target point, robot is settling
+	double adjustMargin = 6.0; //if robot is this distance from the target point, stop adjusting angle
+	double minSpeedMargin = 3.0; //if robot is this distance from the target point, don't decrease in speed anymore
+  //measured in inches
+
+	while(settleTimer < settleTime && timeoutTimer < timeout)
+	{
+		distError = calcDistance(x,y);
+    //calculate distance to target point
+		angleError = calcAngleError(x,y);
+    //calculate shortest angle to face target point
+		projection = fabs(distError)*cos(angleError);
+    //if you represent the robot as a unit vector with a direction of robotTheta (call this robot vector), and represent the distance and angle between the target point and the robot as another vector (call this point vector)
+    //you can prorject the robot's vector onto the point vector. The magnitude of the projected vector represents how far the robot can travel to get as close to the target point as possible without changing its heading
+    //as the robot's heading is adjusted by the angle p-controller, the magnitude of the projected vector will become closer and closer to the actual distError
+		if(projection < 0) projection = 0;
+    //prevents robot from moving backwards
+    //with adaptiveDrive, robot should only be able allowed to move ONE direction, allowing it to have the option to move forwards and backwards whenever it chooses creates strange and erratic behavior
+		distkPScale = pow(fabs(projection/distError),scalePower);
+    scaledDistkP = distkP * distkPScale;
+    //calculates a new scaled distkP based on projection/distError
+    //scale power is used to tune sensitivity of scaled kP
+
+		if(fabs(distError) < settleMargin || (fabs(distError) < adjustMargin && fabs(angleError) > 85.0*M_PI/180.0) )
+			return;
+		timeoutTimer+=10;
+    //if robot is within settleMargin of point or robot is with adjustMargin and is roughly perpendicular to the point settleTimer will increase
+
+		if(fabs(distError) < minSpeedMargin) {
+			angleSpeed = 0;
+			distSpeed = (distError/fabs(distError))*minSpeedMargin*distkP;
+      //if robot is within minSpeedMargin of the target point, the robot's speed is locked and angleSpeed is set to 0
+		}
+		else if(fabs(distError) < adjustMargin) {
+			angleSpeed = 0;
+			distSpeed = distError*distkP;
+      //if robot is within adjustMargin of the target point, robot's speed is still p-controlled, but angleSpeed is set to 0
+		}
+		else {
+      angleSpeed = angleError*anglekP;
+			distSpeed = distError*scaledDistkP;
+      //if robot is outside either of those margins, angle and dist speed are controlled by p-controller
+    }
+
+    if(currentSpeed < distSpeed)	currentSpeed += accel;
+		else currentSpeed = distSpeed;
+    //distSpeed is aways positive and robot doesn't go backwards, so if currentSpeed < distSpeed then accelerate
+    //if decelerating let p-controllers determine speed
+
+		driveVector(currentSpeed,angleSpeed,maxV); //send speeds to motors
+		pros::delay(10);
+
+    if(DEBUGGING_ENABLED) {
+      updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
+      updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
+    }
+	}
+	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+	rightDrive.moveVelocity(0);
+  leftDrive.moveVelocity(0);
+}
+
 void adaptiveDrive_reversed(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)
 {
   /*
