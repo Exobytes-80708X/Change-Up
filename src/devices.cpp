@@ -9,7 +9,7 @@ okapi::MotorGroup leftDrive({ld_1,ld_2});
 okapi::MotorGroup rightDrive({rd_1,rd_2});
 pros::Motor leftIntake(1,pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor rightIntake(12,pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor topConveyor(7,pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor topConveyor(7,pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor botConveyor(13,pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
 
 //pros::ADIAnalogIn topDetector2 ('E'); //moded to B on ext ports

@@ -33,7 +33,7 @@ void thread_sensors_v2(void*p)
   int red_counter = 0;
   while(true) {
     t = pros::millis();
-    if(topDetector1.get_value() < 2400 || topDetector2.get_value() < 2400)
+    if(topDetector1.get_value() < 2400 || topDetector2.get_value() < 2450)
       topBall = true;
     else topBall = false;
 
@@ -377,6 +377,7 @@ void thread_subsystems(void* p)
   while(true) {
     int* r_r = std::find(red,redEnd,auton%NUM_OF_AUTONS);
     int* r_b = std::find(blue,blueEnd,auton%NUM_OF_AUTONS);
+    int counter;
     t = pros::millis();
     switch(conveyorState) {
       case 0: //idle state
@@ -385,7 +386,11 @@ void thread_subsystems(void* p)
       case 1: //shooting manually
           topConveyor.move_voltage(12000);
           botConveyor.move_velocity(12000);
-          while(firstBall) pros::delay(10);
+          counter = 0;
+          while(firstBall || counter < 200) {
+            pros::delay(10);
+            counter += 10;
+          }
           pros::delay(100);
           while(conveyorState == 1) {
             pros::delay(10);
