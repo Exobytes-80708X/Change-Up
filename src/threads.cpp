@@ -82,8 +82,11 @@ void countBalls(int numOfBalls)
   }
   int timeOut = 10000;
   int timer = 0;
+  std::uint32_t diff;
+  std::uint32_t t;
   for(int n = 0; n < numOfBalls; n++) {
     timer = 0;
+    t = pros::millis();
     while(!topBall) {
       pros::delay(10);
       timer += 10;
@@ -93,7 +96,14 @@ void countBalls(int numOfBalls)
       }
     }
     while(topBall) pros::delay(10);
+
+    diff = pros::millis()-t;
+    if(diff < 150) {
+      n--;
+      continue;
+    }
     updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,2,"",0);
+    updateVarLabel(debugLabel3,"DIFF",debugValue3,diff,"",0);
   }
   fi = true;
 }
@@ -300,6 +310,7 @@ void super_macro_slowed(int shootBalls, int intakeBalls)
   shooting_macro_slowed(shootBalls);
   while(!intakeFinished) {
     idleConveyor();
+    pros::delay(10);
   }
   if(!driverControl)
     conveyorState = 0;
