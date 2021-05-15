@@ -160,6 +160,7 @@ void intake_subthread(void*p)
   intakeFinished = false;
   intakeState = inward;
   bool wait = false;
+  while(botBall) pros::delay(10);
   countIntakeBalls(iBalls);
   if(botBall)
     pros::delay(100);

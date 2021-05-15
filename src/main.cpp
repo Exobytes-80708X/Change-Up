@@ -363,8 +363,8 @@ void autonomous()
       super_macro_slowed(3, 2); // SCORE SECOND GOAL
       intake(outward);
       //driveDistance(-5,10);
-      release_all_asynch(300);
-      driveDistance(-16,10);
+      release_all_asynch(400);
+      driveDistance(-19,10);
       intake(inward);
       adaptiveDrive(13,57,0.2,8,0.5,5.0,1.0,250,10000);
       //facePID(63,58,p,i,d); //face THIRD goal (right side)
@@ -378,16 +378,21 @@ void autonomous()
       intake(inward);
       adaptiveDrive(-30,48,0.6,8.9,0.5,7.3,1.0,250,10000);//intake floating ball
 
-      adaptiveDrive(0,35,0.6,8.9,0.7,12.0,5.0,250,2000);//intake floating ball
+      adaptiveDrive(0,35,0.6,8.9,0.7,9.0,3.0,250,2000);//intake floating ball
 
       driveDistance(-13,10);
-      adaptiveDrive(2,70,0.6,8.9,0.7,12.0,5.0,250,4000);//intake floating ball
-
+      adaptiveDrive(2,70,0.6,8,0.7,9.0,3.0,250,1700);//intake floating ball
       super_macro_slowed(3,3);
+      intake(inward);
+      while(!thirdBall)
+        pros::delay(10);
       intake(outward);
-      release_all_asynch(600);
+      release_all_asynch(400);
       driveDistance(-23,10);
       intake(inward);
+
+      adaptiveDrive(-66.5,20,0.6,8,0.7,9.0,3.0,250,2300);//intake floating ball
+
       // intake(inward);
       // //eject(countHeldBalls());
       //
