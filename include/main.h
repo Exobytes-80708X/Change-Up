@@ -90,6 +90,7 @@ extern int* redEnd;
 extern int* blueEnd;
 extern int blue[];
 extern double start_theta;
+extern void release(int);
 #ifndef DEVICES
 #define DEVICES
 #include "devices.h"

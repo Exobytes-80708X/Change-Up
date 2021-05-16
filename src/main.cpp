@@ -68,7 +68,7 @@ void release(int n)
   intake(outward);
   countReleaseBalls(n);
   conveyorState = 0;
-  pros::delay(250);
+  //pros::delay(250);
 }
 
 int rd_balls;

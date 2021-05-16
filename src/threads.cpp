@@ -13,7 +13,7 @@ int sort_trigger = 8;
 
 bool topBall;
 bool midBall;
-bool botBall;
+bool botBall = false;
 bool firstBall;
 bool secondBall;
 bool thirdBall;
@@ -33,7 +33,7 @@ void thread_sensors_v2(void*p)
   int red_counter = 0;
   while(true) {
     t = pros::millis();
-    if(topDetector1.get_value() < 2400 || topDetector2.get_value() < 2450)
+    if(topDetector1.get_value() < 2450 || topDetector2.get_value() < 2450)
       topBall = true;
     else topBall = false;
 
@@ -41,9 +41,10 @@ void thread_sensors_v2(void*p)
       midBall = true;
     else midBall = false;
 
-    if(botDetector.get() < 60)
+    if(botDetector.get() < 60 && !botBall)
       botBall = true;
-    else botBall = false;
+    else if(botDetector.get() > 170 && botBall)
+      botBall = false;
 
     if(topBall)
       firstBall = true;
@@ -84,9 +85,11 @@ void countBalls(int numOfBalls)
   int timer = 0;
   std::uint32_t diff;
   std::uint32_t t;
+  bool repeat = false;
   for(int n = 0; n < numOfBalls; n++) {
     timer = 0;
-    t = pros::millis();
+    if(!repeat)
+      t = pros::millis();
     while(!topBall) {
       pros::delay(10);
       timer += 10;
@@ -95,15 +98,16 @@ void countBalls(int numOfBalls)
         return;
       }
     }
-    while(topBall) pros::delay(10);
-
     diff = pros::millis()-t;
-    if(diff < 150) {
+    if(diff < 200) {
       n--;
+      repeat = true;
       continue;
     }
-    updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,2,"",0);
+    repeat = false;
+    updateVarLabel(debugLabel2,"BALL COUNT",debugValue2,n+1,"",0);
     updateVarLabel(debugLabel3,"DIFF",debugValue3,diff,"",0);
+    while(topBall) pros::delay(10);
   }
   fi = true;
 }
@@ -111,7 +115,10 @@ void countBalls(int numOfBalls)
 void countReleaseBalls(int numOfBalls)
 {
   int timer=0;
+  std::uint32_t diff;
+  std::uint32_t t;
   for(int n = 0; n < numOfBalls; n++) {
+    t = pros::millis();
     timer = 0;
     while(!botBall) {
       timer+=10;
@@ -120,6 +127,9 @@ void countReleaseBalls(int numOfBalls)
         return;
       }
     }
+    diff = pros::millis()-t;
+    updateVarLabel(debugLabel4,"BALL COUNT",debugValue4,n+1,"",0);
+    updateVarLabel(debugLabel5,"DIFF",debugValue5,diff,"",0);
     timer = 0;
     while(botBall) {
       timer+=10;
@@ -134,22 +144,36 @@ void countReleaseBalls(int numOfBalls)
 void countIntakeBalls(int numOfBalls)
 {
   int timer=0;
+  std::uint32_t diff;
+  std::uint32_t t;
+  bool repeat = false;
   for(int n = 0; n < numOfBalls; n++) {
+    if(!repeat)
+      t = pros::millis();
     timer = 0;
-    while(botBall) {
+    while(!botBall || timer < 220) {
       timer+=10;
       pros::delay(10);
       if(timer > 2500){
         return;
       }
     }
+    diff = pros::millis()-t;
+    updateVarLabel(debugLabel4,"BALL COUNT",debugValue4,n+1,"",0);
+    updateVarLabel(debugLabel5,"DIFF",debugValue5,diff,"",0);
     timer = 0;
-    while(!botBall) {
+    if(diff < 200) {
+      n--;
+      repeat = true;
+      continue;
+    }
+    while(botBall && countHeldBalls() != 3) {
       timer+=10;
       pros::delay(10);
       if(timer > 2500) {
         return;
       }
+      repeat = false;
     }
   }
 }
@@ -162,8 +186,7 @@ void intake_subthread(void*p)
   bool wait = false;
   while(botBall) pros::delay(10);
   countIntakeBalls(iBalls);
-  if(botBall)
-    pros::delay(100);
+  //pros::delay(200);
   intakeState = outward;
   pros::delay(100);
   intakeState = stop;
@@ -432,12 +455,14 @@ void thread_subsystems(void* p)
         break;
 
       case 4: //macro2
-        intake_control.suspend();
-        super_macro(2,1);
-        intake_control.resume();
+        // intake_control.suspend();
+        // super_macro(2,1);
+        // intake_control.resume();
         break;
       case 6: //macro3
-        shooting_macro(2);
+        intake_control.suspend();
+        super_macro_slowed(3,2);
+        intake_control.resume();
         break;
 
       case 7: //pause
