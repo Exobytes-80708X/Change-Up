@@ -422,17 +422,18 @@ void thread_subsystems(void* p)
           topConveyor.move_voltage(12000);
           botConveyor.move_velocity(12000);
           counter = 0;
-          while(firstBall || counter < 200) {
+          while(topBall || counter < 200) {
             pros::delay(10);
             counter += 10;
           }
           pros::delay(100);
           while(conveyorState == 1) {
-            pros::delay(10);
+            while(topBall) pros::delay(10);
+            pros::delay(100);
           }
           topConveyor.move_voltage(-12000);
+          botConveyor.move_voltage(-12000);
           pros::delay(100);
-          topConveyor.move_voltage(0);
           break;
         case 2:
           intake_thread.suspend();
