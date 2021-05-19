@@ -357,44 +357,79 @@ void autonomous()
       purePursuit(24,0,startXPts,startYPts,8.8,0.6,12.0,5000); //pure pursuit, pick 2 balls
       driveDistance(-16,11);
       intake(stop);
-      adaptiveDrive(57,-7,0.2,8,0.5,12.0,3.0,250,1200);
+      adaptiveDrive(57,-7,0.2,8,0.5,12.0,3.0,100,1200);
       // facePID(57,-7,p,i,d); //face goal
       // delayDriveSmooth(1050,7.2,0.3,fwd);
-      super_macro_slowed(3, 2); // SCORE SECOND GOAL
+      super_macro_slowed(3, 2); // SCORE FIRST GOAL
       intake(outward);
       //driveDistance(-5,10);
       release_all_asynch(400);
       driveDistance(-19,10);
       intake(inward);
-      adaptiveDrive(13,57,0.2,8,0.5,5.0,1.0,250,10000);
-      //facePID(63,58,p,i,d); //face THIRD goal (right side)
-      //intake(inward);
-      //delayDriveSmooth(1350, 8.2, 0.4, fwd);
-      adaptiveDrive(63,58,0.2,8,0.5,12.0,5.0,250,1800);
+      adaptiveDrive(13,57,0.2,8,0.5,5.0,1.0,100,10000);
+      facePID(63,56,p,i,d);
+      delayDriveSmooth(1600, 9, 0.5, fwd);
       reset(0);
-      super_macro_slowed(2,1);  // score THIRD GOAL
+      timer = 0;
+      while(!thirdBall){
+        pros::delay(10);
+        timer+= 10;
+        if(timer > 1000)
+          break;
+        }
+      shooting_macro(2);  // score THIRD GOAL
       intake(outward);
       driveDistance(-14,10); //back out from goal
       release_all_asynch(0);
       delay_turn(8000,250,1);
       pros::delay(250);
       intake(inward);
-      adaptiveDrive(-30,48,0.6,8.9,0.5,7.3,1.0,250,10000);//intake floating ball
-
-      adaptiveDrive(0,35,0.6,8.9,0.7,9.0,3.0,250,2000);//intake floating ball
+      adaptiveDrive(-29,48,0.4,9.3,0.55,7.5,20.0,100,10000);//intake floating ball
+      facePID(0,35,p,i,d); // face WALL BALL 1
+      driveDistance(calcDistance(0,35)-3,10);
+      //adaptiveDrive(0,35,0.3,9.3,0.5,7.5,9.0,100,2000);//intake floating ball
 
       driveDistance(-13,10);
-      adaptiveDrive(2,70,0.6,8,0.7,9.0,3.0,250,1700);//intake floating ball
+      intake(stop);
+      adaptiveDrive(2,70,0.6,9.3,8.7,9.0,3.0,100,1450);//intake floating ball
       super_macro_slowed(2,2);
-      intake(inward);
-      while(!thirdBall)
-        pros::delay(10);
       intake(outward);
       release_all_asynch(400);
       driveDistance(-23,10);
       intake(inward);
+      adaptiveDrive(-64.25,21.5,0.4,8.6,0.6,5.0,1.0,250,10000); //get ball for FIFTH goal (far middle)
 
-      adaptiveDrive(-66.5,20,0.6,8,0.7,9.0,3.0,250,2300);//intake floating ball
+
+      //adaptiveDrive(-58.5,23.5,0.6,9.3,0.7,7.5,20.0,100,2300);//intake floating ball
+      intake(stop);
+      adaptiveDrive(-61.5,57,0.1,9.3,0.7,7.0,20.0,100,2100);//intake floating ball
+      reset(1);
+      super_macro_slowed(1,1);
+      intake(outward);
+      driveDistance(-18,10);
+      release_all_asynch(0);
+      delay_turn(8000,250,1);
+      pros::delay(350);
+      ///facePID(-36,-15,p,i,d);
+      intake(inward);
+      adaptiveDrive(-34,-15,0.1,9.3,0.7,9.0,5.0,100,3700);//intake floating ball
+      //adaptiveDrive(-68,-40,0.1,8,0.7,9.0,5.0,100,1400);//intake floating ball
+      facePID(-61,-36,p,i,d);
+      driveDistance(calcDistance(-61,-36)-3,10);
+      driveDistance(-10,10);
+      adaptiveDrive(-60,-4,0.1,9.3,0.7,9.0,5.0,100,2000);//intake floating ball
+      //eject(countHeldBalls());
+      //purePursuit(24,0,skills2ndX,skills2ndY,8,0.7,10.0,3000); //anglekp was 12 //get ball for SIXTH Goal (far left corner)
+      //delayDriveSmooth(500,7.5,0.5,fwd);
+      super_macro_slowed(2,1);
+
+      intake(outward);
+      release_all_asynch(0);
+      driveDistance(-14,10);
+
+      //eject(countHeldBalls());
+
+
 
       // intake(inward);
       // //eject(countHeldBalls());
