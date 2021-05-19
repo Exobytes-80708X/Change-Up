@@ -1063,6 +1063,16 @@ void face(double theta)
   face(theta,false,750,0,2.5,10,5.8,250,5000);
 }
 
+void delay_turn(int speed, int duration, int dir)
+{
+  leftDrive.moveVoltage(speed*dir);
+  rightDrive.moveVoltage(-speed*dir);
+  pros::delay(duration);
+  leftDrive.moveVoltage(0);
+  rightDrive.moveVoltage(0);
+  pros::delay(100);
+}
+
 void adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)
 {
   /*

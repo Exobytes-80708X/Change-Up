@@ -375,6 +375,9 @@ void autonomous()
       super_macro_slowed(2,1);  // score THIRD GOAL
       intake(outward);
       driveDistance(-14,10); //back out from goal
+      release_all_asynch(0);
+      delay_turn(8000,250,1);
+      pros::delay(250);
       intake(inward);
       adaptiveDrive(-30,48,0.6,8.9,0.5,7.3,1.0,250,10000);//intake floating ball
 
@@ -382,7 +385,7 @@ void autonomous()
 
       driveDistance(-13,10);
       adaptiveDrive(2,70,0.6,8,0.7,9.0,3.0,250,1700);//intake floating ball
-      super_macro_slowed(3,3);
+      super_macro_slowed(2,2);
       intake(inward);
       while(!thirdBall)
         pros::delay(10);
