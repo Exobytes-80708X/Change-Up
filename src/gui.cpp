@@ -1,7 +1,7 @@
 #include "main.h"
 #include "display/lvgl.h"
 
-int auton = 3;
+int auton = 0;
 const int NUM_OF_AUTONS = 6;
 const std::string AUTON_HEADING = "AUTON SELECTED: ";
 

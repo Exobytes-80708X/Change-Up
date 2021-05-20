@@ -6,7 +6,8 @@ const double ENCODER_WIDTH = 7.0;
 const double MIDDLE_ENCODER_LENGTH = 10.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
 const double IMU_WEIGHT = 1.0;
-const bool DEBUGGING_ENABLED = false;
+const bool DEBUGGING_ENABLED = true;
+const int MIN_V = 2500;
 int test = 0;
 
 double robotTheta_imu = 0.0;
@@ -400,104 +401,6 @@ void driveVector(double currentSpeed, double angleSpeed, double maxV)
 	rightDrive.moveVoltage(rightSpeed);
 }
 
-//OLD
-void driveDistance(double distance, double accel, double minV, double maxV, double distkP, double anglekP, int settleTime, int timeout) //OLD
-{
-  /*
-  Arguments:
-  distance    - number of inches robot needs to travel (can take negative values too)
-  accel       - rate of acceleration being applied to motors per 10 msec, where 0 = no acceleration, 1 = accelerate to max speed immediately
-  minV        - minimum voltage applied to motors
-  maxV        - maximum voltage applid to motors
-  distkP      - constant for tuning distance p-controller
-  anglekP      - constant for tuning angle p-controller
-  settleTime  - the amount of time robot must be within a certain range of the target distance before declaring the movement as finished
-  timeout     - maximum amount of time the movement can take
-  */
-	double simX = distance*sin(robotTheta) + robotX;
-  double simY = distance*cos(robotTheta) + robotY;
-  //calculates a point that is the target distance away from the robots current position
-	double initX = robotX;
-  double initY = robotY;
-	double initTheta = robotTheta;
-  //keeps track of robots intial position before the movement
-	double distError = calcDistance_signed(simX,simY);
-	double angleError;
-  double prevError = distError;
-	double distSpeed;
-	double angleSpeed;
-	double currentSpeed = 0.0;
-
-  double d;
-
-	accel *= 12000;
-	minV *= 1000;
-	maxV *= 1000;
-	distkP *= 1000;
-	anglekP *= 1000;
-  //scales all arguments to be the correct units
-
-	int settleTimer = 0;
-	int timeoutTimer = 0;
-  //initialize timers
-
-	while(settleTimer < settleTime && timeoutTimer < timeout)
-	{
-		distError = calcDistance_signed(simX,simY);
-    d = distError - prevError;
-    prevError = distError;
-		if(distance < 0)
-			angleError = calcAngleErrorReversed(simX,simY);
-      //angle error based on the back of the robot
-		else
-			angleError = calcAngleError(simX,simY);
-      //angle error based on the front of the robot
-
-		angleSpeed = angleError*anglekP;
-		distSpeed = distError*distkP;
-    //scales angle error and distance error
-
-		if(distSpeed > 0 && currentSpeed < distSpeed)	currentSpeed += accel;
-		else if(distSpeed < 0 && currentSpeed > distSpeed) currentSpeed -= accel;
-		else currentSpeed = distSpeed;
-    //if going forward, accelerate forwards
-    //if going reverse, accelerate backwards
-    //if decelerating (whether forwards or backwards), let p-controllers determine speed
-
-		if(distError > 0 && currentSpeed < minV)
-			currentSpeed = minV;
-		else if(distError < 0 && currentSpeed > -minV)
-			currentSpeed = -minV;
-    //makes sure currentSpeed is greater than minV
-
-		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0 || d < 0.1)
-			settleTimer+=10;
-    else
-      settleTimer = 0;
-    //if robot is within 0.5 inches of simulated point or is roughly perpendicular to the simulated point, increase the settleTimer
-    //else if robot is outside that range of error, reset settleTimer to 0
-		timeoutTimer+=10;
-
-		if(fabs(distError) < 6.0)
-			angleSpeed = 0;
-    //if robot is with 6 inches of target distance, robot will no longer adjust to face point
-    //as that will result in the robot making sudden turns at the end of a straight movement, which is bad for straight movements
-
-    driveVector(currentSpeed,angleSpeed,maxV); //send calculated speeds to motors
-		pros::delay(10);
-
-    if(DEBUGGING_ENABLED) {
-      updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
-      updateVarLabel(debugLabel2,"TIMEOUT TIMER",debugValue2,timeoutTimer,"SEC",0);
-    }
-	}
-  if(DEBUGGING_ENABLED) resetAutonDebug();
-	rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
-	leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
-	rightDrive.moveVelocity(0);
-  leftDrive.moveVelocity(0);
-}
-
 void driveDistance2(double distance, double accel, double minV, double maxV, double distkP, double anglekP, int settleTime, int timeout)
 {
   double simX = distance*sin(robotTheta) + robotX;
@@ -540,7 +443,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
       //angle error based on the front of the robot
 
 		angleSpeed = angleError*anglekP;
-		distSpeed = distError*distkP;
+		distSpeed = distError*distkP*cos(angleError);
     //scales angle error and distance error
 
 		if(distSpeed > 0 && currentSpeed < distSpeed)	currentSpeed += accel;
@@ -564,7 +467,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
     //else if robot is outside that range of error, reset settleTimer to 0
 		timeoutTimer+=10;
 
-		if(fabs(distError) < 6.0)
+		if(fabs(distError) < 24.0)
 			angleSpeed = 0;
     //if robot is with 6 inches of target distance, robot will no longer adjust to face point
     //as that will result in the robot making sudden turns at the end of a straight movement, which is bad for straight movements
@@ -588,21 +491,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 
 void driveDistance(double distance, double maxV)
 {
-  driveDistance2(distance,0.5,3,maxV,0.8,1,250,3000);
-}
-
-void accel(double accel, int ms)
-{
-  int timer = 0;
-  double currentSpeed = 0;
-  while(timer < ms)
-  {
-    leftDrive.moveVoltage(currentSpeed);
-    rightDrive.moveVoltage(currentSpeed);
-    currentSpeed += accel;
-    pros::delay(10);
-    timer += 10;
-  }
+  driveDistance2(distance,0.3,0,maxV,0.5,3,250,3000);
 }
 
 void driveUntilStopped(double v)
@@ -631,44 +520,6 @@ void driveUntilStopped(double v)
 
 double pseudoI = 0.0;
 
-void face_alg(double error, double accelTime, double minV, double medV, double maxV, double kP) //deprecated
-{
-  double currentSpeed = error*kP; //scales error
-
-  if(currentSpeed < -maxV)
-    currentSpeed = -maxV;
-  else if(currentSpeed > maxV)
-    currentSpeed = maxV;
-  //limits currentSpeed to maxV
-
-  if(error > 0 && fabs(currentSpeed) < minV)
-    currentSpeed = minV;
-  else if(error < 0 && fabs(currentSpeed) < minV)
-    currentSpeed = -minV;
-  //makes sure currentSpeed is greater than minV
-
-  if(fabs(error) < medV/kP && fabs(error) > 0.04) {
-    pseudoI += medV/accelTime*10;
-    if(pseudoI > medV - minV)
-      pseudoI = medV - minV;
-  }
-  else pseudoI = 0;
-
-  if(error > 0)
-    currentSpeed += pseudoI;
-  else currentSpeed -= pseudoI;
-
-  leftDrive.moveVoltage(currentSpeed);
-  rightDrive.moveVoltage(-currentSpeed);
-  //send voltages to motors
-  pros::delay(10);
-
-  if(DEBUGGING_ENABLED) {
-    updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
-    updateVarLabel(debugLabel2,"CURRENT SPEED",debugValue2,currentSpeed,"mV",0);
-    updateVarLabel(debugLabel3,"PSEUDO I SPEED",debugValue3,pseudoI,"mV",0);
-  }
-}
 void facePID(double x, double y, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout){
       /*
       Arguments:
@@ -783,7 +634,7 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
   					error = calcAngleError(theta); //calculate angle error based off front of robot
 
   				if(fabs(error) < 0.02 || (fabs(error) < 0.04 && d < 0.01) )
-  					settleTimer+=10;
+  					settleTimer += 10;
           else
             settleTimer = 0;
           //if robot is within 0.04 radians (2.5 degrees) of facing (x,y), increase settleTimer
@@ -800,15 +651,17 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
 
           double currentSpeed = p * kP + i * kI + d * kD;
           if (fabs(currentSpeed) > maxV) currentSpeed = maxV*currentSpeed/fabs(currentSpeed);
+          else if (fabs(currentSpeed) < MIN_V) currentSpeed = MIN_V*currentSpeed/fabs(currentSpeed);
 
           leftDrive.moveVoltage(currentSpeed);
           rightDrive.moveVoltage(-currentSpeed);
           pros::delay(10);
           if(DEBUGGING_ENABLED) {
-            updateVarLabel(debugLabel1,"ERROR",debugValue1,error*180/M_PI,"DEG",3);
+            updateVarLabel(debugLabel1,"ERROR",debugValue1,error,"RAD",3);
             updateVarLabel(debugLabel2,"P SPEED",debugValue2,p*kP,"mV",0);
             updateVarLabel(debugLabel3,"I SPEED",debugValue3,i*kI,"mV",0);
             updateVarLabel(debugLabel4,"D SPEED",debugValue4,d*kD,"mV",0);
+            updateVarLabel(debugLabel5,"SETTLE",debugValue4,settleTimer,"ms",0);
           }
   		}
       if(DEBUGGING_ENABLED) resetAutonDebug();
@@ -964,105 +817,6 @@ void delayFacePID(double theta, bool reversed, double maxV, double kP, double kI
 }
 
 
-void face(double x, double y, bool reversed, double accelTime, double minV, double medV, double maxV, double kP, int settleTime, int timeout)
-{
-    /*
-    Arguments:
-    x         - x value of desired point
-    y         - y value of desired point
-    reversed  - true means front of robot will face, false means back of robot will face
-    accel     - rate of acceleration, usually 0 for turning
-    minV      - minimum voltage
-    maxV      - maximum voltage
-    kP        - constant for tuning angle p-controller
-    settleTime- the amount of time robot must be within a certain range of the target distance before declaring the movement as finished
-    timeout   - maximum amount of time the movement can take
-    */
-		double error = calcAngleError(x,y);
-    //calculates shortest number of radians needed to turn to face (x,y)
-		double currentSpeed;
-    pseudoI = 0.0;
-
-		int settleTimer = 0;
-		int timeoutTimer = 0;
-    //initialize timers
-		//accel *= 1000;
-		minV *= 1000;
-    medV *= 1000;
-		maxV *= 1000;
-		kP *= 1000;
-    //scales all arguments to be the correct units
-
-		while(settleTimer < settleTime && timeoutTimer < timeout)
-		{
-				if(reversed == true)
-					error = calcAngleErrorReversed(x,y); //calculates angle error based off back of robot
-				else
-					error = calcAngleError(x,y); //calculate angle error based off front of robot
-
-				if(fabs(error) < 0.04)
-					settleTimer+=10;
-        else
-          settleTimer = 0;
-        //if robot is within 0.04 radians (2.5 degrees) of facing (x,y), increase settleTimer
-        //else reset settleTimer
-				timeoutTimer+=10;
-
-      face_alg(error,accelTime,minV,medV,maxV,kP);
-		}
-    if(DEBUGGING_ENABLED) resetAutonDebug();
-		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
-		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
-		rightDrive.moveVelocity(0);
-	  leftDrive.moveVelocity(0);
-}
-
-void face(double theta, bool reversed, double accelTime, double minV, double medV, double maxV, double kP, int settleTime, int timeout)
-//does exact same thing as the other face, but instead of inputting (x,y) point, it takes a specific absolute theta as an argument
-{
-		double error = calcAngleError(theta);
-		double currentSpeed;
-    pseudoI = 0.0;
-		int settleTimer = 0;
-		int timeoutTimer = 0;
-		//accel *= 1000;
-		minV *= 1000;
-    medV *= 1000;
-		maxV *= 1000;
-		kP *= 1000;
-
-		while(settleTimer < settleTime && timeoutTimer < timeout)
-		{
-				if(reversed == true)
-					error = calcAngleErrorReversed(theta);
-				else
-					error = calcAngleError(theta);
-
-				if(fabs(error) < 0.04)
-					settleTimer+=10;
-        else
-          settleTimer = 0;
-				timeoutTimer+=10;
-
-				face_alg(error,accelTime,minV,medV,maxV,kP);
-		}
-    if(DEBUGGING_ENABLED) resetAutonDebug();
-		rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
-		leftDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
-		rightDrive.moveVelocity(0);
-	  leftDrive.moveVelocity(0);
-}
-
-void face(double x, double y)
-{
-  face(x,y,false,500,0,2.5,10,5.8,250,5000);
-}
-
-void face(double theta)
-{
-  face(theta,false,750,0,2.5,10,5.8,250,5000);
-}
-
 void delay_turn(int speed, int duration, int dir)
 {
   leftDrive.moveVoltage(speed*dir);
@@ -1094,10 +848,12 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
   //saves intial position the robot
 
 	double distError; //distance from robots current position to target point
-	double angleError; //how much robot has to turn to face the target point
+	double angleError = calcAngleError(x,y); //how much robot has to turn to face the target point
+  double prevAngleError = angleError;
 
 	double distSpeed; //speed based on distError*distkP
 	double angleSpeed; //speed based on angleError*anglekP
+  double angleD; //angle derivative
 	double currentSpeed; //speed sent to robot based on distkP, used for controlling acceleration
 
 	double projection; //vector projection to calculate how far robot has to travel to get as close to target point WITHOUT changing its heading
@@ -1118,9 +874,9 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 	int timeoutTimer = 0;
   //initialize timers
 
-	double settleMargin = 0.5; //if robot is this distance from target point, robot is settling
-	double adjustMargin = 6.0; //if robot is this distance from the target point, stop adjusting angle
-	double minSpeedMargin = 3.0; //if robot is this distance from the target point, don't decrease in speed anymore
+	double settleMargin = 2.0; //if robot is this distance from target point, robot is settling
+	double adjustMargin = 12.0; //if robot is this distance from the target point, stop adjusting angle
+	double minSpeedMargin = 6.0; //if robot is this distance from the target point, don't decrease in speed anymore
   //measured in inches
 
 	while(settleTimer < settleTime && timeoutTimer < timeout)
@@ -1183,7 +939,7 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
   leftDrive.moveVelocity(0);
 }
 
-void adaptiveDrive_flow(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)
+void adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double anglekD, double scalePower, int settleTime, int timeout)
 {
   /*
   Arguments:
@@ -1204,10 +960,12 @@ void adaptiveDrive_flow(double x, double y, double accel, double maxV, double di
   //saves intial position the robot
 
 	double distError; //distance from robots current position to target point
-	double angleError; //how much robot has to turn to face the target point
+	double angleError = calcAngleError(x,y); //how much robot has to turn to face the target point
+  double prevAngleError = angleError;
 
 	double distSpeed; //speed based on distError*distkP
 	double angleSpeed; //speed based on angleError*anglekP
+  double angleD; //angle derivative
 	double currentSpeed; //speed sent to robot based on distkP, used for controlling acceleration
 
 	double projection; //vector projection to calculate how far robot has to travel to get as close to target point WITHOUT changing its heading
@@ -1228,9 +986,9 @@ void adaptiveDrive_flow(double x, double y, double accel, double maxV, double di
 	int timeoutTimer = 0;
   //initialize timers
 
-	double settleMargin = 0.5; //if robot is this distance from target point, robot is settling
-	double adjustMargin = 6.0; //if robot is this distance from the target point, stop adjusting angle
-	double minSpeedMargin = 3.0; //if robot is this distance from the target point, don't decrease in speed anymore
+	double settleMargin = 2.0; //if robot is this distance from target point, robot is settling
+	double adjustMargin = 12.0; //if robot is this distance from the target point, stop adjusting angle
+	double minSpeedMargin = 6.0; //if robot is this distance from the target point, don't decrease in speed anymore
   //measured in inches
 
 	while(settleTimer < settleTime && timeoutTimer < timeout)
@@ -1246,13 +1004,15 @@ void adaptiveDrive_flow(double x, double y, double accel, double maxV, double di
 		if(projection < 0) projection = 0;
     //prevents robot from moving backwards
     //with adaptiveDrive, robot should only be able allowed to move ONE direction, allowing it to have the option to move forwards and backwards whenever it chooses creates strange and erratic behavior
-		distkPScale = pow(fabs(projection/distError),scalePower);
+		distkPScale = pow(fabs(cos(angleError)),scalePower);
     scaledDistkP = distkP * distkPScale;
     //calculates a new scaled distkP based on projection/distError
     //scale power is used to tune sensitivity of scaled kP
 
 		if(fabs(distError) < settleMargin || (fabs(distError) < adjustMargin && fabs(angleError) > 85.0*M_PI/180.0) )
-			return;
+			settleTimer+=10;
+    else
+      settleTimer = 0;
 		timeoutTimer+=10;
     //if robot is within settleMargin of point or robot is with adjustMargin and is roughly perpendicular to the point settleTimer will increase
 
@@ -1267,7 +1027,9 @@ void adaptiveDrive_flow(double x, double y, double accel, double maxV, double di
       //if robot is within adjustMargin of the target point, robot's speed is still p-controlled, but angleSpeed is set to 0
 		}
 		else {
-      angleSpeed = angleError*anglekP;
+      angleD = angleError - prevAngleError;
+      prevAngleError = angleError;
+      angleSpeed = angleError*anglekP + angleD*anglekD;
 			distSpeed = distError*scaledDistkP;
       //if robot is outside either of those margins, angle and dist speed are controlled by p-controller
     }
