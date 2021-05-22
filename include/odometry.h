@@ -4,6 +4,7 @@
 extern double robotTheta;
 extern double robotX;
 extern double robotY;
+extern const int MIN_V;
 extern void thread_Odometry(void*param);
 extern double calcDistance(double x1, double y1, double x2, double y2);
 extern double calcDistance(double x2, double y2);
@@ -22,6 +23,7 @@ extern void adaptiveDrive_reversed(double x, double y, double maxV);
 extern void face(double x, double y);
 extern void face(double theta);
 extern void driveDistance(double distance, double maxV);
+extern void driveDistance(double distance, double maxV,int);
 extern void driveDistance2(double distance, double accel, double minV, double maxV, double distkP, double anglekP, int settleTime, int timeout);
 extern void delayDrive(int ms, double vel);
 extern void delayTurn(int ms, double velL, double velR);

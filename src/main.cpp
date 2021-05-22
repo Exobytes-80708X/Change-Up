@@ -231,7 +231,7 @@ void autonomous()
   pros::delay(200);
   isRobotDisabled = false;
   driverControl = false;
-  double p = 10;
+  double p = 18;
   double i = 0;
   double d = 70;
   double tempTheta;
@@ -261,9 +261,41 @@ void autonomous()
     // driveDistance(72,12);
     // facePID(180,false,12,p,i,d,100,5000);
     // driveDistance(48,12);
+    start_theta = 1.09694499; //M_PI/3;
+    pros::delay(100);
+    intake(inward);
+    // startXPts.push_back(robotX);
+    // startYPts.push_back(robotY);
+    //
+    // startXPts.push_back(24); //set points for pure pursuit
+    // startYPts.push_back(10);
+    //
+    // startXPts.push_back(36);
+    // startYPts.push_back(24);
 
+    //purePursuit(24,1.0,startXPts,startYPts,12,0.3,12.0,5000); //pure pursuit, pick 2 balls
+
+    // driveDistance(24,12,1000);
+    // facePID(45,18,p,i,d);
+    // driveDistance(calcDistance(45,18),12,1000);
+    // driveDistance(-16,12);
+
+    adaptiveDrive(45,18,0.5,12,0.5,12.0,1.0,100,1800);
+    intake(stop);
+    // facePID(45,false,12,p,i,d,100,5000);
     //adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)
-    adaptiveDrive(24,-48, 0.5, 12, 0.5, 4, 0, 10.0, 100, 10000);
+    //adaptiveDrive(24,-48, 0.5, 12, 0.7, 4, 0, 10.0, 100, 10000); *optimal parameters
+
+    // startXPts.push_back(robotX);
+    // startYPts.push_back(robotY);
+    //
+    // startXPts.push_back(0); //set points for pure pursuit
+    // startYPts.push_back(24);
+    //
+    // startXPts.push_back(24);
+    // startYPts.push_back(48);
+    //
+    // purePursuit(24,1.0,startXPts,startYPts,12,0.3,120.0,5000); //pure pursuit, pick 2 balls
     break;
 
     case 1: //red auton
@@ -340,31 +372,41 @@ void autonomous()
 
     case 3: //SKILLS ================================================================================================================================================================
       start_theta = 1.09694499; //M_PI/3;
+      pros::delay(100);
       intake(inward);
-      startXPts.push_back(robotX);
-      startYPts.push_back(robotY);
+      // startXPts.push_back(robotX);
+      // startYPts.push_back(robotY);
+      //
+      // startXPts.push_back(24); //set points for pure pursuit
+      // startYPts.push_back(10);
+      //
+      // startXPts.push_back(36);
+      // startYPts.push_back(24);
 
-      startXPts.push_back(24); //set points for pure pursuit
-      startYPts.push_back(10);
+      //purePursuit(24,1.0,startXPts,startYPts,12,0.3,12.0,5000); //pure pursuit, pick 2 balls
 
-      startXPts.push_back(44);
-      startYPts.push_back(19);
+      // driveDistance(24,12,1000);
+      // facePID(45,18,p,i,d);
+      // driveDistance(calcDistance(45,18),12,1000);
+      //
 
-      purePursuit(24,0,startXPts,startYPts,8.8,0.6,12.0,5000); //pure pursuit, pick 2 balls
-      driveDistance(-16,12);
+      adaptiveDrive(43,18,0.5,12,0.5,12.0,1.0,100,2000);
+      driveDistance(-20,12);
       intake(stop);
-      //adaptiveDrive(57,-7,0.2,8,0.5,12.0,3.0,100,1000);
-      facePID(57,-7,p,i,d); //face goal
-      delayDriveSmooth(1050,7.2,0.3,fwd);
+      adaptiveDrive(57,-7,0.5,12,0.5,12.0,10.0,100,1000);
+      //facePID(57,-7,p-2,i,d); //face goal
+      //delayDriveSmooth(1050,7.2,0.3,fwd);
+      //driveDistance(calcDistance(57,-7)-8,12,1000);
       super_macro_slowed(3, 2); // SCORE FIRST GOAL
       intake(outward);
       //driveDistance(-5,10);
       release_all_asynch(400);
-      driveDistance(-19,12);
+      driveDistance(-20,12);
       intake(inward);
-      adaptiveDrive(13,57,0.6,8,0.5,5.0,1.0,100,10000);
+      adaptiveDrive(15,50,0.7,12, 0.5, 12, 10.0,100,10000);
       facePID(63,56,p,i,d);
-      delayDriveSmooth(1250, 9, 0.5, fwd);
+      //delayDriveSmooth(1250, 9, 0.5, fwd);
+      driveDistance(calcDistance(63,56)-15,12,1250);
       reset(0);
       timer = 0;
       while(!thirdBall){

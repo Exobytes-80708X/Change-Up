@@ -151,7 +151,7 @@ void thread_Odometry(void*p) //ARC-BASED 3 WHEELS
   int leftReset = left.reset();
   int rightReset = right.reset();
   int midReset = middle.reset();
-  pros::delay(200);
+  pros::delay(100);
   std::uint32_t t;
   while(true)
   {
@@ -374,11 +374,15 @@ void driveVector(double currentSpeed, double angleSpeed, double maxV)
   maxV          - maximum voltage applid to motors, uses mV
   debugOn       - enables/disables debugging on V5 display
   */
-	if(fabs(currentSpeed) > maxV)
-		currentSpeed = currentSpeed/fabs(currentSpeed)*maxV;
+
+  if(fabs(angleSpeed) > maxV) {
+    angleSpeed = angleSpeed/fabs(angleSpeed)*maxV;
+  }
+	if(fabs(currentSpeed) > maxV-fabs(angleSpeed))
+		currentSpeed = currentSpeed/fabs(currentSpeed)*maxV-fabs(angleSpeed);
     //Limits currentSpeed to maxV
 
-	double maxCurrentSpeed = fabs(currentSpeed) + fabs(angleSpeed);
+	//double maxCurrentSpeed = fabs(currentSpeed) + fabs(angleSpeed);
   //calculates new maximum currentSpeed with angleSpeed added
 	double leftSpeed = currentSpeed + angleSpeed;
 	double rightSpeed = currentSpeed - angleSpeed;
@@ -459,6 +463,8 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 			currentSpeed = -minV;*/
     //makes sure currentSpeed is greater than minV
 
+    if(fabs(currentSpeed) < MIN_V) currentSpeed = MIN_V*currentSpeed/fabs(currentSpeed);
+
 		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0 || (d < 0.0015 && fabs(distError) < 5.0))
 			settleTimer+=10;
     else
@@ -479,7 +485,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 
     if(DEBUGGING_ENABLED) {
       updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
-      updateVarLabel(debugLabel2,"TIMEOUT TIMER",debugValue2,timeoutTimer,"SEC",0);
+      updateVarLabel(debugLabel2,"DIST SPEED",debugValue2,distSpeed,"SEC",0);
     }
 	}
   if(DEBUGGING_ENABLED) resetAutonDebug();
@@ -491,8 +497,20 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 
 void driveDistance(double distance, double maxV)
 {
-  driveDistance2(distance,0.3,0,maxV,0.5,3,250,3000);
+  if(distance < 0)
+    driveDistance2(distance,0.7,0,maxV,0.5,3,100,3000);
+  else
+    driveDistance2(distance,0.7,0,maxV,0.6,3,100,3000);
 }
+
+void driveDistance(double distance, double maxV,int timeout)
+{
+  if(distance < 0)
+    driveDistance2(distance,0.7,0,maxV,0.5,3,100,timeout);
+  else
+    driveDistance2(distance,0.7,0,maxV,0.6,3,100,timeout);
+}
+
 
 void driveUntilStopped(double v)
 {
@@ -558,7 +576,7 @@ void facePID(double x, double y, bool reversed, double maxV, double kP, double k
   				else
   					error = calcAngleError(x,y); //calculate angle error based off front of robot
 
-            if(fabs(error) < 0.02 || (fabs(error) < 0.1 && d < 0.01) )
+            if(fabs(error) < 0.02 || (fabs(error) < 0.04 && d < 0.01) )
     					settleTimer+=10;
             else
               settleTimer = 0;
@@ -576,6 +594,7 @@ void facePID(double x, double y, bool reversed, double maxV, double kP, double k
 
             double currentSpeed = p * kP + i * kI + d * kD;
             if (fabs(currentSpeed) > maxV) currentSpeed = maxV*currentSpeed/fabs(currentSpeed);
+            else if (fabs(currentSpeed) < MIN_V) currentSpeed = MIN_V*currentSpeed/fabs(currentSpeed);
 
           leftDrive.moveVoltage(currentSpeed);
           rightDrive.moveVoltage(-currentSpeed);
@@ -596,7 +615,7 @@ void facePID(double x, double y, bool reversed, double maxV, double kP, double k
 
 void facePID(double x, double y, double kP,double kI, double kD)
 {
-  facePID(x, y, false, 8, kP, kI, kD, 100, 5000);
+  facePID(x, y, false, 12, kP, kI, kD, 100, 5000);
 }
 
 void facePID(double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout){
@@ -673,7 +692,7 @@ void facePID(double theta, bool reversed, double maxV, double kP, double kI, dou
 
 void facePID(double theta, double kP, double kI, double kD)
 {
-  facePID(theta, false, 8, kP,kI,kD, 100, 10000);
+  facePID(theta, false, 12, kP,kI,kD, 100, 10000);
 }
 
 void pointTurn(int side, int oppRPM, double theta, bool reversed, double maxV, double kP, double kI, double kD, int settleTime, int timeout)
@@ -897,7 +916,7 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
     //calculates a new scaled distkP based on projection/distError
     //scale power is used to tune sensitivity of scaled kP
 
-		if(fabs(distError) < settleMargin || (fabs(distError) < adjustMargin && fabs(angleError) > 85.0*M_PI/180.0) )
+		if(fabs(distError) < settleMargin || (fabs(distError) < minSpeedMargin && fabs(angleError) > 85.0*M_PI/180.0) )
 			settleTimer+=10;
     else
       settleTimer = 0;
@@ -1168,7 +1187,7 @@ void adaptiveDrive_reversed(double x, double y, double maxV){
 }
 void adaptiveDrive(double x, double y, double maxV)
 {
-	adaptiveDrive(x,y,0.2,maxV,0.7,5.0,1.0,250,10000);
+	adaptiveDrive(x,y,0.5,maxV,0.7,5.0,1.0,250,10000);
 }
 
 void delayDrive(int ms,double vel){

@@ -140,9 +140,12 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
 
   db realAngleError;
 
+  db currentSpeed = 0;
+
   maxV *= 1000;
   timekP *= 1000;
   anglekP *= 1000;
+  accel *= 1000;
   int timer = 0;
 
   while(settleTimer < 200 && timer < timeout) {
@@ -210,25 +213,28 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     if(distError < 6.0 && minRadius > 6.0)
       angleError = 0;
 
-    if(distError < 2.0 || (fabs(realAngleError) > 85.0*M_PI/180.0 && distError < 6.0)) settleTimer += 10;
+    if(distError < 2.0 || (fabs(realAngleError) > 85.0*M_PI/180.0 && fabs(realAngleError) < 95.0*M_PI/180.0 &&distError < 6.0)) settleTimer += 10;
     else settleTimer = 0;
 
     fwdSpeed = distError*timekP*cos(angleError); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down
     angleSpeed = angleError*anglekP;
 
-    if(fabs(fwdSpeed) > maxV) fwdSpeed = maxV*fwdSpeed/fabs(fwdSpeed);
+    if(currentSpeed < maxV && accel != 0) currentSpeed += accel;
+    else currentSpeed = fwdSpeed;
 
+    if(fabs(currentSpeed) > maxV) currentSpeed = maxV*fwdSpeed/fabs(fwdSpeed);
+    //else if(fabs(currentSpeed) < MIN_V) currentSpeed = MIN_V*fwdSpeed/fabs(fwdSpeed);
     derivative = distError - prevDistError;
     prevDistError = distError;
 
     updateVarLabel(debugLabel1,"RADIUS",debugValue1,adaptRadius,"IN",3);
     updateVarLabel(debugLabel2,"ANGLE ERROR",debugValue2,angleError*180/M_PI,"DEG",3);
-    updateVarLabel(debugLabel3,"FWD_SPEED",debugValue3,fwdSpeed,"mV",3);
+    updateVarLabel(debugLabel3,"CURR_SPEED",debugValue3,currentSpeed,"mV",3);
     updateVarLabel(debugLabel4,"C_TIME",debugValue4,currentTime,"",3);
     updateVarLabel(debugLabel5,"FOLLOW X",debugValue5,followX,"IN",3);
     updateVarLabel(debugLabel6,"FOLLOW Y",debugValue6,followY,"IN",3);
 
-    driveVector(fwdSpeed,angleSpeed,maxV);
+    driveVector(currentSpeed,angleSpeed,maxV);
     pros::delay(10);
   }
   rightDrive.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
@@ -350,7 +356,7 @@ void purePursuit(db minRadius, db accel, vd xPts, vd yPts, db maxV, db timekP, d
     if(distError < 6.0 && minRadius > 6.0)
       angleError = 0;
 
-    if(distError < 2.0 || (fabs(realAngleError) > 85.0*M_PI/180.0 && distError < 6.0)) settleTimer += 10;
+    if(distError < 2.0 || (fabs(realAngleError) > 85.0*M_PI/180.0 && distError < 4.0)) settleTimer += 10;
     else settleTimer = 0;
 
     fwdSpeed = distError*timekP*cos(angleError); //the larger the angleError the less it will move forward i.e. if there is a sharp turn it will slow down
