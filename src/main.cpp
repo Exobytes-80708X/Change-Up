@@ -64,11 +64,11 @@ void release(int n)
   conveyorState = 7;
 
   topConveyor.move_velocity(-600);
-  botConveyor.move_velocity(-600);
+  botConveyor.move_velocity(-400);
   intake(outward);
   countReleaseBalls(n);
   conveyorState = 0;
-  //pros::delay(250);
+  pros::delay(250);
 }
 
 int rd_balls;

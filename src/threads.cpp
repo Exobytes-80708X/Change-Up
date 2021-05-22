@@ -44,7 +44,7 @@ void thread_sensors_v2(void*p)
 
     if(botDetector.get() < 60 && !botBall)
       botBall = true;
-    else if(botDetector.get() > 150 && botBall)
+    else if(botDetector.get() > 170 && botBall)
       botBall = false;
 
     if(topBall)
@@ -168,7 +168,7 @@ void countIntakeBalls(int numOfBalls)
     //   repeat = true;
     //   continue;
     // }
-    while(botBall && countHeldBalls() != 3) {
+    while(botBall) {
       timer+=10;
       pros::delay(10);
       if(timer > 2500) {
@@ -457,12 +457,13 @@ void thread_subsystems(void* p)
         break;
 
       case 4: //macro2
-        // intake_control.suspend();
-        // super_macro(2,1);
-        // intake_control.resume();
+        intake_control.suspend();
+        super_macro_slowed(3,2);
+        intake_control.resume();
         break;
       case 6: //macro3
         shooting_macro(2);
+
         break;
 
       case 7: //pause
