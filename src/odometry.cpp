@@ -512,7 +512,7 @@ void driveDistance(double distance, double maxV)
   if(distance < 0)
     driveDistance2(distance,0.7,0,maxV,0.6,3,100,3000);
   else
-    driveDistance2(distance,0.7,0,maxV,0.6,3,100,3000);
+    driveDistance2(distance,0.5,0,maxV,0.6,3,100,3000);
 }
 
 void driveDistance(double distance, double maxV,int timeout)
@@ -520,7 +520,7 @@ void driveDistance(double distance, double maxV,int timeout)
   if(distance < 0)
     driveDistance2(distance,0.7,0,maxV,0.6,3,100,timeout);
   else
-    driveDistance2(distance,0.7,0,maxV,0.6,3,100,timeout);
+    driveDistance2(distance,0.5,0,maxV,0.6,3,100,timeout);
 }
 
 
@@ -928,7 +928,7 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
     //calculates a new scaled distkP based on projection/distError
     //scale power is used to tune sensitivity of scaled kP
 
-		if(fabs(distError) < settleMargin || (fabs(distError) < minSpeedMargin && fabs(angleError) > 85.0*M_PI/180.0) )
+		if(fabs(distError) < settleMargin || (fabs(distError) < adjustMargin && fabs(angleError) > 85.0*M_PI/180.0) )
 			settleTimer+=10;
     else
       settleTimer = 0;

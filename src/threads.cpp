@@ -458,7 +458,8 @@ void thread_subsystems(void* p)
 
       case 4: //macro2
         intake_control.suspend();
-        super_macro_slowed(3,2);
+        release(2);
+        // super_macro_slowed(3,2);
         intake_control.resume();
         break;
       case 6: //macro3
