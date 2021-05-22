@@ -275,7 +275,7 @@ void autonomous()
 
     //purePursuit(24,1.0,startXPts,startYPts,12,0.3,12.0,5000); //pure pursuit, pick 2 balls
 
-    // driveDistance(24,12,1000);
+    driveDistance(-24,12,1000);
     // facePID(45,18,p,i,d);
     // driveDistance(calcDistance(45,18),12,1000);
     // driveDistance(-16,12);

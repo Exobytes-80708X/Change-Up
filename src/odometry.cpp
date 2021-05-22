@@ -394,7 +394,7 @@ void driveVector(double currentSpeed, double angleSpeed, double maxV)
 		rightSpeed /= speedScale;
 	}*/
 
-	if(DEBUGGING_ENABLED) {
+	if(false) {
     updateVarLabel(debugLabel3,"LEFT SPEED",debugValue3,leftSpeed,"mV",7);
     updateVarLabel(debugLabel4,"RIGHT SPEED",debugValue4,rightSpeed,"mV",7);
     updateVarLabel(debugLabel5,"CURRENT SPEED",debugValue5,currentSpeed,"mV",7);
@@ -434,6 +434,11 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
   double prevError;
   double d;
 
+  updateVarLabel(debugLabel3,"DISTANCE",debugValue3,distance,"IN",0);
+  updateVarLabel(debugLabel4,"C_SPEED",debugValue4,currentSpeed,"mV",0);
+
+  //pros::delay(2000);
+
 	while(settleTimer < settleTime && timeoutTimer < timeout)
 	{
 		distError = calcDistance_signed(simX,simY);
@@ -465,6 +470,11 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 
     if(fabs(currentSpeed) < MIN_V) currentSpeed = MIN_V*currentSpeed/fabs(currentSpeed);
 
+    updateVarLabel(debugLabel3,"DISTANCE ERROR",debugValue3,distError,"IN",0);
+    updateVarLabel(debugLabel4,"C_SPEED",debugValue4,currentSpeed,"mV",0);
+
+    //pros::delay(2000);
+
 		if(fabs(distError) < 0.5 || fabs(angleError) > 85.0*M_PI/180.0 || (d < 0.0015 && fabs(distError) < 5.0))
 			settleTimer+=10;
     else
@@ -485,7 +495,9 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 
     if(DEBUGGING_ENABLED) {
       updateVarLabel(debugLabel1,"DISTANCE ERROR",debugValue1,distError,"IN",3);
-      updateVarLabel(debugLabel2,"DIST SPEED",debugValue2,distSpeed,"SEC",0);
+      updateVarLabel(debugLabel2,"DIST SPEED",debugValue2,distSpeed,"mV",0);
+      updateVarLabel(debugLabel3,"ANGLE ERROR",debugValue3,angleError,"RAD",0);
+      updateVarLabel(debugLabel4,"C_SPEED",debugValue4,currentSpeed,"mV",0);
     }
 	}
   if(DEBUGGING_ENABLED) resetAutonDebug();
