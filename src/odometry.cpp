@@ -418,7 +418,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 	double angleError;
 	double distSpeed;
 	double angleSpeed;
-	double currentSpeed = minV*1000 * distance/abs(distance);
+	double currentSpeed = MIN_V*1000 * distance/abs(distance);
 
 	accel *= 1000;
 	minV *= 1000;
@@ -510,7 +510,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 void driveDistance(double distance, double maxV)
 {
   if(distance < 0)
-    driveDistance2(distance,0.7,0,maxV,0.5,3,100,3000);
+    driveDistance2(distance,0.7,0,maxV,0.6,3,100,3000);
   else
     driveDistance2(distance,0.7,0,maxV,0.6,3,100,3000);
 }
@@ -518,7 +518,7 @@ void driveDistance(double distance, double maxV)
 void driveDistance(double distance, double maxV,int timeout)
 {
   if(distance < 0)
-    driveDistance2(distance,0.7,0,maxV,0.5,3,100,timeout);
+    driveDistance2(distance,0.7,0,maxV,0.6,3,100,timeout);
   else
     driveDistance2(distance,0.7,0,maxV,0.6,3,100,timeout);
 }
