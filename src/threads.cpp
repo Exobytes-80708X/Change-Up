@@ -35,7 +35,7 @@ void thread_sensors_v2(void*p)
     t = pros::millis();
     if( (topDetector1.get_value() < 2450 || topDetector2.get_value() < 2450) && topBall == false)
       topBall = true;
-    else if((topDetector1.get_value() > 2700 || topDetector2.get_value() > 2700) && topBall == true)
+    else if((topDetector1.get_value() > 2700 && topDetector2.get_value() > 2700) && topBall == true)
       topBall = false;
 
     if(midDetector.get() < 75)
@@ -458,7 +458,7 @@ void thread_subsystems(void* p)
 
       case 4: //macro2
         intake_control.suspend();
-        release(2);
+        release(1);
         // super_macro_slowed(3,2);
         intake_control.resume();
         break;

@@ -512,7 +512,7 @@ void driveDistance(double distance, double maxV)
   if(distance < 0)
     driveDistance2(distance,0.7,0,maxV,0.6,3,100,3000);
   else
-    driveDistance2(distance,0.5,0,maxV,0.6,3,100,3000);
+    driveDistance2(distance,0.3,0,maxV,0.6,3,100,3000);
 }
 
 void driveDistance(double distance, double maxV,int timeout)
@@ -520,7 +520,7 @@ void driveDistance(double distance, double maxV,int timeout)
   if(distance < 0)
     driveDistance2(distance,0.7,0,maxV,0.6,3,100,timeout);
   else
-    driveDistance2(distance,0.5,0,maxV,0.6,3,100,timeout);
+    driveDistance2(distance,0.3,0,maxV,0.6,3,100,timeout);
 }
 
 
@@ -940,7 +940,7 @@ void adaptiveDrive(double x, double y, double accel, double maxV, double distkP,
 			distSpeed = (distError/fabs(distError))*minSpeedMargin*distkP;
       //if robot is within minSpeedMargin of the target point, the robot's speed is locked and angleSpeed is set to 0
 		}
-		else if(fabs(distError) < adjustMargin) {
+		else if(fabs(distError) < adjustMargin && adjustMargin > minSpeedMargin) {
 			angleSpeed = 0;
 			distSpeed = distError*distkP;
       //if robot is within adjustMargin of the target point, robot's speed is still p-controlled, but angleSpeed is set to 0
