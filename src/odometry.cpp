@@ -1,7 +1,7 @@
 #include "main.h"
 //================ Odometry Variables ================
 
-const double WHEEL_DIAMETER = 2.8;
+const double WHEEL_DIAMETER = 2.75;
 const double ENCODER_WIDTH = 7.0;
 const double MIDDLE_ENCODER_LENGTH = 10.0;
 const double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER*M_PI;
@@ -105,7 +105,7 @@ void thread_Odometry_old(void*param) //LINE-BASED 3 WHEELS
         //dY = (dLeftVal + dRightVal)/2 * cos( (robotTheta) ); //calculate change in y
 
         dX = (dLeftVal + dRightVal)/2 * sin(avgTheta) + dMiddleVal * cos(avgTheta);//calculate change in x
-        dY = (dLeftVal + dRightVal)/2 * cos(avgTheta) - dMiddleVal * sin(avgTheta);; //calculate change in y
+        dY = (dLeftVal + dRightVal)/2 * cos(avgTheta) - dMiddleVal * sin(avgTheta); //calculate change in y
 
         robotX += dX; //add to current x and ys
         robotY += dY;
@@ -113,7 +113,7 @@ void thread_Odometry_old(void*param) //LINE-BASED 3 WHEELS
         //if(DEBUGGING_ENABLED) {
           updateValueLabel(xValue,robotX, "IN",3);
           updateValueLabel(yValue,robotY, "IN",3);
-          updateValueLabel(thetaValue,robotTheta*180/M_PI,"DEG",3);
+          updateValueLabel(thetaValue,avgTheta*180/M_PI,"DEG",3);
         //}
         pros::delay(10); //reupdate every dT msec
     }
@@ -176,7 +176,6 @@ void thread_Odometry(void*p) //ARC-BASED 3 WHEELS
     }
 
     dTheta = dIMU;
-    //dTheta = (dL - dR)/W;
 
     avgTheta = robotTheta + dTheta/2.0;
     avgTheta = fmod(avgTheta, 2*M_PI);
@@ -203,7 +202,7 @@ void thread_Odometry(void*p) //ARC-BASED 3 WHEELS
     updateValueLabel(xValue,robotX, "IN",3);
     updateValueLabel(yValue,robotY, "IN",3);
     updateValueLabel(thetaValue,robotTheta*180/M_PI,"DEG",3);
-    pros::Task::delay_until(&t,10);
+    pros::Task::delay_until(&t,20);
   }
 }
 // =============================================== math ===============================================================
@@ -418,7 +417,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 	double angleError;
 	double distSpeed;
 	double angleSpeed;
-	double currentSpeed = MIN_V*1000 * distance/abs(distance);
+	double currentSpeed = distance/abs(distance);
 
 	accel *= 1000;
 	minV *= 1000;
@@ -455,6 +454,8 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 		distSpeed = distError*distkP*cos(angleError);
     //scales angle error and distance error
 
+    if(fabs(distSpeed) < MIN_V) distSpeed = MIN_V*distSpeed/fabs(distSpeed);
+
 		if(distSpeed > 0 && currentSpeed < distSpeed)	currentSpeed += accel;
 		else if(distSpeed < 0 && currentSpeed > distSpeed) currentSpeed -= accel;
 		else currentSpeed = distSpeed;
@@ -467,8 +468,6 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
 		else if(distError < 0 && currentSpeed > -minV)
 			currentSpeed = -minV;*/
     //makes sure currentSpeed is greater than minV
-
-    if(fabs(currentSpeed) < MIN_V) currentSpeed = MIN_V*currentSpeed/fabs(currentSpeed);
 
     updateVarLabel(debugLabel3,"DISTANCE ERROR",debugValue3,distError,"IN",0);
     updateVarLabel(debugLabel4,"C_SPEED",debugValue4,currentSpeed,"mV",0);
@@ -483,7 +482,7 @@ void driveDistance2(double distance, double accel, double minV, double maxV, dou
     //else if robot is outside that range of error, reset settleTimer to 0
 		timeoutTimer+=10;
 
-		if(fabs(distError) < 24.0)
+		if(fabs(distError) < 6.0)
 			angleSpeed = 0;
     //if robot is with 6 inches of target distance, robot will no longer adjust to face point
     //as that will result in the robot making sudden turns at the end of a straight movement, which is bad for straight movements
@@ -512,7 +511,7 @@ void driveDistance(double distance, double maxV)
   if(distance < 0)
     driveDistance2(distance,0.7,0,maxV,0.6,3,100,3000);
   else
-    driveDistance2(distance,0.3,0,maxV,0.6,3,100,3000);
+    driveDistance2(distance,0.3,0,maxV,0.5,3,100,3000);
 }
 
 void driveDistance(double distance, double maxV,int timeout)
@@ -520,7 +519,7 @@ void driveDistance(double distance, double maxV,int timeout)
   if(distance < 0)
     driveDistance2(distance,0.7,0,maxV,0.6,3,100,timeout);
   else
-    driveDistance2(distance,0.3,0,maxV,0.6,3,100,timeout);
+    driveDistance2(distance,0.3,0,maxV,0.5,3,100,timeout);
 }
 
 
@@ -1129,9 +1128,9 @@ void adaptiveDrive_reversed(double x, double y, double accel, double maxV, doubl
 	int timeoutTimer = 0;
   //initialize timers
 
-	double settleMargin = 0.5; //if robot is this distance from target point, robot is settling
-	double adjustMargin = 6.0; //if robot is this distance from the target point, stop adjusting angle
-	double minSpeedMargin = 3.0; //if robot is this distance from the target point, don't decrease in speed anymore
+	double settleMargin = 2.0; //if robot is this distance from target point, robot is settling
+	double adjustMargin = 12.0; //if robot is this distance from the target point, stop adjusting angle
+	double minSpeedMargin = 6.0; //if robot is this distance from the target point, don't decrease in speed anymore
   //measured in inches
 
 	while(settleTimer < settleTime && timeoutTimer < timeout)

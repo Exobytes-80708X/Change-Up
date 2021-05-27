@@ -59,6 +59,34 @@ void intake(int state){
   intakeState = state;
 }
 
+void adjustMiddle(void*p)
+{
+  double v_l;
+  double v_r;
+  while(true) {
+    v_l = fabs(leftIntake.get_actual_velocity());
+    v_r = fabs(rightIntake.get_actual_velocity());
+
+    if (v_r < 200 && v_l < 200){
+      rightDrive.moveVoltage(5000);
+      leftDrive.moveVoltage(5000);
+    }
+    else if(v_l < v_r-100 ) {
+      rightDrive.moveVoltage(-8000);
+      leftDrive.moveVoltage(8000);
+    }
+    else if(v_r < v_l-100){
+      rightDrive.moveVoltage(8000);
+      leftDrive.moveVoltage(-8000);
+    }
+    else {
+      rightDrive.moveVoltage(0);
+      leftDrive.moveVoltage(0);
+    }
+    pros::delay(50);
+  }
+}
+
 void release(int n)
 {
   conveyorState = 7;
@@ -109,7 +137,7 @@ void release_thread(void* p) {
 
 void release_thread2(void* p) {
   pros::delay(500);
-  release(countHeldBalls()-1);
+  release_slowed(countHeldBalls()-1);
 }
 void shoot(int a){
     conveyorState = 3;
@@ -232,20 +260,54 @@ void unfold_thread(void*p) {
   unfold();
 }
 //------------------------------------------------------
+bool mid_ball_grabbed = false;
+void check_mid_ball_grabbed(void*p) {
+  int mtimer = 0;
+  pros::delay(100);
+  while(!botBall){
+    pros::delay(10);
+    mtimer += 10;
+    if(mtimer > 3000) return;
+  }
+  mid_ball_grabbed = true;
+}
+
 void autonomous()
 {
-  std::uint32_t t = pros::millis();
   pros::Task task_odometry (thread_Odometry, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  switch(auton) {
+    case 0:
+      start_theta = 0;
+    break;
+    case 1:
+      start_theta = 3*M_PI/2;
+    break;
+    case 2:
+    break;
+    case 3:
+      start_theta = 1.09694499;
+    break;
+    case 4:
+    case 5:
+      start_theta = 0;
+    break;
+  }
+  pros::delay(200);
+  std::uint32_t t = pros::millis();
   pros::Task f (asynchShoot, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task a (intake_delay, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task r (release_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   pros::Task r2 (release_thread2, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task cm (check_mid_ball_grabbed, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
+  pros::Task am (adjustMiddle, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   //pros::Task u (unfold_thread, (void*)"PROS", TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "");
   f.suspend();
   a.suspend();
   r.suspend();
   r2.suspend();
-  pros::delay(200);
+  am.suspend();
+  cm.suspend();
+  //pros::delay(100);
   isRobotDisabled = false;
   driverControl = false;
   double p = 18;
@@ -270,56 +332,17 @@ void autonomous()
   goals.push_back(std::make_pair(0,0));
   int timer = 0;
   //goals = repos_goals(goals,-53.375,13.25);
-  updateVarLabel(debugLabel3,"R1",debugValue3,goals[0],"",3);
-  updateVarLabel(debugLabel4,"R2",debugValue4,goals[1],"",3);
-  updateVarLabel(debugLabel5,"R3",debugValue5,goals[2],"",3);
+  // updateVarLabel(debugLabel3,"R1",debugValue3,goals[0],"",3);
+  // updateVarLabel(debugLabel4,"R2",debugValue4,goals[1],"",3);
+  // updateVarLabel(debugLabel5,"R3",debugValue5,goals[2],"",3);
   switch(auton) {
     case 0: //no auton
-    // driveDistance(72,12);
-    // facePID(180,false,12,p,i,d,100,5000);
-    // driveDistance(48,12);
-    start_theta = 1.09694499; //M_PI/3;
-    pros::delay(100);
-    intake(inward);
-    // startXPts.push_back(robotX);
-    // startYPts.push_back(robotY);
-    //
-    // startXPts.push_back(24); //set points for pure pursuit
-    // startYPts.push_back(10);
-    //
-    // startXPts.push_back(36);
-    // startYPts.push_back(24);
 
-    //purePursuit(24,1.0,startXPts,startYPts,12,0.3,12.0,5000); //pure pursuit, pick 2 balls
-
-    driveDistance(-24,12,1000);
-    // facePID(45,18,p,i,d);
-    // driveDistance(calcDistance(45,18),12,1000);
-    // driveDistance(-16,12);
-
-    adaptiveDrive(45,18,0.5,12,0.5,12.0,1.0,100,1800);
-    intake(stop);
-    // facePID(45,false,12,p,i,d,100,5000);
-    //adaptiveDrive(double x, double y, double accel, double maxV, double distkP, double anglekP, double scalePower, int settleTime, int timeout)
-    //adaptiveDrive(24,-48, 0.5, 12, 0.7, 4, 0, 10.0, 100, 10000); *optimal parameters
-
-    // startXPts.push_back(robotX);
-    // startYPts.push_back(robotY);
-    //
-    // startXPts.push_back(0); //set points for pure pursuit
-    // startYPts.push_back(24);
-    //
-    // startXPts.push_back(24);
-    // startYPts.push_back(48);
-    //
-    // purePursuit(24,1.0,startXPts,startYPts,12,0.3,120.0,5000); //pure pursuit, pick 2 balls
     break;
 
     case 1: //red auton
 
     case 2: //blue auton
-      //robotTheta = M_PI/2;
-      start_theta = 3*M_PI/2;
       unfold();
       intake(inward);
       pointTurn(1,100,225,false,40,i,d);
@@ -388,8 +411,6 @@ void autonomous()
     break;
 
     case 3: //SKILLS ================================================================================================================================================================
-      start_theta = 1.09694499; //M_PI/3;
-      pros::delay(100);
       intake(inward);
       // startXPts.push_back(robotX);
       // startYPts.push_back(robotY);
@@ -542,6 +563,7 @@ void autonomous()
       facePID(61,0,p,i,d);
       intake(inward);
       driveUntilStopped(5000);
+      am.resume();
       while(!thirdBall){
         pros::delay(10);
         timer+= 10;
@@ -670,38 +692,36 @@ void autonomous()
     case 4: //red mid auton
 
     case 5: //blue mid auton
-
-      bool worked = false;
-      start_theta = 0;
+      cm.resume();
       intake(inward);
-      driveDistance2(44, 0.7, 0, 8, 1.0, 3, 250, 2000);
-      delayDriveSmooth(250,8,0.5,rev);
+      //driveDistance2(44, 0.7, 0, 8, 1.0, 3, 250, 2000);
+      driveDistance(46,12);
+      delayDriveSmooth(500,12,0.5,rev);
       //driveDistance(-24,10);
-      adaptiveDrive(-27,-7,0.5,8,0.5,6.0,1.0,100,2000);
+      adaptiveDrive(-36,-15,0.5,12,0.4,6.0,10.0,100,1900);
       while(!thirdBall) {
         pros::delay(10);
         timer += 10;
         if(timer > 1000)
           break;
       }
-      if(countHeldBalls()==3)
-        worked = true;
       intake(stop);
       //delayDriveSmooth(1000,5,0.5,fwd);
-      if(worked)
-        super_macro_slowed(3,2);
+      if(mid_ball_grabbed)
+        super_macro(3,2);
       else
-        super_macro_slowed(2,2);
+        super_macro(2,2);
       r2.resume();
       //adaptiveDrive_reversed(45,16,0.5,8,0.5,6.0,1.0,250,2000);
       //pros::delay(150);
       //release_asynch(countHeldBalls()-1);
-      adaptiveDrive_reversed(30,15,8.0);
+      //adaptiveDrive_reversed(30,15,8.0);
+      adaptiveDrive_reversed(30,10,0.5,12,0.5,8.0,10.0,100,2000);
       //release(countHeldBalls()-1);
       //facePID(180,p,i,d);
       intake(inward);
       //delayDriveSmooth(1000,8,0.5,fwd);
-      adaptiveDrive(36,-7,0.5,8.5,0.5,6.0,2.0,100,1000);
+      adaptiveDrive(33,-15,0.5,12,0.6,7.0,10.0,100,1000);
 
       while(!thirdBall) {
         pros::delay(10);
@@ -715,7 +735,8 @@ void autonomous()
       else if(secondBall)
         shooting_macro(1);
       intake(outward);
-      delayDriveSmooth(700,9,0.7,rev);
+      driveDistance(-20,12);
+      //delayDriveSmooth(700,12,0.5,rev);
 
       // xPts.push_back(robotX);
       // yPts.push_back(robotY);
@@ -727,12 +748,12 @@ void autonomous()
       // yPts.push_back(0);
 
       //eject(countHeldBalls());
-      pros::delay(100);
+      //pros::delay(100);
       intake(inward);
       //purePursuit(24,0,xPts,yPts,8,0.8,6.5,8.0,5000);
 
-      adaptiveDrive(96,-10,0.7,8.5,0.5,10.0,3.0,100,2000);
-      conveyorState = 99;
+      adaptiveDrive(108,-15,0.4,12,0.5,6.0,10.0,100,2000);
+      //conveyorState = 99;
       timer = 0;
       while(!thirdBall) {
         pros::delay(10);
@@ -741,7 +762,7 @@ void autonomous()
           break;
       }
       intake(stop);
-      super_macro_slowed(3,2); //score third goal
+      super_macro(3,2); //score third goal
       intake(outward);
       delayDrive(400,-8000);
     break;
