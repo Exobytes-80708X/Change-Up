@@ -155,7 +155,7 @@ void countIntakeBalls(int numOfBalls)
     while(!botBall /*|| timer < 220*/) {
       timer+=10;
       pros::delay(10);
-      if(timer > 2500){
+      if(timer > 2000){
         return;
       }
     }
@@ -171,7 +171,7 @@ void countIntakeBalls(int numOfBalls)
     while(botBall) {
       timer+=10;
       pros::delay(10);
-      if(timer > 2500) {
+      if(timer > 2000) {
         return;
       }
     //  repeat = false;

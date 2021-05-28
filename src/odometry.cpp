@@ -532,17 +532,20 @@ void driveUntilStopped(double v)
 
   rightDrive.moveVoltage(v);
   leftDrive.moveVoltage(v);
-  pros::delay(100);
-  while(timer < 30) {
+  pros::delay(500);
+  while(timer < 1) {
     d = calcDistance(prevX,prevY);
     prevX = robotX;
     prevY = robotY;
     if(d < 0.001)
-      timer += 10;
+      timer += 1;
     rightDrive.moveVoltage(v);
     leftDrive.moveVoltage(v);
-    pros::delay(10);
+    pros::delay(50);
+    updateVarLabel(debugLabel1,"D",debugValue1,d,"DEG",3);
+    updateVarLabel(debugLabel2,"TIMER",debugValue2,timer,"MS",0);
   }
+  updateVarLabel(debugLabel3,"END",debugValue3,0,"",0);
   rightDrive.moveVoltage(0);
   leftDrive.moveVoltage(0);
 }
