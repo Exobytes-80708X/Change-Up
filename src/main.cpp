@@ -68,15 +68,15 @@ void adjustMiddle(void*p)
     v_r = fabs(rightIntake.get_actual_velocity());
 
     if (v_r < 200 && v_l < 200){
-      rightDrive.moveVoltage(5000);
-      leftDrive.moveVoltage(5000);
+      rightDrive.moveVoltage(3000);
+      leftDrive.moveVoltage(3000);
     }
     else if(v_l < v_r-100 ) {
       rightDrive.moveVoltage(0);
-      leftDrive.moveVoltage(5000);
+      leftDrive.moveVoltage(4000);
     }
     else if(v_r < v_l-100){
-      rightDrive.moveVoltage(5000);
+      rightDrive.moveVoltage(4000);
       leftDrive.moveVoltage(0);
     }
     else {
@@ -267,7 +267,7 @@ void check_mid_ball_grabbed(void*p) {
   while(!botBall){
     pros::delay(10);
     mtimer += 10;
-    if(mtimer > 3000) return;
+    if(mtimer > 2500) return;
   }
   mid_ball_grabbed = true;
 }
@@ -280,9 +280,8 @@ void autonomous()
       start_theta = 0;
     break;
     case 1:
-      start_theta = 3*M_PI/2;
-    break;
     case 2:
+      start_theta = 3*M_PI/2;
     break;
     case 3:
       start_theta = 1.09694499;
@@ -343,6 +342,7 @@ void autonomous()
     delayDrive(150,-8000);
     intake(inward);
     am.resume();
+    timer = 0;
     while(!thirdBall){
       pros::delay(10);
       timer+= 10;
@@ -351,6 +351,7 @@ void autonomous()
       }
     am.suspend();
     shooting_macro(1);
+    timer = 0;
     while(!thirdBall){
       pros::delay(10);
       timer+= 10;
@@ -366,7 +367,7 @@ void autonomous()
     case 1: //red auton
 
     case 2: //blue auton
-      unfold();
+      //unfold();
       intake(inward);
       pointTurn(1,100,225,false,40,i,d);
       timer = 0;
@@ -378,48 +379,41 @@ void autonomous()
       }
       // pros::delay(200);
       if(thirdBall)
-        super_macro_slowed(3,1); //score first goal
+        super_macro_slowed(2,1); //score first goal
       else
-        super_macro_slowed(3,2);
+        super_macro_slowed(2,2);
       intake(outward);
       r.resume();
-      adaptiveDrive_reversed(34,16,9.5);
-      facePID(180,p,i,d);
+
+      adaptiveDrive_reversed(32,10,0.5,12,0.5,8.0,10.0,100,2000);
+      //release(countHeldBalls()-1);
+      //facePID(180,p,i,d);
       intake(inward);
-      delayDrive(800,9000);
+      //delayDriveSmooth(1000,8,0.5,fwd);
+      adaptiveDrive(36,-15,0.5,12,0.6,7.0,10.0,100,1000);
       timer = 0;
-      while(!secondBall) {
-        pros::delay(10);
-        timer += 10;
-        if(timer > 2000)
-          break;
-      }
-      shooting_macro(1); //score second goal
-      intake(outward);
-      delayDriveSmooth(500,8,0.5,true);
-      intake(inward);
-      while(!firstBall) {
+      while(!thirdBall) {
         pros::delay(10);
         timer += 10;
         if(timer > 1000)
           break;
       }
+      if(thirdBall || secondBall)
+        shooting_macro(2);
+      else
+        shooting_macro(1);
+      // if(thirdBall || secondBall)
+      //   shooting_macro(2);
+      // else
+      //   shooting_macro(1);
+      intake(outward);
+      driveDistance(-20,12);
 
-      xPts.push_back(robotX);
-      yPts.push_back(robotY);
+      intake(inward);
+      //purePursuit(24,0,xPts,yPts,8,0.8,6.5,8.0,5000);
 
-      xPts.push_back(70);
-      yPts.push_back(20);
-
-      xPts.push_back(95);
-      yPts.push_back(0);
-
-      //eject(countHeldBalls());
-      pros::delay(100);
-      purePursuit(24,0,xPts,yPts,8,0.8,5.0,8.0,5000);
-
-      delayDrive(500,8000);
-      conveyorState = 99;
+      adaptiveDrive(108,-13,0.4,12,0.5,6.0,10.0,100,2000);
+      //conveyorState = 99;
       timer = 0;
       while(!thirdBall) {
         pros::delay(10);
@@ -428,9 +422,62 @@ void autonomous()
           break;
       }
       intake(stop);
-      shooting_macro(2); //score third goal
+      if(firstBall)
+        super_macro(3,2); //score third goal
+      else
+        shooting_macro(2);
       intake(outward);
       delayDrive(400,-8000);
+
+
+      // adaptiveDrive_reversed(34,16,9.5);
+      // facePID(180,p,i,d);
+      // intake(inward);
+      // delayDrive(800,9000);
+      // timer = 0;
+      // while(!secondBall) {
+      //   pros::delay(10);
+      //   timer += 10;
+      //   if(timer > 2000)
+      //     break;
+      // }
+      // shooting_macro(1); //score second goal
+      // intake(outward);
+      // delayDriveSmooth(500,8,0.5,true);
+      // intake(inward);
+      // while(!firstBall) {
+      //   pros::delay(10);
+      //   timer += 10;
+      //   if(timer > 1000)
+      //     break;
+      // }
+      //
+      // xPts.push_back(robotX);
+      // yPts.push_back(robotY);
+      //
+      // xPts.push_back(70);
+      // yPts.push_back(20);
+      //
+      // xPts.push_back(95);
+      // yPts.push_back(0);
+      //
+      // //eject(countHeldBalls());
+      // pros::delay(100);
+      // purePursuit(24,0,xPts,yPts,8,0.8,5.0,8.0,5000);
+      //
+      // delayDrive(500,8000);
+      // conveyorState = 99;
+      // timer = 0;
+      // while(!thirdBall) {
+      //   pros::delay(10);
+      //   timer += 10;
+      //   if(timer > 1000)
+      //     break;
+      // }
+      // intake(stop);
+      // shooting_macro(2); //score third goal
+      // intake(outward);
+      // delayDrive(400,-8000);
     break;
 
     case 3: //SKILLS ================================================================================================================================================================
@@ -526,7 +573,7 @@ void autonomous()
       intake(inward);
       //facePID(-34,-15,p,i,d);
       //driveDistance(calcDistance(-34,-15),10);
-      adaptiveDrive(-34,-15,0.5,12,0.5,5.0,10.0,100,3700); //intake floating ball 5th goal
+      adaptiveDrive(-34,-14,0.5,12,0.5,5.0,10.0,100,3700); //intake floating ball 5th goal
       facePID(-68,-31,p,i,d);
       //adaptiveDrive(-68,-40,0.1,8,0.7,9.0,5.0,100,1400);//intake floating ball 5th goal
       //facePID(-61,-39,p,i,d);
@@ -566,7 +613,7 @@ void autonomous()
       driveDistance(calcDistance(0,-36)-8,12); //intake wall ball
       driveDistance(-10,12);
       intake(stop);
-      adaptiveDrive(-9,-72.5,0.5,12,0.5,5,10.0,100,1400); //approach 7th goal
+      adaptiveDrive(-9,-72.5,0.5,12,0.5,5.5,10.0,100,1400); //approach 7th goal
       super_macro_slowed(countHeldBalls(),2); //score 7th goal
       intake(outward);
       release_all_asynch(300);
@@ -606,7 +653,7 @@ void autonomous()
       driveDistance(-24,12);
       release(countHeldBalls());
 
-      facePID(62.5,-75,p,i,d);
+      facePID(61.5,-75,p,i,d);
       intake(inward);
       driveDistance(calcDistance(64,-77)-1,12, 1200);
 
@@ -741,7 +788,8 @@ void autonomous()
       driveDistance(46,12);
       delayDriveSmooth(500,12,0.5,rev);
       //driveDistance(-24,10);
-      adaptiveDrive(-36,-15,0.5,12,0.4,6.0,10.0,100,1900);
+      adaptiveDrive(-36,-10,0.5,12,0.4,6.0,10.0,100,2000);
+      timer = 0;
       while(!thirdBall) {
         pros::delay(10);
         timer += 10;
@@ -751,21 +799,21 @@ void autonomous()
       intake(stop);
       //delayDriveSmooth(1000,5,0.5,fwd);
       if(mid_ball_grabbed)
-        super_macro(3,2);
+        super_macro_slowed(3,2);
       else
-        super_macro(2,2);
+        super_macro(2,1);
       r2.resume();
       //adaptiveDrive_reversed(45,16,0.5,8,0.5,6.0,1.0,250,2000);
       //pros::delay(150);
       //release_asynch(countHeldBalls()-1);
       //adaptiveDrive_reversed(30,15,8.0);
-      adaptiveDrive_reversed(30,10,0.5,12,0.5,8.0,10.0,100,2000);
+      adaptiveDrive_reversed(28,10,0.5,12,0.5,8.0,10.0,100,2000);
       //release(countHeldBalls()-1);
       //facePID(180,p,i,d);
       intake(inward);
       //delayDriveSmooth(1000,8,0.5,fwd);
       adaptiveDrive(33,-15,0.5,12,0.6,7.0,10.0,100,1000);
-
+      timer = 0;
       while(!thirdBall) {
         pros::delay(10);
         timer += 10;
@@ -773,29 +821,32 @@ void autonomous()
           break;
       }
       intake(stop);
-      if(thirdBall)
-        shooting_macro(2);
-      else if(secondBall)
+      // if(thirdBall || secondBall)
+      //   shooting_macro(2);
+      // else
         shooting_macro(1);
       intake(outward);
+
+      adaptiveDrive_reversed(34,24,0.5,12,0.5,8.0,10.0,100,2000);
+
+      facePID(33,52,p-4,i,d);
+
+      intake(inward);
+
+      driveUntilStopped(5000);
+
+      shooting_macro(1);
+
+      a.resume();
+
       driveDistance(-20,12);
-      //delayDriveSmooth(700,12,0.5,rev);
 
-      // xPts.push_back(robotX);
-      // yPts.push_back(robotY);
-      //
-      // xPts.push_back(60);
-      // yPts.push_back(8);
-      //
-      // xPts.push_back(93);
-      // yPts.push_back(0);
-
-      //eject(countHeldBalls());
-      //pros::delay(100);
+      //driveDistance(-20,12);
+      /* for home row
       intake(inward);
       //purePursuit(24,0,xPts,yPts,8,0.8,6.5,8.0,5000);
 
-      adaptiveDrive(108,-15,0.4,12,0.5,6.0,10.0,100,2000);
+      adaptiveDrive(108,-13,0.4,12,0.5,6.0,10.0,100,2000);
       //conveyorState = 99;
       timer = 0;
       while(!thirdBall) {
@@ -808,6 +859,7 @@ void autonomous()
       super_macro(3,2); //score third goal
       intake(outward);
       delayDrive(400,-8000);
+      */
     break;
   }
 }
