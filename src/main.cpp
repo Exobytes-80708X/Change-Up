@@ -802,6 +802,7 @@ void autonomous()
         super_macro_slowed(3,2);
       else
         super_macro(2,1);
+      intake(outward);
       r2.resume();
       //adaptiveDrive_reversed(45,16,0.5,8,0.5,6.0,1.0,250,2000);
       //pros::delay(150);
@@ -813,6 +814,7 @@ void autonomous()
       intake(inward);
       //delayDriveSmooth(1000,8,0.5,fwd);
       adaptiveDrive(33,-15,0.5,12,0.6,7.0,10.0,100,1000);
+
       timer = 0;
       while(!thirdBall) {
         pros::delay(10);
@@ -821,25 +823,27 @@ void autonomous()
           break;
       }
       intake(stop);
-      // if(thirdBall || secondBall)
-      //   shooting_macro(2);
-      // else
+      if(thirdBall || secondBall)
+        shooting_macro(2);
+      else
         shooting_macro(1);
       intake(outward);
 
-      adaptiveDrive_reversed(34,24,0.5,12,0.5,8.0,10.0,100,2000);
+      release_all_asynch(300);
+      adaptiveDrive_reversed(35,24,0.5,12,0.5,8.0,10.0,100,2000);
 
-      facePID(33,52,p-4,i,d);
+      facePID(270,p,i,d);
+      // facePID(33,60,p-4,i,d);
+      //
+      // intake(inward);
+      //
+      // driveUntilStopped(5000);
 
-      intake(inward);
-
-      driveUntilStopped(5000);
-
-      shooting_macro(1);
-
-      a.resume();
-
-      driveDistance(-20,12);
+      // shooting_macro(1);
+      //
+      // a.resume();
+      //
+      // driveDistance(-20,12);
 
       //driveDistance(-20,12);
       /* for home row
